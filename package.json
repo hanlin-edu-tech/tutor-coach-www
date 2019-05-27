@@ -1,0 +1,28 @@
+{
+  "name": "tutor-coach-www",
+  "version": "1.0.0",
+  "description": "tutor-coach-www",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo website"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hanlin-edu-tech/tutor-coach-www.git"
+  },
+  "author": "ujhong636 <ujhong636@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "autoprefixer": "^9.5.1",
+    "event-stream": "^4.0.1",
+    "gulp": "^3.9.1",
+    "gulp-gcloud-publish": "^2.1.1",
+    "gulp-postcss": "^8.0.0",
+    "gulp-rename": "^1.4.0",
+    "gulp-sass": "^4.0.2",
+    "gulp-template-util": "0.0.2",
+    "jquery-modal": "^0.9.1",
+    "pug": "^2.0.3",
+    "q": "^1.5.1"
+  }
+}
