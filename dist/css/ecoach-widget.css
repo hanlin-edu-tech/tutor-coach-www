@@ -3,8 +3,8 @@
   font-family: 微軟正黑體;
   position: fixed;
   width: 270px;
-  left: 30px;
-  top: 130px;
+  left: 2%;
+  top: 10%;
   background-color: #F5F5F5;
   border-radius: 6px;
   opacity: 1;
@@ -26,6 +26,7 @@
     text-align: center;
     border-radius: 6px 6px 0px 0px; }
     .ecoach .row-header .close-ecoach {
+      cursor: pointer;
       top: 10px;
       right: 10px;
       position: absolute;
@@ -117,6 +118,8 @@
                 animation: tick 0.6s cubic-bezier(0, 0, 0.32, -0.13) forwards;
         -webkit-animation-delay: .3s;
                 animation-delay: .3s; }
+      .ecoach .list .seen .flaticon-done {
+        display: none; }
 
 @-webkit-keyframes tick {
   from {
@@ -145,6 +148,16 @@
   to {
     -webkit-transform: translate(50%, -50%) scale(1);
             transform: translate(50%, -50%) scale(1); } }
+    @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+      .ecoach .list .seen .flaticon-done {
+        display: block;
+        text-align: center;
+        color: #fff; }
+        .ecoach .list .seen .flaticon-done:before {
+          margin-left: 0;
+          font-size: 14px; }
+      .ecoach .list .seen .svg {
+        display: none; } }
   .ecoach .row-next {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -162,6 +175,7 @@
       color: #FF8A34;
       font-size: 14px;
       font-weight: 500;
+      font-family: "微軟正黑體", Arial, sans-serif;
       border-radius: 20px;
       -webkit-transition: 0.3s;
       transition: 0.3s; }
@@ -182,7 +196,7 @@
           transform: scale(0);
   position: fixed;
   bottom: 50px;
-  left: 30px; }
+  left: 2%; }
   .ecoach-icon img {
     width: 80px;
     cursor: pointer;

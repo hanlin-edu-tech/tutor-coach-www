@@ -11,8 +11,8 @@ $btn-yellow: #FFE284
     font-family: 微軟正黑體
     position: fixed
     width: 270px
-    left: 30px
-    top: 130px
+    left: 2%
+    top: 10%
     background-color: $color-grey
     border-radius: 6px
     opacity: 1
@@ -30,6 +30,7 @@ $btn-yellow: #FFE284
         text-align: center
         border-radius: 6px 6px 0px 0px
         .close-ecoach
+            cursor: pointer
             top: 10px
             right: 10px
             position: absolute
@@ -109,7 +110,9 @@ $btn-yellow: #FFE284
                 stroke-linejoin: round
                 animation: tick .6s cubic-bezier(0, 0, 0.32, -0.13) forwards
                 animation-delay: .3s
-
+            .flaticon-done
+                display: none
+        
             @keyframes tick
                 from 
                     stroke-dashoffset: 26
@@ -122,6 +125,19 @@ $btn-yellow: #FFE284
                 to 
                     transform: translate(50%,-50%) scale(1)
 
+        // 修正ie無法顯示svg動畫
+        @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none)
+            .seen
+                .flaticon-done
+                    display: block
+                    text-align: center
+                    color:#fff
+                    &:before
+                        margin-left: 0
+                        font-size: 14px
+                .svg
+                    display: none
+
     .row-next
         display: flex
         justify-content: center
@@ -133,6 +149,7 @@ $btn-yellow: #FFE284
             color: $color-orange
             font-size: 14px
             font-weight: 500
+            font-family: "微軟正黑體", Arial, sans-serif
             border-radius: 20px
             transition: 0.3s
             &:hover
@@ -147,7 +164,7 @@ $btn-yellow: #FFE284
     transform: scale(0)
     position: fixed
     bottom: 50px
-    left: 30px
+    left: 2%
     img
         width: 80px
         cursor: pointer

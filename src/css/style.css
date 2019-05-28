@@ -299,10 +299,10 @@
     right: 10px;
     text-decoration: none;
     cursor: pointer; }
-    .modal-con .js-close-modal:active {
-      color: #757575; }
     .modal-con .js-close-modal:before {
       font-size: 15px; }
+    .modal-con .js-close-modal:hover {
+      color: #757575; }
 
 @media screen and (max-width: 700px) {
   .modal-con {
