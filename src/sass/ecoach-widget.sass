@@ -1,0 +1,158 @@
+// colors
+$color-orange: #FF8A34
+$color-grey: #F5F5F5
+$color-yellow: #FDF6DA
+$border-yellow: #FFC60B
+$btn-yellow: #FFE284
+
+.ecoach
+    *
+        //border: 1px solid #000
+    font-family: 微軟正黑體
+    position: fixed
+    width: 270px
+    left: 30px
+    top: 130px
+    background-color: $color-grey
+    border-radius: 6px
+    opacity: 1
+    box-shadow: 0px 0px 10px rgba(#000,0.3)
+    transform: scale(1)
+    transform-origin: 0 100%
+    transition: 0.3s
+    .row-header
+        position: relative
+        padding: 8px 0px
+        background: linear-gradient(160deg, #EE9630 , #E67E43)
+        color: #fff
+        font-size: 15px
+        line-height: 23px
+        text-align: center
+        border-radius: 6px 6px 0px 0px
+        .close-ecoach
+            top: 10px
+            right: 10px
+            position: absolute
+            color: $color-orange
+            background-color: #fff
+            border-radius: 50%
+            transition: 0.3s
+            &:before
+                margin-left: 0
+                font-size: 12px
+                padding: 0px 6px
+            &:hover
+                transform: scale(1.1)
+    
+    .list
+        max-height: 320px
+        overflow: auto
+        padding: 8px 15px
+        margin-bottom: 12px
+        .course
+            position: relative
+            display: flex
+            background-color: #fff
+            border: 1px solid #E6E6E6
+            margin-bottom: 5px
+            border-radius: 3px
+            padding: 8px 20px
+            font-size: 14px
+            color: #000
+        .active
+            background-color: $color-yellow
+            border: 1px solid $border-yellow
+            position: relative
+            &:before
+                transform: translateY(-50%)
+                top: 50%
+                left: 5px
+                position: absolute
+                content: ''
+                width: 0
+                height: 0
+                border-style: solid
+                border-width: 5px 0 5px 8.7px
+                border-color: transparent transparent transparent $border-yellow
+        .disabled
+            color: #E6E6E6
+        .icon
+            display: flex
+            align-items: center
+            justify-content: center
+        i
+            &:before
+                margin-left: 0
+                margin-right: 6px
+
+        .seen
+            position: absolute
+            top: 50%
+            right: 0
+            transform: translate(50%,-50%) scale(0)
+            background: white
+            width: 20px
+            height: 20px
+            border-radius: 50%
+            background-color: #4CCC41
+            border: 1px solid #4BB742
+            animation: showout .6s cubic-bezier(0.68, 0.55, 0.265, 1.55) forwards
+            .svg
+                width: 20px
+            .path
+                fill: transparent
+                stroke: #fff
+                stroke-width: 3
+                stroke-dasharray: 25
+                stroke-dashoffset: 26
+                stroke-linecap: round
+                stroke-linejoin: round
+                animation: tick .6s cubic-bezier(0, 0, 0.32, -0.13) forwards
+                animation-delay: .3s
+
+            @keyframes tick
+                from 
+                    stroke-dashoffset: 26
+                to 
+                    stroke-dashoffset: 0
+
+            @keyframes showout
+                from 
+                    transform: translate(50%,-50%) scale(0)
+                to 
+                    transform: translate(50%,-50%) scale(1)
+
+    .row-next
+        display: flex
+        justify-content: center
+        align-items: flex-start
+        height: 50px
+        .next-btn
+            padding: 8px 30px
+            background-color: $btn-yellow
+            color: $color-orange
+            font-size: 14px
+            font-weight: 500
+            border-radius: 20px
+            transition: 0.3s
+            &:hover
+                text-decoration: none
+                transform: scale(1.1)
+.hide-coach
+    transform: scale(0)
+    opacity: 0
+
+.ecoach-icon
+    transition: 0.3s
+    transform: scale(0)
+    position: fixed
+    bottom: 50px
+    left: 30px
+    img
+        width: 80px
+        cursor: pointer
+        transition: 0.3s
+        &:hover
+            transform: scale(1.1)
+.show-icon
+    transform: scale(1)

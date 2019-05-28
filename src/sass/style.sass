@@ -71,6 +71,20 @@
         .btn-get
             +btn-hover
 
+@keyframes stamp
+    0%
+        opacity: 0
+    
+    10%
+        opacity: .50
+        transform-origin: 50% 50%
+        transform: scale(5)
+        transition: all .3s cubic-bezier(0.6, 0.04, 0.98, 0.335)
+    
+    100%
+        opacity: 1
+        transform: scale(1)
+
 
 // classes
 .container-class
@@ -179,6 +193,7 @@
 
 // popup
 .modal
+    z-index: 1000
     position: fixed
     background: rgba(#000,0.7)
     top: 0
@@ -227,23 +242,6 @@
 @media screen and (max-width: 700px)
     .modal-con
         width: 70%
-
-
-
-
-@keyframes stamp
-    0%
-        opacity: 0
-    
-    10%
-        opacity: .50
-        transform-origin: 50% 50%
-        transform: scale(5)
-        transition: all .3s cubic-bezier(0.6, 0.04, 0.98, 0.335)
-    
-    100%
-        opacity: 1
-        transform: scale(1)
 
 
 

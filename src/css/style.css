@@ -81,6 +81,38 @@
         -webkit-transform: scale(1.05);
                 transform: scale(1.05); }
 
+@-webkit-keyframes stamp {
+  0% {
+    opacity: 0; }
+  10% {
+    opacity: .50;
+    -webkit-transform-origin: 50% 50%;
+            transform-origin: 50% 50%;
+    -webkit-transform: scale(5);
+            transform: scale(5);
+    -webkit-transition: all 0.3s cubic-bezier(0.6, 0.04, 0.98, 0.335);
+    transition: all 0.3s cubic-bezier(0.6, 0.04, 0.98, 0.335); }
+  100% {
+    opacity: 1;
+    -webkit-transform: scale(1);
+            transform: scale(1); } }
+
+@keyframes stamp {
+  0% {
+    opacity: 0; }
+  10% {
+    opacity: .50;
+    -webkit-transform-origin: 50% 50%;
+            transform-origin: 50% 50%;
+    -webkit-transform: scale(5);
+            transform: scale(5);
+    -webkit-transition: all 0.3s cubic-bezier(0.6, 0.04, 0.98, 0.335);
+    transition: all 0.3s cubic-bezier(0.6, 0.04, 0.98, 0.335); }
+  100% {
+    opacity: 1;
+    -webkit-transform: scale(1);
+            transform: scale(1); } }
+
 .container-class {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -220,6 +252,7 @@
               transform: scale(1.05); }
 
 .modal {
+  z-index: 1000;
   position: fixed;
   background: rgba(0, 0, 0, 0.7);
   top: 0;
@@ -274,35 +307,3 @@
 @media screen and (max-width: 700px) {
   .modal-con {
     width: 70%; } }
-
-@-webkit-keyframes stamp {
-  0% {
-    opacity: 0; }
-  10% {
-    opacity: .50;
-    -webkit-transform-origin: 50% 50%;
-            transform-origin: 50% 50%;
-    -webkit-transform: scale(5);
-            transform: scale(5);
-    -webkit-transition: all 0.3s cubic-bezier(0.6, 0.04, 0.98, 0.335);
-    transition: all 0.3s cubic-bezier(0.6, 0.04, 0.98, 0.335); }
-  100% {
-    opacity: 1;
-    -webkit-transform: scale(1);
-            transform: scale(1); } }
-
-@keyframes stamp {
-  0% {
-    opacity: 0; }
-  10% {
-    opacity: .50;
-    -webkit-transform-origin: 50% 50%;
-            transform-origin: 50% 50%;
-    -webkit-transform: scale(5);
-            transform: scale(5);
-    -webkit-transition: all 0.3s cubic-bezier(0.6, 0.04, 0.98, 0.335);
-    transition: all 0.3s cubic-bezier(0.6, 0.04, 0.98, 0.335); }
-  100% {
-    opacity: 1;
-    -webkit-transform: scale(1);
-            transform: scale(1); } }

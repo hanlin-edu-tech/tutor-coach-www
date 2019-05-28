@@ -7,6 +7,7 @@ html(lang='tw')
         link(type='text/css', href='https://www.ehanlin.com.tw/lesscss/ehanlin-basicss.css', rel='stylesheet')
         link(type='text/css', href='./css/tutor-coach.css', rel='stylesheet')
         link(type='text/css', href='./css/lib/flaticon.css', rel='stylesheet')
+        link(type='text/css', href='./css/ecoach-widget.css', rel='stylesheet')
         link(type='text/css', href='./css/style.css', rel='stylesheet')
         link(type='image/png', href='./img/favicon.png', rel='icon')
         title 翰林雲端學院 - 線上學習首選 - 免費試用小中高課程
@@ -288,12 +289,15 @@ html(lang='tw')
                     .class-btn-check
                         img(src="./img/btn-check.png", alt="")
 
+        // banner課表排課中
         .box.banner-arrange
             img(src="./img/banner-arrange-class.png", alt="")
+        // banner尚未購買e導師
         .box.banner-buy-ecoach
             img(src="./img/banner-buy-ecoach.png", alt="")
             a.btn-ecoach(href="")
                 img(src="./img/btn-buy-ecoach.png", alt="")
+        // banner完成課表
         .box.banner-finish
             img(src="./img/banner-finish.png", alt="")
 
@@ -304,6 +308,61 @@ html(lang='tw')
                 a.js-close-modal.flaticon-close(href='#')
                 .content-gift 恭喜獲得金幣100寶石10
 
+        // widget
+        .ecoach
+            .row-header
+                .subject 國一上國文
+                .unit 唐詩四期
+                a.close-ecoach.flaticon-close(href='#')
+            .row-content
+                .list
+                    .course
+                        .icon
+                            i.flaticon-masterlist_classquiz
+                        .title 唐詩四期(一)唐詩四期(一)唐詩四期(一)唐詩四期(一)
+                        .seen
+                            svg#tick.svg(version='1.1', viewBox='6 5 26 26')
+                                polyline.path(points='11.6,20 15.9,24.2 26.4,13.8')
+                    .course.active
+                        .icon
+                            i.flaticon-masterlist_classquiz
+                        .title 唐詩四期(一)唐詩四期(一)唐詩四期(一)唐詩四期(一)
+                        .seen(style="display:none")
+                            svg#tick.svg(version='1.1', viewBox='6 5 26 26')
+                                polyline.path(points='11.6,20 15.9,24.2 26.4,13.8')
+                    .course.disabled
+                        .icon
+                            i.flaticon-masterlist_classquiz
+                        .title 唐詩四期(一)唐詩四期(一)唐詩四期(一)唐詩四期(一)
+                        .seen(style="display:none")
+                            svg#tick.svg(version='1.1', viewBox='6 5 26 26')
+                                polyline.path(points='11.6,20 15.9,24.2 26.4,13.8')
+                    .course.disabled
+                        .icon
+                            i.flaticon-masterlist_classquiz
+                        .title 唐詩四期(一)唐詩四期(一)唐詩四期(一)唐詩四期(一)
+                        .seen(style="display:none")
+                            svg#tick.svg(version='1.1', viewBox='6 5 26 26')
+                                polyline.path(points='11.6,20 15.9,24.2 26.4,13.8')
+                    .course.disabled
+                        .icon
+                            i.flaticon-masterlist_classquiz
+                        .title 唐詩四期(一)唐詩四期(一)唐詩四期(一)唐詩四期(一)
+                        .seen(style="display:none")
+                            svg#tick.svg(version='1.1', viewBox='6 5 26 26')
+                                polyline.path(points='11.6,20 15.9,24.2 26.4,13.8')
+                    .course.disabled
+                        .icon
+                            i.flaticon-masterlist_classquiz
+                        .title 唐詩四期(一)唐詩四期(一)唐詩四期(一)唐詩四期(一)
+                        .seen(style="display:none")
+                            svg#tick.svg(version='1.1', viewBox='6 5 26 26')
+                                polyline.path(points='11.6,20 15.9,24.2 26.4,13.8')
+                .row-next
+                    a.next-btn(href="") 下一步
+
+        .ecoach-icon
+            img(src="./img/ecoach/ecoach-icon.png", alt="")
         footer#ehanlin-footer
         script(data-module='ehanlin-header, ehanlin-menu, ehanlin-info-left-side, ehanlin-footer', src='https://s3-ap-northeast-1.amazonaws.com/ehanlin-web-resource/common_webcomponent/current/js/ehanlin-loader.js', type='text/javascript')
         script(src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js", type='text/javascript')
