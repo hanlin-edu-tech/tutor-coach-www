@@ -43,6 +43,25 @@
   padding-top: 0; }
   .container-banner .banner {
     width: 100%; }
+  .container-banner .row-gift {
+    position: absolute;
+    top: 130px;
+    right: 85px; }
+    .container-banner .row-gift .gift-bg {
+      width: 110px; }
+      .container-banner .row-gift .gift-bg img {
+        width: 100%; }
+    .container-banner .row-gift .class-btn {
+      width: 90px;
+      padding: 5px 10px 0px; }
+      .container-banner .row-gift .class-btn img {
+        cursor: pointer;
+        width: 100%;
+        -webkit-transition: .3s;
+        transition: .3s; }
+    .container-banner .row-gift .btn-get:hover img {
+      -webkit-transform: scale(1.05);
+              transform: scale(1.05); }
   .container-banner .row-class {
     top: 150px;
     left: 50%;
@@ -71,15 +90,6 @@
     .container-banner .class-bg .animation-stamp {
       -webkit-animation: stamp 0.4s forwards;
               animation: stamp 0.4s forwards; }
-  .container-banner .class-btn {
-    padding: 5px 8px 0px; }
-    .container-banner .class-btn .btn-get {
-      cursor: pointer;
-      -webkit-transition: .3s;
-      transition: .3s; }
-      .container-banner .class-btn .btn-get:hover {
-        -webkit-transform: scale(1.05);
-                transform: scale(1.05); }
 
 @-webkit-keyframes stamp {
   0% {
