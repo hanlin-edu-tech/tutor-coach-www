@@ -1,0 +1,214 @@
+#courses.box.container-class
+    div(is="course" v-for="(singleCourse, dataId, index) in courses"
+        :single-course="singleCourse" :key="dataId")
+
+    // 單堂課程列
+    //.content-class
+    //    .class-time
+    //        .date 2019年7月1日
+    //        .time 14:00-16:00
+    //    .class-icon
+    //        img(src="./img/icon/icon.png", alt="")
+    //    .class-detail
+    //        .course-subject 國一上數學
+    //        .course-unit 通貫古今--鄭伯克段于鄢
+    //        .course-tool 學習工具：講義、筆、智慧型手機
+    //    .class-gift
+    //        .gift-title 課堂獎勵
+    //        .gift-pic
+    //            img(src="./img/class-gift.png", alt="")
+    //    .class-btn
+    //        // 已開始上課
+    //        a.class-btn-start(href="")
+    //            img(src="./img/btn-start.png", alt="")
+    //        // 補課
+    //        a.class-btn-add(style="display:none", href="")
+    //            img(src="./img/btn-add.png", alt="")
+    //        // 完成課程
+    //        a.class-btn-done(style="display:none", href="")
+    //            img(src="./img/btn-done.png", alt="")
+    //        // 即將上課
+    //        .class-btn-ready(style="display:none")
+    //            img(src="./img/btn-ready.png", alt="")
+    //            .flaticon-time.count-time#countTime
+    //        // 尚未開課
+    //        .class-btn-noclass(style="display:none")
+    //            img(src="./img/btn-noclass.png", alt="")
+    //        // 老師審核中
+    //        .class-btn-check(style="display:none")
+    //            img(src="./img/btn-check.png", alt="")
+    //
+    //.content-class
+    //    .class-time
+    //        .date 2019年12月23日
+    //        .time 14:00-16:00
+    //    .class-icon
+    //        img(src="./img/icon/icon.png", alt="")
+    //    .class-detail
+    //        .course-subject 國一上數學
+    //        .course-unit 通貫古今--鄭伯克段于鄢--左傳(一)(講義第114頁)
+    //        .course-tool 學習工具：講義、筆、智慧型手機
+    //    .class-gift
+    //        .gift-title 課堂獎勵
+    //        .gift-pic
+    //            img(src="./img/class-gift.png", alt="")
+    //    .class-btn
+    //        // 已開始上課
+    //        a.class-btn-start(style="display:none", href="")
+    //            img(src="./img/btn-start.png", alt="")
+    //        // 補課
+    //        a.class-btn-add(href="")
+    //            img(src="./img/btn-add.png", alt="")
+    //        // 完成課程
+    //        a.class-btn-done(style="display:none", href="")
+    //            img(src="./img/btn-done.png", alt="")
+    //        // 即將上課
+    //        .class-btn-ready(style="display:none")
+    //            img(src="./img/btn-ready.png", alt="")
+    //            .flaticon-time.count-time#countTime
+    //        // 尚未開課
+    //        .class-btn-noclass(style="display:none")
+    //            img(src="./img/btn-noclass.png", alt="")
+    //        // 老師審核中
+    //        .class-btn-check(style="display:none")
+    //            img(src="./img/btn-check.png", alt="")
+    //
+    //.content-class
+    //    .class-time
+    //        .date 2019年12月23日
+    //        .time 14:00-16:00
+    //    .class-icon
+    //        img(src="./img/icon/icon.png", alt="")
+    //    .class-detail
+    //        .course-subject 國一上數學
+    //        .course-unit 通貫古今--鄭伯克段于鄢--左傳(一)(講義第114頁)
+    //        .course-tool 學習工具：講義、筆、智慧型手機
+    //    .class-gift
+    //        .gift-title 課堂獎勵
+    //        .gift-pic
+    //            img(src="./img/class-gift.png", alt="")
+    //    .class-btn
+    //        // 已開始上課
+    //        a.class-btn-start(style="display:none", href="")
+    //            img(src="./img/btn-start.png", alt="")
+    //        // 補課
+    //        a.class-btn-add(style="display:none", href="")
+    //            img(src="./img/btn-add.png", alt="")
+    //        // 完成課程
+    //        a.class-btn-done(href="")
+    //            img(src="./img/btn-done.png", alt="")
+    //        // 即將上課
+    //        .class-btn-ready(style="display:none")
+    //            img(src="./img/btn-ready.png", alt="")
+    //            .flaticon-time.count-time#countTime
+    //        // 尚未開課
+    //        .class-btn-noclass(style="display:none")
+    //            img(src="./img/btn-noclass.png", alt="")
+    //        // 老師審核中
+    //        .class-btn-check(style="display:none")
+    //            img(src="./img/btn-check.png", alt="")
+    //
+    //.content-class
+    //    .class-time
+    //        .date 2019年12月23日
+    //        .time 14:00-16:00
+    //    .class-icon
+    //        img(src="./img/icon/icon.png", alt="")
+    //    .class-detail
+    //        .course-subject 國一上數學
+    //        .course-unit 第七堂 數列
+    //        .course-tool 學習工具：講義、筆、智慧型手機
+    //    .class-gift
+    //        .gift-title 課堂獎勵
+    //        .gift-pic
+    //            img(src="./img/class-gift.png", alt="")
+    //    .class-btn
+    //        // 已開始上課
+    //        a.class-btn-start(style="display:none", href="")
+    //            img(src="./img/btn-start.png", alt="")
+    //        // 補課
+    //        a.class-btn-add(style="display:none", href="")
+    //            img(src="./img/btn-add.png", alt="")
+    //        // 完成課程
+    //        a.class-btn-done(style="display:none", href="")
+    //            img(src="./img/btn-done.png", alt="")
+    //        // 即將上課
+    //        .class-btn-ready
+    //            img(src="./img/btn-ready.png", alt="")
+    //            .flaticon-time.count-time#countTime 59分59秒
+    //        // 尚未開課
+    //        .class-btn-noclass(style="display:none")
+    //            img(src="./img/btn-noclass.png", alt="")
+    //        // 老師審核中
+    //        .class-btn-check(style="display:none")
+    //            img(src="./img/btn-check.png", alt="")
+    //
+    //.content-class
+    //    .class-time
+    //        .date 2019年12月23日
+    //        .time 14:00-16:00
+    //    .class-icon
+    //        img(src="./img/icon/icon.png", alt="")
+    //    .class-detail
+    //        .course-subject 國一上數學
+    //        .course-unit 通貫古今--鄭伯克段于鄢--左傳(一)(講義第114頁)
+    //        .course-tool 學習工具：講義、筆、智慧型手機
+    //    .class-gift
+    //        .gift-title 課堂獎勵
+    //        .gift-pic
+    //            img(src="./img/class-gift.png", alt="")
+    //    .class-btn
+    //        // 已開始上課
+    //        a.class-btn-start(style="display:none", href="")
+    //            img(src="./img/btn-start.png", alt="")
+    //        // 補課
+    //        a.class-btn-add(style="display:none", href="")
+    //            img(src="./img/btn-add.png", alt="")
+    //        // 完成課程
+    //        a.class-btn-done(style="display:none", href="")
+    //            img(src="./img/btn-done.png", alt="")
+    //        // 即將上課
+    //        .class-btn-ready(style="display:none")
+    //            img(src="./img/btn-ready.png", alt="")
+    //            .flaticon-time.count-time#countTime
+    //        // 尚未開課
+    //        .class-btn-noclass
+    //            img(src="./img/btn-noclass.png", alt="")
+    //        // 老師審核中
+    //        .class-btn-check(style="display:none")
+    //            img(src="./img/btn-check.png", alt="")
+    //
+    //.content-class
+    //    .class-time
+    //        .date 2019年12月23日
+    //        .time 14:00-16:00
+    //    .class-icon
+    //        img(src="./img/icon/icon.png", alt="")
+    //    .class-detail
+    //        .course-subject 國一上數學
+    //        .course-unit 通貫古今--鄭伯克段于鄢--左傳(一)(講義第114頁)
+    //        .course-tool 學習工具：講義、筆、智慧型手機
+    //    .class-gift
+    //        .gift-title 課堂獎勵
+    //        .gift-pic
+    //            img(src="./img/class-gift.png", alt="")
+    //    .class-btn
+    //        // 已開始上課
+    //        a.class-btn-start(style="display:none", href="")
+    //            img(src="./img/btn-start.png", alt="")
+    //        // 補課
+    //        a.class-btn-add(style="display:none", href="")
+    //            img(src="./img/btn-add.png", alt="")
+    //        // 完成課程
+    //        a.class-btn-done(style="display:none", href="")
+    //            img(src="./img/btn-done.png", alt="")
+    //        // 即將上課
+    //        .class-btn-ready(style="display:none")
+    //            img(src="./img/btn-ready.png", alt="")
+    //            .flaticon-time.count-time#countTime
+    //        // 尚未開課
+    //        .class-btn-noclass(style="display:none")
+    //            img(src="./img/btn-noclass.png", alt="")
+    //        // 老師審核中
+    //        .class-btn-check
+    //            img(src="./img/btn-check.png", alt="")
