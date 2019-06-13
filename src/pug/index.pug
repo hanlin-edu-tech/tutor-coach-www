@@ -29,52 +29,48 @@ html(lang='tw')
                 .class
                     .class-bg
                         img(src="./img/class1.png", alt="")
+                        // class animation-stamp為蓋章的動畫
                         img.stamp-finish.animation-stamp(src="./img/stamp-finish.png", alt="")
                         img.stamp-none(style="display:none", src="./img/stamp-none.png", alt="")
-                    .class-btn
-                        img.btn-get(src="./img/btn-get.png", alt="")
-                        img.btn-none(style="display:none", src="./img/btn-none.png", alt="")
-                        img.btn-already(style="display:none", src="./img/btn-already.png", alt="")
+                
                 // 連續兩堂課
                 .class
                     .class-bg
                         img(src="./img/class2.png", alt="")
                         img.stamp-finish(src="./img/stamp-finish.png", alt="")
                         img.stamp-none(style="display:none", src="./img/stamp-none.png", alt="")
-                    .class-btn
-                        img.btn-get(style="display:none", src="./img/btn-get.png", alt="")
-                        img.btn-none(style="display:none", src="./img/btn-none.png", alt="")
-                        img.btn-already(src="./img/btn-already.png", alt="")
+                    
                 // 連續三堂課
                 .class
                     .class-bg
                         img(src="./img/class3.png", alt="")
                         img.stamp-finish(style="display:none", src="./img/stamp-finish.png", alt="")
                         img.stamp-none(src="./img/stamp-none.png", alt="")
-                    .class-btn
-                        img.btn-get(style="display:none", src="./img/btn-get.png", alt="")
-                        img.btn-none(src="./img/btn-none.png", alt="")
-                        img.btn-already(style="display:none", src="./img/btn-already.png", alt="")
+                    
                 // 連續四堂課
                 .class
                     .class-bg
                         img(src="./img/class4.png", alt="")
                         img.stamp-finish(style="display:none", src="./img/stamp-finish.png", alt="")
                         img.stamp-none(src="./img/stamp-none.png", alt="")
-                    .class-btn
-                        img.btn-get(style="display:none", src="./img/btn-get.png", alt="")
-                        img.btn-none(src="./img/btn-none.png", alt="")
-                        img.btn-already(style="display:none", src="./img/btn-already.png", alt="")
+                    
                 // 連續五堂課
                 .class
                     .class-bg
                         img(src="./img/class5.png", alt="")
                         img.stamp-finish(style="display:none", src="./img/stamp-finish.png", alt="")
                         img.stamp-none(src="./img/stamp-none.png", alt="")
-                    .class-btn
-                        img.btn-get(style="display:none", src="./img/btn-get.png", alt="")
-                        img.btn-none(src="./img/btn-none.png", alt="")
-                        img.btn-already(style="display:none", src="./img/btn-already.png", alt="")
+
+            .row-gift
+                .gift-bg
+                    img(src="./img/cont-gift.png", alt="")
+                .class-btn
+                    // 領取獎勵按鈕
+                    a.btn-get(href="")
+                        img(src="./img/btn-get.png", alt="")
+                    // 尚未達成按鈕
+                    .btn-none(style="display:none")
+                        img(src="./img/btn-none.png", alt="")
 
 
         // 引入課程內容的 vue 模組
