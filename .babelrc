@@ -1,0 +1,23 @@
+{
+  "compact": false,
+  "presets": [
+    [
+      "@babel/env",
+      {
+        "targets": {
+          "browsers": "last 2 versions, > 1%, ie >= 11"
+        },
+        "modules": false
+      }
+    ]
+  ],
+  "plugins": [
+    [
+      "@babel/plugin-transform-runtime",
+      {
+        "helpers": true,
+        "regenerator": true
+      }
+    ]
+  ]
+}

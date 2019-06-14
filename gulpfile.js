@@ -1,14 +1,16 @@
-const Q = require('q')
-const fs = require('fs')
+const del = require('del')
+const fs = require('fs').promises
 const pug = require('pug')
 const gulp = require('gulp')
 const es = require('event-stream')
 const rename = require('gulp-rename')
 const gulpSass = require('gulp-sass')
-const gcPub = require('gulp-gcloud-publish')
-const util = require('gulp-template-util')
 const autoprefixer = require('autoprefixer')
 const postcss = require('gulp-postcss')
+const replace = require('gulp-replace')
+const cache = require('gulp-cache')
+const imageMin = require('gulp-imagemin')
+const pngquant = require('imagemin-pngquant')
 
 let bucketNameForTest = 'tutor-apps-test'
 let bucketNameForProd = 'tutor-apps'
@@ -16,20 +18,26 @@ let projectId = 'tutor-204108'
 let keyFilename = 'tutor.json'
 let projectName = 'app/coach/'
 
-function buildHtml () {
-  return es.map(function (file, cb) {
-    file.contents = new Buffer(pug.renderFile(
-      file.path, {
-        filename: file.path,
-        pretty: true
-      }
-    ))
+const clean = source => {
+  return del([source])
+}
+
+const buildHtml = () => {
+  return es.map((file, cb) => {
+    file.contents = Buffer.from(
+      pug.renderFile(
+        file.path, {
+          filename: file.path,
+          pretty: true
+        }
+      )
+    )
     cb(null, file)
   })
 }
 
-function htmlTask (dest) {
-  return function () {
+const htmlTask = dest => {
+  return () => {
     return gulp.src('src/pug/**/*.pug')
       .pipe(buildHtml())
       .pipe(rename({
@@ -39,28 +47,12 @@ function htmlTask (dest) {
   }
 }
 
-function libTask (dest) {
-  return function () {
-    var packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8').toString())
-    if (!packageJson.dependencies) {
-      packageJson.dependencies = {}
-    }
-    var webLibModules = []
-    for (var module in packageJson.dependencies) {
-      webLibModules.push('node_modules/' + module + '/**/*')
-    }
-    return gulp.src(webLibModules, {
-      base: 'node_modules/'
-    })
-      .pipe(gulp.dest(dest))
-  }
-}
-
-function styleTask (dest) {
-  return function () {
-    var processors = [
-      autoprefixer({ grid: true, browsers: ['last 2 version', 'ie 11', '>1%']})
+const styleTask = dest => {
+  return () => {
+    const processors = [
+      autoprefixer({ grid: true })
     ]
+
     return gulp.src('src/sass/**/*.sass')
       .pipe(gulpSass())
       .pipe(postcss(processors))
@@ -71,58 +63,72 @@ function styleTask (dest) {
   }
 }
 
-function copyStaticTask (dest) {
-  return function () {
-    return gulp.src(['src/*.html', 'src/img/**', 'src/css/**', 'src/js/**'], {
+const copyStaticTask = dest => {
+  return () => {
+    return gulp.src(['src/css/**', 'src/js/*.js'], {
       base: 'src'
     })
       .pipe(gulp.dest(dest))
   }
 }
 
-let uploadGCS = bucketName => {
+const switchEnv = env => {
   return gulp
-    .src([
-      './dist/*.html',
-      './dist/css/**/*.@(css|eot|svg|ttf|woff)',
-      './dist/js/**/*.js',
-      './dist/img/**/*.@(jpg|png|gif|svg|mp4)'
-    ], {
-      base: `${__dirname}/dist/`
+    .src(['./src/js/modules/main.js'], {
+      base: './'
     })
-    .pipe(gcPub({
-      bucket: bucketName,
-      keyFilename: keyFilename,
-      base: projectName,
-      projectId: projectId,
-      public: true,
-      metadata: {
-        cacheControl: 'private, no-transform'
-      }
-    }))
+    .pipe(
+      replace(/(from '(.\/for-ui\/ui-courses|.\/courses)')/g, () => {
+        if (env === 'ui') {
+          return 'from \'./for-ui/ui-courses\''
+        } else {
+          return 'from \'./courses\''
+        }
+      })
+    )
+    .pipe(
+      replace(/(from '(.\/for-ui\/ui-bonuses|.\/bonuses)')/g, () => {
+        if (env === 'ui') {
+          return 'from \'./for-ui/ui-bonuses\''
+        } else {
+          return 'from \'./bonuses\''
+        }
+      })
+    )
+    .pipe(gulp.dest('./'))
 }
 
-gulp.task('uploadGcpTest', uploadGCS.bind(uploadGCS, bucketNameForTest))
-gulp.task('uploadGcpProd', uploadGCS.bind(uploadGCS, bucketNameForProd))
-gulp.task('lib', libTask('src/lib'))
-gulp.task('style', styleTask('src/css'))
-gulp.task('html', htmlTask('src'))
-gulp.task('build', ['style', 'html'])
-gulp.task('default', ['build'])
-gulp.task('watch', function () {
-  gulp.watch('src/pug/**/*.pug', ['html'])
-  gulp.watch('src/sass/**/*.sass', ['style'])
-})
+const minifyImage = sourceImage => {
+  return gulp
+    .src(sourceImage, { base: './src' })
+    .pipe(cache(imageMin({
+      use: [pngquant({
+        speed: 7
+      })]
+    })))
+    .pipe(gulp.dest('./dist'))
+}
 
-gulp.task('package', function () {
-  let deferred = Q.defer()
-  Q.fcall(function () {}).then(function () {
-    return Q.all([
-      util.logStream(copyStaticTask('dist')),
-      util.logStream(styleTask('dist/css')),
-      util.logStream(htmlTask('dist'))
-    ])
-  })
+const watchPugSassImages = () => {
+  gulp.watch('src/pug/**/*.pug', gulp.series('html'))
+  gulp.watch('src/sass/**/*.sass', gulp.series(['style', 'copyToDist']))
+  gulp.watch('./src/img/**/*.@(jpg|png)', gulp.series('minifyImage'))
+}
 
-  return deferred.promise
-})
+gulp.task('html', htmlTask('./dist'))
+gulp.task('copyToDist', copyStaticTask('./dist'))
+gulp.task('style', styleTask('./dist/css'))
+gulp.task('minifyImage', minifyImage.bind(minifyImage, './src/img/**/*.@(jpg|png)'))
+gulp.task('compilePugSass', gulp.series(['style', 'html']))
+
+/* 依據環境佈署 */
+gulp.task('switchUiEnv', switchEnv.bind(switchEnv, 'ui'))
+gulp.task('switchDevEnv', switchEnv.bind(switchEnv, 'dev'))
+
+gulp.task('packageToUi', gulp.series(clean.bind(clean, './dist'), 'copyToDist',
+  gulp.parallel('compilePugSass', 'minifyImage', 'switchUiEnv')))
+
+gulp.task('packageToDev', gulp.series(clean.bind(clean, './dist'), 'copyToDist',
+  gulp.parallel('compilePugSass', 'minifyImage', 'switchDevEnv')))
+
+gulp.task('watch', gulp.series('copyToDist', gulp.parallel(watchPugSassImages)))
