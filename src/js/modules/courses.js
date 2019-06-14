@@ -1,13 +1,5 @@
 import { db, fireStoreAuth } from './firestore/firebase-config'
-
-const eventBus = new Vue({});
-
-const course = {
-  props: {
-    singleCourse: {}
-  },
-  template: '#template-course'
-}
+import singleCourse from './components/single-course'
 
 export default {
   name: 'courses',
@@ -22,7 +14,7 @@ export default {
     }
   },
   components: {
-    'course': course
+    'course': singleCourse
   },
 
   async mounted () {
@@ -61,9 +53,9 @@ export default {
       return Object.assign({
         date: startDate.format('YYYY-MM-DD'),
         time: startDate.format('HH:mm:ss'),
-        subject: userCourse.name,
-        unit: userCourse.description,
-        tool: 'GG'
+        subject: userCourse.userPlan,
+        unit: userCourse.name,
+        tool: userCourse.description
       }, vueModel.determineCourseStatus(startDate, endDate, userCourse.status))
     },
 
@@ -72,12 +64,20 @@ export default {
       const nowDiffMinStartDate = vueModel.now.diff(startDate, 'minutes')
       const nowBeforeEndDate = vueModel.now.isBefore(endDate)
 
-      //const isNoClass = (nowDiffMinStartDate < 0 && Math.abs(nowDiffMinStartDate) >= 60)
+      // 準備開始上課
       const isReady = (nowDiffMinStartDate < 0 && Math.abs(nowDiffMinStartDate) < 60)
+
+      // 可開始上課
       const isStart = (nowDiffMinStartDate > 0 && nowBeforeEndDate && !status)
-      const isAdd = (!nowBeforeEndDate && status && !status.checked && !status.rejected)
-      const isCheck = (nowBeforeEndDate && status && status.checked && !status.received)
-      const isDone = (nowBeforeEndDate && status && status.checked && status.received)
+
+      // 補課中
+      const isAdd = (!nowBeforeEndDate && !status.finished && !status.checked && !status.rejected)
+
+      // 老師審核中
+      const isCheck = (status && status.finished && (!status.checked || status.rejected))
+
+      // 完成課程審核，待領獎
+      const isDone = (status && status.checked && !status.received)
 
       const retrieveCourseStatus = ({ isReady, isStart, isAdd, isCheck, isDone }) => {
         if (isReady) {
@@ -115,6 +115,7 @@ export default {
           }
         }
 
+        // 尚未開課
         return {
           classBtnCss: 'class-btn-noclass',
           classBtnImg: './img/btn-noclass.png'
@@ -130,7 +131,6 @@ export default {
         .onSnapshot(
           async userCourseQuerySnapshot => {
             const userCourseNewestChange = userCourseQuerySnapshot.docChanges().last()
-            console.log(userCourseNewestChange)
             const id = userCourseNewestChange.doc.id
             const data = userCourseNewestChange.doc.data()
             const userCourse = data.userCourse
@@ -142,7 +142,8 @@ export default {
               }
 
               case 'modified': {
-                if (userCourse.enabled === false || userCourse.visible === false) {
+                if (userCourse.enabled === false || userCourse.visible === false
+                  || userCourse.status.received === true) {
                   Vue.delete(vueModel.courses, id)
                   break
                 }

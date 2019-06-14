@@ -1,4 +1,5 @@
 import courses from './courses'
+import bonuses from './bonuses'
 import util from './util/util'
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-tw'
@@ -21,3 +22,9 @@ new Vue({
     return createElement(courses)
   }
 }).$mount('#courses')
+
+new Vue({
+  render: createElement => {
+    return createElement(bonuses)
+  }
+}).$mount('#bonuses')

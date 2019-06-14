@@ -1,0 +1,12 @@
+script(type="text/x-template" id="template-bonus")
+    .class
+        .class-bg
+            img(:src="`./img/class${index + 1}.png`", alt="")
+            // class animation-stamp為蓋章的動畫
+            img(:id="`stamp{index}`"
+                class="stamp-finish"
+                :class="{ 'animation-stamp' : singleBonus.isAnimationStamp }"
+                src="./img/stamp-finish.png",
+                v-show="singleBonus.isStampFinish")
+            img(class="stamp-none" src="./img/stamp-none.png",
+                v-show="singleBonus.isStampNone")

@@ -1,8 +1,7 @@
 #courses.box.container-class
-    div(is="course" v-for="(singleCourse, dataId, index) in courses"
-        :single-course="singleCourse" :key="dataId")
+    div(is="course", v-for="(singleCourse, dataId, index) in courses",
+        :single-course="singleCourse", :single-course-id="dataId", :key="dataId")
 
-    // 單堂課程列
     //.content-class
     //    .class-time
     //        .date 2019年7月1日

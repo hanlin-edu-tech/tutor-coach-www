@@ -1,12 +1,12 @@
 script(type="text/x-template" id="template-course")
-    div.content-class
+    .content-class(:id="singleCourseId")
         .class-time
             .date {{ singleCourse.date }}
             .time {{ singleCourse.time }}
         .class-icon
             img(src="./img/icon/icon.png", alt="")
         .class-detail
-            .course-subject {{ singleCourse.subject }}
+            .course-subject {{ singleCourse.userPlan }}
             .course-unit {{ singleCourse.unit }}
             .course-tool {{ singleCourse.tool }}
         .class-gift

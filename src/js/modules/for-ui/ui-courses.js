@@ -1,11 +1,5 @@
 import dataCourses from './data-courses'
-
-const course = {
-  props: {
-    singleCourse: {}
-  },
-  template: '#template-course'
-}
+import singleCourse from '../components/single-course'
 
 export default {
   name: 'courses',
@@ -16,6 +10,6 @@ export default {
     }
   },
   components: {
-    'course': course
+    'course': singleCourse
   }
 }

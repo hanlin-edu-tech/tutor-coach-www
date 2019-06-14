@@ -24,57 +24,24 @@ html(lang='tw')
         .box.container-banner
             .title-bar.flaticon-header_curriculum  學習課表
             img.banner(src="./img/bg-banner.png", alt="")
-            .row-class
-                // 連續一堂課
-                .class
-                    .class-bg
-                        img(src="./img/class1.png", alt="")
-                        // class animation-stamp為蓋章的動畫
-                        img.stamp-finish.animation-stamp(src="./img/stamp-finish.png", alt="")
-                        img.stamp-none(style="display:none", src="./img/stamp-none.png", alt="")
-                
-                // 連續兩堂課
-                .class
-                    .class-bg
-                        img(src="./img/class2.png", alt="")
-                        img.stamp-finish(src="./img/stamp-finish.png", alt="")
-                        img.stamp-none(style="display:none", src="./img/stamp-none.png", alt="")
-                    
-                // 連續三堂課
-                .class
-                    .class-bg
-                        img(src="./img/class3.png", alt="")
-                        img.stamp-finish(style="display:none", src="./img/stamp-finish.png", alt="")
-                        img.stamp-none(src="./img/stamp-none.png", alt="")
-                    
-                // 連續四堂課
-                .class
-                    .class-bg
-                        img(src="./img/class4.png", alt="")
-                        img.stamp-finish(style="display:none", src="./img/stamp-finish.png", alt="")
-                        img.stamp-none(src="./img/stamp-none.png", alt="")
-                    
-                // 連續五堂課
-                .class
-                    .class-bg
-                        img(src="./img/class5.png", alt="")
-                        img.stamp-finish(style="display:none", src="./img/stamp-finish.png", alt="")
-                        img.stamp-none(src="./img/stamp-none.png", alt="")
 
-            .row-gift
+            // 引入獎勵內容的 vue 模組
+            include ./vue/vue-bonuses.pug
+
+            .row-gift(id="bonus-received")
                 .gift-bg
                     img(src="./img/cont-gift.png", alt="")
                 .class-btn
                     // 領取獎勵按鈕
-                    a.btn-get(href="")
+                    .btn-get(style="display:none")
                         img(src="./img/btn-get.png", alt="")
                     // 尚未達成按鈕
-                    .btn-none(style="display:none")
+                    .btn-none
                         img(src="./img/btn-none.png", alt="")
 
 
         // 引入課程內容的 vue 模組
-        include vue/vue-courses.pug
+        include ./vue/vue-courses.pug
 
         // banner課表排課中
         .box.banner-arrange
@@ -100,6 +67,7 @@ html(lang='tw')
 
         // x-template of Vue Component
         include ./x-template/template-course.pug
+        include ./x-template/template-bonus.pug
 
         script(data-module='ehanlin-header, ehanlin-menu, ehanlin-info-left-side, ehanlin-footer', src='https://s3-ap-northeast-1.amazonaws.com/ehanlin-web-resource/common_webcomponent/current/js/ehanlin-loader.js', type='text/javascript')
         script(src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js", type='text/javascript')
