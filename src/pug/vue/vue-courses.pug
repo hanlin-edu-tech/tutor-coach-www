@@ -1,4 +1,4 @@
-#courses.box.container-class
+#courses.box.container-class(style="position: relative;")
     div(is="course", v-for="(singleCourse, dataId, index) in courses",
         :single-course="singleCourse", :single-course-id="dataId", :key="dataId")
 

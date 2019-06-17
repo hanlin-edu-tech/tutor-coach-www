@@ -8,6 +8,7 @@ export default {
     const vueModel = this
     return {
       courses: {},
+      userCourseOriginalRef: db.collection('UserCourse'),
       ehanlinUser: window.ehanlinUser,
       now: vueModel.$dayjs(Date.now()),
       oneYearAgo: vueModel.$dayjs().subtract(1, 'year').toDate()
@@ -18,47 +19,13 @@ export default {
   },
 
   async mounted () {
-    let userCourseQuerySnapshot
     const vueModel = this
     await fireStoreAuth()
-
-    vueModel.userCourseRef = db.collection('UserCourse')
-      .where('userCourse.user', '==', vueModel.ehanlinUser)
-      .where('userCourse.enabled', '==', true)
-      .where('userCourse.visible', '==', true)
-      .where('userCourse.start', '>=', vueModel.oneYearAgo)
-      .orderBy('userCourse.start', 'desc')
-
-    userCourseQuerySnapshot = await vueModel.userCourseRef.get()
-    vueModel.retrieveUserCourses(userCourseQuerySnapshot.docs)
-    vueModel.listeningOnUserCourseChange()
+    await vueModel.userCoursesHandler()
+    await vueModel.initialBanner()
   },
 
   methods: {
-    retrieveUserCourses (userCourseDocs) {
-      const vueModel = this
-      for (let userCourseDoc of userCourseDocs) {
-        const id = userCourseDoc.id
-        const data = userCourseDoc.data()
-        const userCourse = data.userCourse
-        Vue.set(vueModel.courses, id, vueModel.composeCourseInfo(userCourse))
-      }
-    },
-
-    composeCourseInfo (userCourse) {
-      const vueModel = this
-      const startDate = vueModel.$dayjs(userCourse.start.toDate())
-      const endDate = vueModel.$dayjs(userCourse.end.toDate())
-
-      return Object.assign({
-        date: startDate.format('YYYY-MM-DD'),
-        time: startDate.format('HH:mm:ss'),
-        subject: userCourse.userPlan,
-        unit: userCourse.name,
-        tool: userCourse.description
-      }, vueModel.determineCourseStatus(startDate, endDate, userCourse.status))
-    },
-
     determineCourseStatus (startDate, endDate, status) {
       const vueModel = this
       const nowDiffMinStartDate = vueModel.now.diff(startDate, 'minutes')
@@ -125,39 +92,135 @@ export default {
       return retrieveCourseStatus({ isReady, isStart, isAdd, isCheck, isDone })
     },
 
+    composeCourseInfo (data) {
+      const vueModel = this
+      const subject = data.userPlan.name
+      const userCourse = data.userCourse
+      const startDate = vueModel.$dayjs(userCourse.start.toDate())
+      const endDate = vueModel.$dayjs(userCourse.end.toDate())
+
+      return Object.assign({
+        date: startDate.format('YYYY-MM-DD'),
+        time: startDate.format('HH:mm:ss'),
+        subject: subject,
+        unit: userCourse.name,
+        tool: userCourse.description
+      }, vueModel.determineCourseStatus(startDate, endDate, userCourse.status))
+    },
+
+    retrieveUserCourses (userCourseDocs) {
+      const vueModel = this
+      for (let userCourseDoc of userCourseDocs) {
+        const id = userCourseDoc.id
+        const data = userCourseDoc.data()
+        Vue.set(vueModel.courses, id, vueModel.composeCourseInfo(data))
+      }
+    },
+
+    showBanner () {
+      const vueModel = this
+      if (Object.keys(vueModel.courses).length === 0) {
+        $('.box.banner-finish').css({ display: '' })
+      } else {
+        $('.box.banner-finish').css({ display: 'none' })
+        $('.box.banner-arrange').css({ display: 'none' })
+      }
+    },
+
     listeningOnUserCourseChange () {
       const vueModel = this
       vueModel.userCourseRef
         .onSnapshot(
           async userCourseQuerySnapshot => {
             const userCourseNewestChange = userCourseQuerySnapshot.docChanges().last()
+            if (!userCourseNewestChange) {
+              return
+            }
+
             const id = userCourseNewestChange.doc.id
             const data = userCourseNewestChange.doc.data()
-            const userCourse = data.userCourse
 
             switch (userCourseNewestChange.type) {
               case 'added': {
-                Vue.set(vueModel.courses, id, vueModel.composeCourseInfo(userCourse))
+                Vue.set(vueModel.courses, id, vueModel.composeCourseInfo(data))
+                vueModel.showBanner()
                 break
               }
 
               case 'modified': {
-                if (userCourse.enabled === false || userCourse.visible === false
-                  || userCourse.status.received === true) {
+                const userCourse = data.userCourse
+                if (userCourse.status.received === true) {
                   Vue.delete(vueModel.courses, id)
                   break
                 }
-                Vue.set(vueModel.courses, id, vueModel.composeCourseInfo(userCourse))
+                Vue.set(vueModel.courses, id, vueModel.composeCourseInfo(data))
                 break
               }
 
               case 'removed': {
                 Vue.delete(vueModel.courses, id)
+                vueModel.showBanner()
                 break
               }
             }
           }
         )
     },
+
+    async userCoursesHandler () {
+      let userCourseQuerySnapshot
+      const vueModel = this
+
+      vueModel.userCourseRef = vueModel.userCourseOriginalRef
+        .where('userCourse.user', '==', vueModel.ehanlinUser)
+        .where('userCourse.enabled', '==', true)
+        .where('userCourse.visible', '==', true)
+        .where('userCourse.start', '>=', vueModel.oneYearAgo)
+        .orderBy('userCourse.start', 'desc')
+
+      userCourseQuerySnapshot = await vueModel.userCourseRef.get()
+      vueModel.retrieveUserCourses(userCourseQuerySnapshot.docs)
+      vueModel.listeningOnUserCourseChange()
+    },
+
+    async initialBanner () {
+      const vueModel = this
+      let userPlanQuerySnapshot, userCourseQuerySnapshot
+      let isBannerBuyEcoach
+      let isBannerArrange
+      let isBannerFinish
+
+      userPlanQuerySnapshot = await db.collection('UserPlan')
+        .where('user', '==', vueModel.ehanlinUser)
+
+      isBannerBuyEcoach = userPlanQuerySnapshot.empty
+      if (!isBannerBuyEcoach) {
+        userCourseQuerySnapshot = await vueModel.userCourseOriginalRef
+          .where('userCourse.user', '==', vueModel.ehanlinUser)
+          .where('userCourse.enabled', '==', true)
+          .get()
+
+        isBannerArrange = userCourseQuerySnapshot.empty
+        isBannerFinish = !userCourseQuerySnapshot.empty && (Object.keys(vueModel.courses).length === 0)
+      }
+
+      const determineBanner = ({ isBannerBuyEcoach, isBannerArrange, isBannerFinish }) => {
+        if (isBannerBuyEcoach) {
+          $('.box.banner-buy-ecoach').css({ display: '' })
+        }
+
+        if (isBannerArrange) {
+          $('.box.banner-arrange').css({ display: '' })
+        }
+
+        if (isBannerFinish) {
+          console.log($('.box.banner-finish'))
+          $('.box.banner-finish').css({ display: '' })
+        }
+      }
+
+      determineBanner({ isBannerBuyEcoach, isBannerArrange, isBannerFinish })
+    }
+
   }
 }
