@@ -5,7 +5,7 @@
   "scripts": {
     "ui": "gulp packageToUi && rollup -c rollup.ui.config.js -w",
     "dev": "gulp packageToDev && rollup -c rollup.dev.config.js -w",
-    "test": "echo website"
+    "test": "gulp packageToDev && rollup -c rollup.base.config.js && gulp uploadToGcsTest"
   },
   "repository": {
     "type": "git",
@@ -28,6 +28,7 @@
     "@babel/core": "^7.4.5",
     "@babel/plugin-transform-runtime": "^7.4.4",
     "@babel/preset-env": "^7.4.5",
+    "@google-cloud/storage": "^2.5.0",
     "autoprefixer": "^9.6.0",
     "core-js": "2",
     "event-stream": "^4.0.1",

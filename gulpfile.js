@@ -1,5 +1,4 @@
 const del = require('del')
-const fs = require('fs').promises
 const pug = require('pug')
 const gulp = require('gulp')
 const es = require('event-stream')
@@ -11,12 +10,67 @@ const replace = require('gulp-replace')
 const cache = require('gulp-cache')
 const imageMin = require('gulp-imagemin')
 const pngquant = require('imagemin-pngquant')
+const { Storage } = require('@google-cloud/storage')
+const fs = require('fs').promises
+const path = require('path')
 
-let bucketNameForTest = 'tutor-apps-test'
-let bucketNameForProd = 'tutor-apps'
-let projectId = 'tutor-204108'
-let keyFilename = 'tutor.json'
-let projectName = 'app/coach/'
+const distDir = path.join(__dirname, 'dist/')
+const storage = new Storage({
+  projectId: 'tutor-204108',
+  keyFilename: './tutor.json'
+})
+
+const cleanGCS = async bucketName => {
+  const options = {
+    prefix: 'app/coach/',
+  }
+
+  const [files] = await storage.bucket(bucketName).getFiles(options)
+  for (let file of files) {
+    await storage.bucket(bucketName)
+      .file(file.name)
+      .delete()
+    console.log(`${file.name} is deleted`)
+  }
+}
+
+const findAllUploadFilesPath = async (dir, multiDistEntireFilePath = []) => {
+  const files = await fs.readdir(dir)
+
+  for (let file of files) {
+    const entireFilepath = path.join(dir, file)
+    const fileStatus = await fs.stat(entireFilepath)
+
+    if (fileStatus.isDirectory()) {
+      multiDistEntireFilePath = await findAllUploadFilesPath(entireFilepath, multiDistEntireFilePath)
+    } else {
+      multiDistEntireFilePath.push(entireFilepath)
+    }
+  }
+
+  return multiDistEntireFilePath
+}
+
+const uploadToGCS = async bucketName => {
+  await cleanGCS(bucketName)
+
+  const multiDistEntireFilePath = await findAllUploadFilesPath(distDir)
+  multiDistEntireFilePath.forEach(distEntireFilePath => {
+    storage.bucket(bucketName)
+      .upload(distEntireFilePath,
+        {
+          destination: `/app/coach/${distEntireFilePath.replace(distDir, '')}`,
+          metadata: {
+            cacheControl: 'no-store',
+          },
+          public: true
+        },
+        (err, file) => {
+          console.log(`Upload ${file.name} successfully`)
+        }
+      )
+  })
+}
 
 const clean = source => {
   return del([source])
@@ -132,3 +186,7 @@ gulp.task('packageToDev', gulp.series(clean.bind(clean, './dist'), 'copyToDist',
   gulp.parallel('compilePugSass', 'minifyImage', 'switchDevEnv')))
 
 gulp.task('watch', gulp.series('copyToDist', gulp.parallel(watchPugSassImages)))
+
+/* 上傳 GCS */
+gulp.task('uploadToGcsTest', uploadToGCS.bind(uploadToGCS, 'tutor-apps-test/'))
+gulp.task('uploadToGcsProduction', uploadToGCS.bind(uploadToGCS, 'tutor-apps/'))

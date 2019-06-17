@@ -3,10 +3,10 @@ import serve from 'rollup-plugin-serve'
 import livereload from 'rollup-plugin-livereload'
 
 rollupBaseConfig.plugins.push(serve({
-  open: true,  // 是否打开浏览器 (default: false)
-  contentBase: './dist', // 入口HTML 文件位置
+  open: true,
+  contentBase: './dist',
   host: 'localhost',
-  port: 30001,
+  port: 30001
 }))
 
 rollupBaseConfig.plugins.push(livereload({
