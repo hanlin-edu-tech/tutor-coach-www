@@ -5,7 +5,7 @@
   "scripts": {
     "ui": "gulp packageToUi && rollup -c rollup.ui.config.js -w",
     "dev": "gulp packageToDev && rollup -c rollup.dev.config.js -w",
-    "test": "gulp packageToDev && rollup -c rollup.base.config.js && gulp uploadToGcsTest"
+    "deployToTest": "gulp packageToDev && rollup -c rollup.base.config.js && gulp uploadToGcsTest"
   },
   "repository": {
     "type": "git",

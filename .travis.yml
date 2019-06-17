@@ -20,12 +20,12 @@ install:
 deploy:
   - provider: script
     skip_cleanup: true
-    script: npm run production
+    script: yarn deployToProduction
     on:
       branch: master
 
   - provider: script
     skip_cleanup: true
-    script: npm run test
+    script: yarn deployToTest
     on:
       branch: test
