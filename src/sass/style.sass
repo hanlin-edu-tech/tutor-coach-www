@@ -3,10 +3,10 @@
     transition: .3s
     &:hover
         transform: scale(1.05)
-    
+
 *
     cursor: default
-    
+
 // navbar //
 .navbar
     display: flex
@@ -86,18 +86,18 @@
             width: 65px
         .animation-stamp
             animation: stamp 0.4s forwards
-    
+
 
 @keyframes stamp
     0%
         opacity: 0
-    
+
     10%
         opacity: .50
         transform-origin: 50% 50%
         transform: scale(5)
         transition: all .3s cubic-bezier(0.6, 0.04, 0.98, 0.335)
-    
+
     100%
         opacity: 1
         transform: scale(1)
@@ -206,11 +206,9 @@
         width: 200px
         +btn-hover
 
-
-
 // popup
 .modal
-    z-index: 1000
+    z-index: 100
     position: fixed
     background: rgba(#000,0.7)
     top: 0
@@ -223,14 +221,15 @@
     &.visible
         opacity: 1
         visibility: visible
+
 .modal-con
-    margin: 70px auto
+    margin: 200px auto
     position: relative
     padding: 20px
     background: #fff
     border-radius: 5px
-    width: 20%
-    box-shadow: 0 0 20px rgba(0,0,0,0.2)
+    width: 25%
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2)
     transform: translateY(-30px)
     visibility: hidden
     opacity: 0
@@ -242,9 +241,10 @@
     .content-gift
         padding: 30px 0px
         text-align: center
-        font-size: 15px
+        font-size: 20px
+        font-weight: 700
         letter-spacing: 1px
-        color: #000
+        color: rgba(60, 36, 84, 0.79)
     .js-close-modal
         position: absolute
         top: 10px
@@ -255,7 +255,15 @@
             font-size: 15px
         &:hover
             color: #757575
-    
+
+.modal-style
+    box-sizing: content-box
+    overflow: hidden
+    border: 3px solid rgb(138, 87, 66)
+    text-overflow: ellipsis
+    background: rgb(252, 248, 211)
+    //text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2)
+
 @media screen and (max-width: 700px)
     .modal-con
         width: 70%
