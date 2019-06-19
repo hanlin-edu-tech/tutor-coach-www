@@ -1,5 +1,7 @@
-import { db, fireStoreAuth } from './firestore/firebase-config'
+import { db, ehanlinAuth } from './firestore/firebase-config'
 import singleBonus from './components/single-bonus'
+import showModal from './util/show-modal'
+import { AuthText } from './util/modal-text'
 
 export default {
   name: 'bonuses',
@@ -7,7 +9,7 @@ export default {
   data () {
     return {
       bonuses: [],
-      ehanlinUser: window.ehanlinUser,
+      ehanlinUser: '',
       LIMITED_COMBO_BONUS: 5,
       currentComboBonus: 0,
       bonusUnReceived: 0
@@ -19,7 +21,11 @@ export default {
 
   async mounted () {
     const vueModel = this
-    await fireStoreAuth()
+    vueModel.ehanlinUser = await ehanlinAuth()
+    if (!vueModel.ehanlinUser) {
+      showModal(AuthText.WARNING)
+      return
+    }
 
     vueModel.onReceivedBonus()
     vueModel.listeningOnUserAchievementChange()
@@ -57,6 +63,8 @@ export default {
       vueModel.currentComboBonus = comboBonus
       vueModel.bonusUnReceived = userAchievement.bonus
 
+      // initial bonuses
+      vueModel.bonuses = []
       for (let i = 1; i <= vueModel.LIMITED_COMBO_BONUS; i++) {
         const bonusInfo = {}
         const isBonusLabel = ((i <= comboBonus) || (comboBonus === 0 && vueModel.bonusUnReceived > 0))
@@ -75,13 +83,24 @@ export default {
 
     listeningOnUserAchievementChange () {
       const vueModel = this
+      console.log(vueModel.ehanlinUser)
       db.collection('UserAchievement')
         .where('user', '==', vueModel.ehanlinUser)
         .onSnapshot(
           async userAchievementQuerySnapshot => {
-            const userAchievementNewestChange = userAchievementQuerySnapshot.docChanges().last()
-            const userAchievement = userAchievementNewestChange.doc.data()
+            let userAchievementNewestChange, userAchievement
+            if(userAchievementQuerySnapshot.empty) {
+              const bonus = 0
+              vueModel.composeBonusInfo({
+                continuous: 0,
+                bonus: bonus
+              })
+              vueModel.determineShowReceivedBonusBtn(bonus)
+              return
+            }
 
+            userAchievementNewestChange = userAchievementQuerySnapshot.docChanges().last()
+            userAchievement = userAchievementNewestChange.doc.data()
             switch (userAchievementNewestChange.type) {
               case 'added': {
                 vueModel.composeBonusInfo(userAchievement)
@@ -93,7 +112,7 @@ export default {
                 let comboBonus = userAchievement.continuous % vueModel.LIMITED_COMBO_BONUS
                 if (comboBonus !== vueModel.currentComboBonus) {
                   vueModel.currentComboBonus = comboBonus
-                  if(comboBonus === 0 && userAchievement.bonus > 0) {
+                  if (comboBonus === 0 && userAchievement.bonus > 0) {
                     comboBonus = 5
                   }
 
@@ -114,9 +133,7 @@ export default {
                       }
                     )
                   }
-
                 }
-
                 vueModel.determineShowReceivedBonusBtn(userAchievement.bonus)
                 break
               }

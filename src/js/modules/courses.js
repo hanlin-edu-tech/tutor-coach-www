@@ -1,5 +1,7 @@
-import { db, fireStoreAuth } from './firestore/firebase-config'
+import { db, ehanlinAuth } from './firestore/firebase-config'
 import singleCourse from './components/single-course'
+import showModal from './util/show-modal'
+import { AuthText } from './util/modal-text'
 
 export default {
   name: 'courses',
@@ -9,7 +11,7 @@ export default {
     return {
       courses: {},
       userCourseOriginalRef: db.collection('UserCourse'),
-      ehanlinUser: window.ehanlinUser,
+      ehanlinUser: '',
       now: vueModel.$dayjs(Date.now()),
       oneYearAgo: vueModel.$dayjs().subtract(1, 'year').toDate()
     }
@@ -20,13 +22,19 @@ export default {
 
   async mounted () {
     const vueModel = this
-    await fireStoreAuth()
+    vueModel.ehanlinUser = await ehanlinAuth()
+    if (!vueModel.ehanlinUser) {
+      showModal(AuthText.WARNING)
+      return
+    }
+
     await vueModel.userCoursesHandler()
     await vueModel.initialBanner()
+    vueModel.onReceivedGift()
   },
 
   methods: {
-    determineCourseStatus (startDate, endDate, status) {
+    determineCourseStatus (courseId, startDate, endDate, status) {
       const vueModel = this
       const nowDiffMinStartDate = vueModel.now.diff(startDate, 'minutes')
       const nowBeforeEndDate = vueModel.now.isBefore(endDate)
@@ -57,7 +65,13 @@ export default {
         if (isStart) {
           return {
             classBtnCss: 'class-btn-start',
-            classBtnImg: './img/btn-start.png'
+            classBtnImg: './img/btn-start.png',
+            action: () => {
+              if (window.sessionStorage) {
+                sessionStorage.setItem('course', courseId)
+                window.location.href = `/coach-web/enterCourse.html?id=${courseId}`
+              }
+            }
           }
         }
 
@@ -104,8 +118,9 @@ export default {
         time: startDate.format('HH:mm:ss'),
         subject: subject,
         unit: userCourse.name,
-        tool: userCourse.description
-      }, vueModel.determineCourseStatus(startDate, endDate, userCourse.status))
+        tool: userCourse.description,
+        action: () => {}
+      }, vueModel.determineCourseStatus(userCourse['_id'], startDate, endDate, userCourse.status))
     },
 
     retrieveUserCourses (userCourseDocs) {
@@ -220,6 +235,21 @@ export default {
       }
 
       determineBanner({ isBannerBuyEcoach, isBannerArrange, isBannerFinish })
+    },
+
+    onReceivedGift () {
+      $('.content-class .class-btn .class-btn-done').on('click', event => {
+        const userCourseId = $(event.currentTarget).parents('.content-class').prop('id')
+        console.log(userCourseId)
+        // $.ajax({
+        //   type: 'PUT',
+        //   contentType: 'application/json',
+        //   url: `http://labs.ehanlin.com.tw/coach-web/UserCourse/${userCourseId}/status/received`,
+        //   success: function (response) {
+        //     console.log(response)
+        //   }
+        // })
+      })
     }
 
   }
