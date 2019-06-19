@@ -30,11 +30,10 @@ export default {
 
     await vueModel.userCoursesHandler()
     await vueModel.initialBanner()
-    vueModel.onReceivedGift()
   },
 
   methods: {
-    determineCourseStatus (courseId, startDate, endDate, status) {
+    determineCourseStatus (userCourseId, startDate, endDate, status) {
       const vueModel = this
       const nowDiffMinStartDate = vueModel.now.diff(startDate, 'minutes')
       const nowBeforeEndDate = vueModel.now.isBefore(endDate)
@@ -68,8 +67,8 @@ export default {
             classBtnImg: './img/btn-start.png',
             action: () => {
               if (window.sessionStorage) {
-                sessionStorage.setItem('course', courseId)
-                window.location.href = `/coach-web/enterCourse.html?id=${courseId}`
+                sessionStorage.setItem('course', userCourseId)
+                window.location.href = `/coach-web/enterCourse.html?id=${userCourseId}`
               }
             }
           }
@@ -92,7 +91,14 @@ export default {
         if (isDone) {
           return {
             classBtnCss: 'class-btn-done',
-            classBtnImg: './img/btn-done.png'
+            classBtnImg: './img/btn-done.png',
+            action: () => {
+              const response = $.ajax({
+                type: 'PUT',
+                contentType: 'application/json',
+                url: `/coach-web/UserCourse/${userCourseId}/status/received`,
+              })
+            }
           }
         }
 

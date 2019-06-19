@@ -34,16 +34,14 @@ export default {
   methods: {
     onReceivedBonus () {
       const vueModel = this
-      $('#bonus-received').on('click', () => {
-        $.ajax({
+      $('#bonus-received').on('click', async () => {
+        await $.ajax({
           type: 'PUT',
-          url: 'http://labs.ehanlin.com.tw/coach-web/UserAchievement/received',
-          success: function (response) {
-            alert(response)
-            vueModel.bonusUnReceived--
-            vueModel.determineShowReceivedBonusBtn(vueModel.bonusUnReceived)
-          }
+          url: '/coach-web/UserAchievement/received',
         })
+
+        vueModel.bonusUnReceived--
+        vueModel.determineShowReceivedBonusBtn(vueModel.bonusUnReceived)
       })
     },
 
