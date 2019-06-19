@@ -15,13 +15,13 @@ const dataBonuses = [
     isAnimationStamp: true
   },
   {
-    isStampFinish: false,
-    isStampNone: true,
+    isStampFinish: true,
+    isStampNone: false,
     isAnimationStamp: true
   },
   {
-    isStampFinish: false,
-    isStampNone: true,
+    isStampFinish: true,
+    isStampNone: false,
     isAnimationStamp: true
   }
 ]

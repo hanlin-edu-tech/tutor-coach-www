@@ -11,5 +11,15 @@ export default {
   },
   components: {
     'bonus': singleBonus
-  }
-}
+  },
+  mounted () {
+    const isAllStampNotFinished = dataBonuses.some(simpleBonus => simpleBonus.isStampFinish === false)
+
+    if (isAllStampNotFinished === true) {
+      $('#bonus-received .btn-get').css({ display: 'none' })
+      $('#bonus-received .btn-none').css({ display: '' })
+    } else {
+      $('#bonus-received .btn-get').css({ display: '' })
+      $('#bonus-received .btn-none').css({ display: 'none' })
+    }
+  }}

@@ -55,4 +55,8 @@ const dataCourses = {
   }
 }
 
+for (let courseId in dataCourses) {
+  dataCourses[courseId].action = () => {}
+}
+
 export default dataCourses
