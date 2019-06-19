@@ -7,6 +7,7 @@ const gulpSass = require('gulp-sass')
 const autoprefixer = require('autoprefixer')
 const postcss = require('gulp-postcss')
 const replace = require('gulp-replace')
+const browserSync = require('browser-sync')
 const cache = require('gulp-cache')
 const imageMin = require('gulp-imagemin')
 const pngquant = require('imagemin-pngquant')
@@ -114,6 +115,9 @@ const styleTask = dest => {
         extname: '.css'
       }))
       .pipe(gulp.dest(dest))
+      .pipe(browserSync.reload({
+        stream: true
+      }))
   }
 }
 
@@ -164,6 +168,12 @@ const minifyImage = sourceImage => {
 }
 
 const watchPugSassImages = () => {
+  browserSync.init({
+    server: {
+      baseDir: './dist'
+    }
+  })
+
   gulp.watch('src/pug/**/*.pug', gulp.series('html'))
   gulp.watch('src/sass/**/*.sass', gulp.series(['style', 'copyToDist']))
   gulp.watch('./src/img/**/*.@(jpg|png)', gulp.series('minifyImage'))

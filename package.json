@@ -3,9 +3,9 @@
   "version": "0.0.01",
   "main": "index.js",
   "scripts": {
-    "ui": "gulp packageToUi && rollup -c rollup.ui.config.js -w",
-    "dev": "gulp packageToDev && rollup -c rollup.dev.config.js -w",
     "test": "echo 'skip test'",
+    "ui": "gulp packageToUi && rollup -c rollup.base.config.js && gulp watch",
+    "dev": "gulp packageToDev && rollup -c rollup.dev.config.js -w",
     "deployToTest": "gulp packageToDev && rollup -c rollup.base.config.js && gulp uploadToGcsTest"
   },
   "repository": {
@@ -31,6 +31,7 @@
     "@babel/preset-env": "^7.4.5",
     "@google-cloud/storage": "^2.5.0",
     "autoprefixer": "^9.6.0",
+    "browsersync": "^0.0.1-security",
     "core-js": "2",
     "event-stream": "^4.0.1",
     "gulp": "^4.0.2",
