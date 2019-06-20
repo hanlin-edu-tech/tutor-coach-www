@@ -4,7 +4,7 @@ script(type="text/x-template" id="template-course")
             .date {{ singleCourse.date }}
             .time {{ singleCourse.time }}
         .class-icon
-            img(src="./img/icon/icon.png", alt="")
+            img(src="./img/icon/icon.png" alt="")
         .class-detail
             .course-subject {{ singleCourse.subject }}
             .course-unit {{ singleCourse.unit }}
@@ -12,9 +12,9 @@ script(type="text/x-template" id="template-course")
         .class-gift
             .gift-title 課堂獎勵
             .gift-pic(id="single-course-gift-received")
-                img(src="./img/class-gift.png", alt="")
+                img(src="./img/class-gift.png" alt="")
         .class-btn
             // 已開始上課
             div(:class="singleCourse.classBtnCss"
                 @click="singleCourse.action")
-                img(:src="singleCourse.classBtnImg", alt="")
+                img(:src="singleCourse.classBtnImg" alt="")

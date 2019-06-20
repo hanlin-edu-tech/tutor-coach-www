@@ -1,4 +1,9 @@
-const dataCourses = {
+let dataCourses = {}
+for (let courseId in dataCourses) {
+  dataCourses[courseId].action = () => {}
+}
+
+dataCourses = Object.assign(dataCourses, {
   1: {
     date: '2019年7月1日',
     time: '14:00-15:00',
@@ -53,10 +58,6 @@ const dataCourses = {
     classBtnCss: 'class-btn-add',
     classBtnImg: './img/btn-add.png'
   }
-}
-
-for (let courseId in dataCourses) {
-  dataCourses[courseId].action = () => {}
-}
+})
 
 export default dataCourses
