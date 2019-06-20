@@ -36,7 +36,7 @@ export default {
 
       // 可開始上課，已開始上課
       const isStart = (nowDiffMinStartDate > 0 && nowBeforeEndDate
-        && (Object.keys(status).length === 0 || status.started))
+        && (Object.keys(status).length === 0 || status.started && !status.finished && !status.checked))
 
       // 補課中
       const isAdd = (
@@ -247,22 +247,6 @@ export default {
       }
 
       determineBanner({ isBannerBuyEcoach, isBannerArrange, isBannerFinish })
-    },
-
-    onReceivedGift () {
-      $('.content-class .class-btn .class-btn-done').on('click', event => {
-        const userCourseId = $(event.currentTarget).parents('.content-class').prop('id')
-        console.log(userCourseId)
-        // $.ajax({
-        //   type: 'PUT',
-        //   contentType: 'application/json',
-        //   url: `http://labs.ehanlin.com.tw/coach-web/UserCourse/${userCourseId}/status/received`,
-        //   success: function (response) {
-        //     console.log(response)
-        //   }
-        // })
-      })
     }
-
   }
 }
