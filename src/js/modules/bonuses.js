@@ -1,7 +1,5 @@
 import { db, ehanlinAuth } from './firestore/firebase-config'
 import singleBonus from './components/single-bonus'
-import showModal from './util/show-modal'
-import { AuthText } from './util/modal-text'
 
 export default {
   name: 'bonuses',
@@ -22,11 +20,6 @@ export default {
   async mounted () {
     const vueModel = this
     vueModel.ehanlinUser = await ehanlinAuth()
-    if (!vueModel.ehanlinUser) {
-      showModal(AuthText.WARNING)
-      return
-    }
-
     vueModel.onReceivedBonus()
     vueModel.listeningOnUserAchievementChange()
   },
@@ -81,7 +74,6 @@ export default {
 
     listeningOnUserAchievementChange () {
       const vueModel = this
-      console.log(vueModel.ehanlinUser)
       db.collection('UserAchievement')
         .where('user', '==', vueModel.ehanlinUser)
         .onSnapshot(

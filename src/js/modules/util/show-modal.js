@@ -1,6 +1,4 @@
 export default modalContent => {
-  console.log(modalContent)
-
   const modalTarget = $('.modal')
   const modalConTarget = modalTarget.find('.modal-con')
   modalConTarget.find('.content-gift').empty()

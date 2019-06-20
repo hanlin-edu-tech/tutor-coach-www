@@ -1,7 +1,5 @@
 import { db, ehanlinAuth } from './firestore/firebase-config'
 import singleCourse from './components/single-course'
-import showModal from './util/show-modal'
-import { AuthText } from './util/modal-text'
 
 export default {
   name: 'courses',
@@ -23,11 +21,6 @@ export default {
   async mounted () {
     const vueModel = this
     vueModel.ehanlinUser = await ehanlinAuth()
-    if (!vueModel.ehanlinUser) {
-      showModal(AuthText.WARNING)
-      return
-    }
-
     await vueModel.userCoursesHandler()
     await vueModel.initialBanner()
   },
@@ -41,11 +34,15 @@ export default {
       // 準備開始上課
       const isReady = (nowDiffMinStartDate < 0 && Math.abs(nowDiffMinStartDate) < 60)
 
-      // 可開始上課
-      const isStart = (nowDiffMinStartDate > 0 && nowBeforeEndDate && !status)
+      // 可開始上課，已開始上課
+      const isStart = (nowDiffMinStartDate > 0 && nowBeforeEndDate
+        && (Object.keys(status).length === 0 || status.started))
 
       // 補課中
-      const isAdd = (!nowBeforeEndDate && !status.finished && !status.checked && !status.rejected)
+      const isAdd = (
+        !nowBeforeEndDate
+        && (!status || (status && !status.finished && !status.checked && !status.rejected))
+      )
 
       // 老師審核中
       const isCheck = (status && status.finished && (!status.checked || status.rejected))
@@ -77,7 +74,13 @@ export default {
         if (isAdd) {
           return {
             classBtnCss: 'class-btn-add',
-            classBtnImg: './img/btn-add.png'
+            classBtnImg: './img/btn-add.png',
+            action: () => {
+              if (window.sessionStorage) {
+                sessionStorage.setItem('course', userCourseId)
+                window.location.href = `/coach-web/enterCourse.html?id=${userCourseId}`
+              }
+            }
           }
         }
 
@@ -98,6 +101,7 @@ export default {
                 contentType: 'application/json',
                 url: `/coach-web/UserCourse/${userCourseId}/status/received`,
               })
+              console.log(response)
             }
           }
         }
@@ -170,10 +174,12 @@ export default {
 
               case 'modified': {
                 const userCourse = data.userCourse
-                if (userCourse.status.received === true) {
+                const status = userCourse.status
+                if (status && status.received) {
                   Vue.delete(vueModel.courses, id)
                   break
                 }
+
                 Vue.set(vueModel.courses, id, vueModel.composeCourseInfo(data))
                 break
               }
