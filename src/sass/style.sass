@@ -206,9 +206,11 @@
         width: 200px
         +btn-hover
 
+
+
 // popup
 .modal
-    z-index: 100
+    z-index: 1000
     position: fixed
     background: rgba(#000,0.7)
     top: 0
@@ -221,15 +223,14 @@
     &.visible
         opacity: 1
         visibility: visible
-
 .modal-con
-    margin: 200px auto
+    margin: 70px auto
     position: relative
     padding: 20px
     background: #fff
     border-radius: 5px
-    width: 25%
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2)
+    width: 20%
+    box-shadow: 0 0 20px rgba(0,0,0,0.2)
     transform: translateY(-30px)
     visibility: hidden
     opacity: 0
@@ -241,10 +242,9 @@
     .content-gift
         padding: 30px 0px
         text-align: center
-        font-size: 20px
-        font-weight: 700
+        font-size: 15px
         letter-spacing: 1px
-        color: rgba(60, 36, 84, 0.79)
+        color: #000
     .js-close-modal
         position: absolute
         top: 10px
@@ -255,14 +255,6 @@
             font-size: 15px
         &:hover
             color: #757575
-
-.modal-style
-    box-sizing: content-box
-    overflow: hidden
-    border: 3px solid rgb(138, 87, 66)
-    text-overflow: ellipsis
-    background: rgb(252, 248, 211)
-    //text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2)
 
 @media screen and (max-width: 700px)
     .modal-con
