@@ -183,7 +183,7 @@ export default {
 
             switch (userCourseNewestChange.type) {
               case 'added': {
-                if(!vueModel.courses.containsKey(id)) {
+                if(!vueModel.courses.hasOwnProperty(id)) {
                   Vue.set(vueModel.courses, id, vueModel.composeCourseInfo(data))
                   vueModel.showBanner()
                 }
