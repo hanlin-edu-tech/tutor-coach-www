@@ -1,0 +1,114 @@
+@mixin btn-hover
+    cursor: pointer
+    transition: .3s
+    &:hover
+        transform: scale(1.05)
+
+
+// 修正course.css 
+body
+    color: #34495E
+    .container
+        width: 980px
+        min-height: auto
+        margin-bottom: 20px
+.info-stage
+    padding-bottom: 10px
+html
+    line-height: normal 
+
+.eh-list > li > .title > .action
+    width: auto
+    top: 2px
+
+.eh-list.level-2 > li > .title > .info > .type > .icon 
+    margin-right: 5px
+
+
+// 修正flaticon.css 
+.stage
+    [class^="flaticon-"]:before, [class*=" flaticon-"]:before
+        margin-left: 0
+
+input
+    cursor: pointer
+label
+    cursor: pointer
+
+
+// navbar 
+.navbar
+    display: flex
+    border-radius: 6px
+    background-color: #009ac9
+    border: solid 3px #fff
+    box-shadow: 1px 1px 4px 1px #ccc
+    margin: 10px auto
+    font-family: "微軟正黑體", Arial, sans-serif
+    list-style: none
+    li
+        color: #ecf0f1
+        font-size: 18px
+        cursor: pointer
+        padding: 10px 0
+        border-left: #fff dashed 1px
+        flex-grow: 1
+        text-align: center
+        &:first-child
+            border-left: none
+    a
+        text-decoration: none
+        color: #ecf0f1
+        padding-left: 5px
+
+// banner
+.img-banner
+    width: 100%
+    margin-bottom: 6px
+
+.title-bar
+    padding: 10px
+    background-color: #0b243b
+    font-size: 15pt
+    color: #fff
+    border-radius: 6px 6px 0px 0px
+    text-align: left
+.container-banner
+    position: relative
+    padding-top: 0
+    .banner
+        width: 100%
+
+.info-stage
+    margin-top: 0px
+    margin-bottom: 0px
+    background-color: #FFFFFF
+    border-radius: 6px
+    box-shadow: 1px 1px 2px #a7a7a7
+
+// option
+.stage
+    hr
+        display: block
+        margin: 5px 30px
+        border: .5px solid #d1d1d1
+.option-row
+    text-align: left
+    padding: 15px 30px
+    .option-title
+        letter-spacing: 1px
+        font-size: 20px
+        font-weight: bold
+        margin-bottom: 10px
+    span
+        padding-right: 5px
+        font-size: 14px
+        &:nth-child(4)
+            padding-left: 20px
+    select
+        cursor: pointer
+        width: 150px
+        font-size: 14px
+        height: 24px
+
+    
