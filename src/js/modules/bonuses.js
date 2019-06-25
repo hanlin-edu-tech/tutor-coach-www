@@ -1,5 +1,6 @@
 import { db, ehanlinAuth } from './firestore/firebase-config'
 import singleBonus from './components/single-bonus'
+import showModal from './util/show-modal'
 
 export default {
   name: 'bonuses',
@@ -28,11 +29,14 @@ export default {
     onReceivedBonus () {
       const vueModel = this
       $('#bonus-received').on('click', async () => {
-        await $.ajax({
+        let coins, gems
+        const receivedReward = await $.ajax({
           type: 'PUT',
           url: '/coach-web/UserAchievement/received',
         })
-
+        coins = receivedReward.filter(reward => reward.type === 'coin').first().amount
+        gems = receivedReward.filter(reward => reward.type === 'gem').first().amount
+        showModal(`恭喜獲得金幣 ${coins} 寶石 ${gems}`)
         vueModel.bonusUnReceived--
         vueModel.determineShowReceivedBonusBtn(vueModel.bonusUnReceived)
       })
@@ -59,15 +63,21 @@ export default {
       for (let i = 1; i <= vueModel.LIMITED_COMBO_BONUS; i++) {
         const bonusInfo = {}
         const isBonusLabel = ((i <= comboBonus) || (comboBonus === 0 && vueModel.bonusUnReceived > 0))
-        if (isBonusLabel) {
+
+        if (i === comboBonus) {
           bonusInfo.isStampFinish = true
           bonusInfo.isStampNone = false
           bonusInfo.isAnimationStamp = true
+        } else if (isBonusLabel) {
+          bonusInfo.isStampFinish = true
+          bonusInfo.isStampNone = false
+          bonusInfo.isAnimationStamp = false
         } else {
           bonusInfo.isStampFinish = false
           bonusInfo.isStampNone = true
           bonusInfo.isAnimationStamp = false
         }
+
         vueModel.bonuses.push(bonusInfo)
       }
     },
@@ -79,7 +89,7 @@ export default {
         .onSnapshot(
           async userAchievementQuerySnapshot => {
             let userAchievementNewestChange, userAchievement
-            if(userAchievementQuerySnapshot.empty) {
+            if (userAchievementQuerySnapshot.empty) {
               const bonus = 0
               vueModel.composeBonusInfo({
                 continuous: 0,
@@ -107,12 +117,22 @@ export default {
                   }
 
                   for (let index = 0; index < comboBonus; index++) {
-                    Vue.set(vueModel.bonuses, index, {
+                    let stampInfo
+                    if (i === comboBonus) {
+                      stampInfo = {
                         isStampFinish: true,
                         isStampNone: false,
                         isAnimationStamp: true
                       }
-                    )
+                    } else {
+                      stampInfo = {
+                        isStampFinish: true,
+                        isStampNone: false,
+                        isAnimationStamp: false
+                      }
+                    }
+
+                    Vue.set(vueModel.bonuses, index, stampInfo)
                   }
 
                   for (let index = comboBonus; index < vueModel.LIMITED_COMBO_BONUS; index++) {

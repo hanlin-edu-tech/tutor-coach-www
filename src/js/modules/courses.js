@@ -1,5 +1,6 @@
 import { db, ehanlinAuth } from './firestore/firebase-config'
 import singleCourse from './components/single-course'
+import showModal from './util/show-modal'
 
 export default {
   name: 'courses',
@@ -26,10 +27,11 @@ export default {
   },
 
   methods: {
-    determineCourseStatus (userCourseId, startDate, endDate, status) {
+    determineCourseStatus (userCourse, startDate, endDate, coins, gems) {
       const vueModel = this
       const nowDiffMinStartDate = vueModel.now.diff(startDate, 'minutes')
       const nowBeforeEndDate = vueModel.now.isBefore(endDate)
+      const status = userCourse.status
 
       // 準備開始上課
       const isReady = (nowDiffMinStartDate < 0 && Math.abs(nowDiffMinStartDate) < 60)
@@ -51,6 +53,7 @@ export default {
       const isDone = (status && status.checked && !status.received)
 
       const retrieveCourseStatus = ({ isReady, isStart, isAdd, isCheck, isDone }) => {
+        const userCourseId = userCourse['_id']
         if (isReady) {
           return {
             classBtnCss: 'class-btn-ready',
@@ -95,13 +98,18 @@ export default {
           return {
             classBtnCss: 'class-btn-done',
             classBtnImg: './img/btn-done.png',
-            action: () => {
-              const response = $.ajax({
-                type: 'PUT',
-                contentType: 'application/json',
-                url: `/coach-web/UserCourse/${userCourseId}/status/received`,
-              })
-              console.log(response)
+            action: async () => {
+              try {
+                await $.ajax({
+                  type: 'PUT',
+                  contentType: 'application/json',
+                  url: `https://www.tbbt.com.tw/coach-web/UserCourse/${userCourseId}/status/received`,
+                })
+                showModal(`恭喜獲得金幣 ${coins} 寶石 ${gems}`)
+              } catch (error) {
+                console.error(error)
+                showModal('獎勵領取失敗')
+              }
             }
           }
         }
@@ -120,17 +128,22 @@ export default {
       const vueModel = this
       const subject = data.userPlan.name
       const userCourse = data.userCourse
+      const rewards = userCourse.rewards
       const startDate = vueModel.$dayjs(userCourse.start.toDate())
       const endDate = vueModel.$dayjs(userCourse.end.toDate())
+      const coins = rewards.filter(reward => reward.type === 'coin').first().amount
+      const gems = rewards.filter(reward => reward.type === 'gem').first().amount
 
       return Object.assign({
         date: startDate.format('YYYY-MM-DD'),
-        time: startDate.format('HH:mm:ss'),
+        time: startDate.format('HH:mm'),
         subject: subject,
         unit: userCourse.name,
         tool: userCourse.description,
+        coins: coins,
+        gems: gems,
         action: () => {}
-      }, vueModel.determineCourseStatus(userCourse['_id'], startDate, endDate, userCourse.status))
+      }, vueModel.determineCourseStatus(userCourse, startDate, endDate, coins, gems))
     },
 
     retrieveUserCourses (userCourseDocs) {
@@ -138,7 +151,9 @@ export default {
       for (let userCourseDoc of userCourseDocs) {
         const id = userCourseDoc.id
         const data = userCourseDoc.data()
-        Vue.set(vueModel.courses, id, vueModel.composeCourseInfo(data))
+        if (data.userCourse.status && !data.userCourse.status.received) {
+          Vue.set(vueModel.courses, id, vueModel.composeCourseInfo(data))
+        }
       }
     },
 
@@ -147,6 +162,7 @@ export default {
       if (Object.keys(vueModel.courses).length === 0) {
         $('.box.banner-finish').css({ display: '' })
       } else {
+        $('.box.banner-buy-ecoach').css({ display: 'none' })
         $('.box.banner-finish').css({ display: 'none' })
         $('.box.banner-arrange').css({ display: 'none' })
       }
@@ -167,8 +183,10 @@ export default {
 
             switch (userCourseNewestChange.type) {
               case 'added': {
-                Vue.set(vueModel.courses, id, vueModel.composeCourseInfo(data))
-                vueModel.showBanner()
+                if(!vueModel.courses.containsKey(id)) {
+                  Vue.set(vueModel.courses, id, vueModel.composeCourseInfo(data))
+                  vueModel.showBanner()
+                }
                 break
               }
 
@@ -195,9 +213,8 @@ export default {
     },
 
     async userCoursesHandler () {
-      let userCourseQuerySnapshot
       const vueModel = this
-
+      let userCourseQuerySnapshot, userCourseDocs
       vueModel.userCourseRef = vueModel.userCourseOriginalRef
         .where('userCourse.user', '==', vueModel.ehanlinUser)
         .where('userCourse.enabled', '==', true)
@@ -206,8 +223,10 @@ export default {
         .orderBy('userCourse.start', 'desc')
 
       userCourseQuerySnapshot = await vueModel.userCourseRef.get()
-      vueModel.retrieveUserCourses(userCourseQuerySnapshot.docs)
-      vueModel.listeningOnUserCourseChange()
+      if (!userCourseQuerySnapshot.empty) {
+        vueModel.retrieveUserCourses(userCourseQuerySnapshot.docs)
+        vueModel.listeningOnUserCourseChange()
+      }
     },
 
     async initialBanner () {
@@ -220,8 +239,8 @@ export default {
       userPlanQuerySnapshot = await db.collection('UserPlan')
         .where('user', '==', vueModel.ehanlinUser)
 
-      isBannerBuyEcoach = userPlanQuerySnapshot.empty
-      if (!isBannerBuyEcoach) {
+      isBannerBuyEcoach = (!userPlanQuerySnapshot.empty || userPlanQuerySnapshot.empty === true)
+      if (isBannerBuyEcoach === false) {
         userCourseQuerySnapshot = await vueModel.userCourseOriginalRef
           .where('userCourse.user', '==', vueModel.ehanlinUser)
           .where('userCourse.enabled', '==', true)
@@ -241,7 +260,6 @@ export default {
         }
 
         if (isBannerFinish) {
-          console.log($('.box.banner-finish'))
           $('.box.banner-finish').css({ display: '' })
         }
       }
