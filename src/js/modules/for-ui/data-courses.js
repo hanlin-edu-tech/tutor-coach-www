@@ -57,6 +57,15 @@ dataCourses = Object.assign(dataCourses, {
     tool: '天元突破',
     classBtnCss: 'class-btn-add',
     classBtnImg: './img/btn-add.png'
+  },
+  7: {
+    date: '2019年7月1日',
+    time: '14:00-15:00',
+    userPlan: '國一上數學',
+    unit: '通貫古今--鄭伯克段于鄢',
+    tool: '天元突破',
+    classBtnCss: 'class-btn-check-error',
+    classBtnImg: './img/btn-check-error.png'
   }
 })
 
