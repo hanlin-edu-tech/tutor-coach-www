@@ -43,6 +43,7 @@ export default {
     },
 
     determineShowReceivedBonusBtn (bonusUnReceived) {
+      $('#bonus-received .gift-get-number').text(bonusUnReceived)
       if (bonusUnReceived > 0) {
         $('#bonus-received .btn-get').css({ display: '' })
         $('#bonus-received .btn-none').css({ display: 'none' })
