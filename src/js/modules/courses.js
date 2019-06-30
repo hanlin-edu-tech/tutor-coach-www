@@ -43,14 +43,17 @@ export default {
       // 補課中
       const isAdd = (
         !nowBeforeEndDate
-        && (!status || (status && !status.finished && !status.checked && !status.rejected))
+        && (!status || (status && (!status.finished && !status.checked && !status.rejected)))
       )
 
       // 老師審核中
-      const isCheck = (status && status.finished && (!status.checked || status.rejected))
+      const isCheck = (status && status.finished && !status.checked)
 
       // 完成課程審核，待領獎
       const isDone = (status && status.checked && !status.received)
+
+      // 課程審核不通過
+      const isRejected = (status && status.rejected)
 
       const retrieveCourseStatus = ({ isReady, isStart, isAdd, isCheck, isDone }) => {
         const userCourseId = userCourse['_id']
@@ -114,6 +117,13 @@ export default {
           }
         }
 
+        if(isRejected) {
+          return {
+            classBtnCss: 'class-btn-check-error',
+            classBtnImg: './img/btn-check-error.png',
+          }
+        }
+
         // 尚未開課
         return {
           classBtnCss: 'class-btn-noclass',
@@ -136,7 +146,7 @@ export default {
 
       return Object.assign({
         date: startDate.format('YYYY-MM-DD'),
-        time: startDate.format('HH:mm'),
+        time: `${startDate.format('HH:mm')} - ${endDate.format('HH:mm')}`,
         subject: subject,
         unit: userCourse.name,
         tool: userCourse.description,
@@ -146,15 +156,27 @@ export default {
       }, vueModel.determineCourseStatus(userCourse, startDate, endDate, coins, gems))
     },
 
+    filterStatusReceived (id, data, showBanner = () => {}) {
+      const vueModel = this
+      const status = data.userCourse.status
+      if (status && !status.received) {
+        Vue.set(vueModel.courses, id, vueModel.composeCourseInfo(data))
+        showBanner()
+      }
+    },
+
     retrieveUserCourses (userCourseDocs) {
       const vueModel = this
-      for (let userCourseDoc of userCourseDocs) {
-        const id = userCourseDoc.id
-        const data = userCourseDoc.data()
-        if (data.userCourse.status && !data.userCourse.status.received) {
-          Vue.set(vueModel.courses, id, vueModel.composeCourseInfo(data))
-        }
-      }
+      userCourseDocs.forEach(
+        userCourseDoc => {
+          const id = userCourseDoc.id
+          const data = userCourseDoc.data()
+          vueModel.filterStatusReceived(id, data)
+        })
+
+      // for (let userCourseDoc of userCourseDocs) {
+      //
+      // }
     },
 
     showBanner () {
@@ -183,9 +205,8 @@ export default {
 
             switch (userCourseNewestChange.type) {
               case 'added': {
-                if(!vueModel.courses.hasOwnProperty(id)) {
-                  Vue.set(vueModel.courses, id, vueModel.composeCourseInfo(data))
-                  vueModel.showBanner()
+                if (!vueModel.courses.hasOwnProperty(id)) {
+                  vueModel.filterStatusReceived(id, data, vueModel.showBanner)
                 }
                 break
               }
