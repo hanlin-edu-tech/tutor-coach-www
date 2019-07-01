@@ -68,7 +68,7 @@ export default {
           return {
             classBtnCss: 'class-btn-start',
             classBtnImg: './img/btn-start.png',
-            action: () => {
+            process: () => {
               if (window.sessionStorage) {
                 sessionStorage.setItem('course', userCourseId)
                 window.location.href = `/coach-web/enterCourse.html?id=${userCourseId}`
@@ -81,7 +81,7 @@ export default {
           return {
             classBtnCss: 'class-btn-add',
             classBtnImg: './img/btn-add.png',
-            action: () => {
+            process: () => {
               if (window.sessionStorage) {
                 sessionStorage.setItem('course', userCourseId)
                 window.location.href = `/coach-web/enterCourse.html?id=${userCourseId}`
@@ -101,7 +101,7 @@ export default {
           return {
             classBtnCss: 'class-btn-done',
             classBtnImg: './img/btn-done.png',
-            action: async () => {
+            process: async () => {
               try {
                 await $.ajax({
                   type: 'PUT',
@@ -117,7 +117,7 @@ export default {
           }
         }
 
-        if(isRejected) {
+        if (isRejected) {
           return {
             classBtnCss: 'class-btn-check-error',
             classBtnImg: './img/btn-check-error.png',
@@ -152,15 +152,24 @@ export default {
         tool: userCourse.description,
         coins: coins,
         gems: gems,
-        action: () => {}
+        process: () => {}
       }, vueModel.determineCourseStatus(userCourse, startDate, endDate, coins, gems))
+    },
+
+    attachPreventDoubleClick (data) {
+      const vueModel = this
+      const courseInfo = vueModel.composeCourseInfo(data)
+      courseInfo.action = event => {
+        vueModel.$preventDoubleClick($(event.currentTarget), courseInfo.process)
+      }
+      return courseInfo
     },
 
     filterStatusReceived (id, data, showBanner = () => {}) {
       const vueModel = this
       const status = data.userCourse.status
       if (status && !status.received) {
-        Vue.set(vueModel.courses, id, vueModel.composeCourseInfo(data))
+        Vue.set(vueModel.courses, id, vueModel.attachPreventDoubleClick(data))
         showBanner()
       }
     },
@@ -173,10 +182,6 @@ export default {
           const data = userCourseDoc.data()
           vueModel.filterStatusReceived(id, data)
         })
-
-      // for (let userCourseDoc of userCourseDocs) {
-      //
-      // }
     },
 
     showBanner () {

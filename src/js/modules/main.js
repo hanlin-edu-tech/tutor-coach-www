@@ -17,6 +17,14 @@ Vue.prototype.$delay = millisecond => {
   )
 }
 
+Vue.prototype.$preventDoubleClick = (target, processFn) => {
+  const dataLockedAt = target.attr('data-locked-at')
+  if (!dataLockedAt || +(new Date() - dataLockedAt) > 2000) {
+    processFn()
+  }
+  target.attr('data-locked-at', +new Date())
+}
+
 new Vue({
   render: createElement => {
     return createElement(courses)
