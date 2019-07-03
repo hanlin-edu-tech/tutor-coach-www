@@ -36,72 +36,74 @@ html(lang='tw')
                         // 選單列
                         .option-row
                             .option-title 學院會根據以下設定出現您學過的課堂歷程資料
-                            span.label 年級:
-                            select(name="")
-                                option(value="") 請選擇年段
-                                option(value="") 國一下
-                                option(value="") 國二下
-                            span.label 課程:
-                            select(name="")
-                                option(value="") 請選擇課程
-                                option(value="") 數學科
-                                option(value="") 英文科
-                                option(value="") 國文科
-                                option(value="") 自然科
-                        
-                        // 課程清單
-                        .eh-list-stage
-                            ol.eh-list.level-0
-                                li.group
-                                    input.list-switch-input(id="check",level="0",type="checkbox")
-                                    label.title(for="check")
-                                        span.info 第7堂 唐詩四期
-                                        span.action
-                                            span.switch
-                                                i.fa.fa-chevron-circle-down
-                                    ol.eh-list.level-2
-                                        li.textbook.TEACH
-                                            input.list-switch-input.TEACH(id="",level="2",type="checkbox")
-                                            label.title(for="")
-                                                span.info
-                                                    span.type
-                                                        span.icon
-                                                            i.flaticon-masterlist_classquiz
-                                                        span.title 教學影片
-                                                    span.title 作者（講義第199頁）
-                                                    span.info 08:11
-                                                span.action
-                                                span.seen
-                                        li.textbook.TEACH
-                                            input.list-switch-input.TEACH(id="",level="2",type="checkbox")
-                                            label.title(for="")
-                                                span.info
-                                                    span.type
-                                                        span.icon
-                                                            i.flaticon-masterlist_classquiz
-                                                        span.title 教學影片
-                                                    span.title 作者（講義第199頁）
-                                                    span.info 08:11
-                                                span.action
-                                                span.seen
-                                        li.textbook.TEACH
-                                            input.list-switch-input.TEACH(id="",level="2",type="checkbox")
-                                            label.title(for="")
-                                                span.info
-                                                    span.type
-                                                        span.icon
-                                                            i.flaticon-masterlist_classquiz
-                                                        span.title 教學影片
-                                                    span.title 作者（講義第199頁）
-                                                    span.info 08:11
-                                                span.action
-                                                span.seen
-                                
+                            //span.label 年級:
+                            //select(name="")
+                            //    option(value="") 請選擇年段
+                            //    option(value="") 國一下
+                            //    option(value="") 國二下
+                            setcion(id="user-plans" style="display:none;")
+                                span.label 課程:
+                                select
+                                    option(value="", selected, disabled, hidden) 請選擇課程
 
+                        // 課程清單
+                        include ./vue/vue-history.pug
+
+                        // 課程清單
+                        //.eh-list-stage
+                        //    ol.eh-list.level-0
+                        //        li.group
+                        //            input.list-switch-input(id="check",level="0",type="checkbox")
+                        //            label.title(for="check")
+                        //                span.info 第7堂 唐詩四期
+                        //                span.action
+                        //                    span.switch
+                        //                        i.fa.fa-chevron-circle-down
+                        //            ol.eh-list.level-2
+                        //                li.textbook.TEACH
+                        //                    input.list-switch-input.TEACH(id="",level="2",type="checkbox")
+                        //                    label.title(for="")
+                        //                        span.info
+                        //                            span.type
+                        //                                span.icon
+                        //                                    i.flaticon-masterlist_classquiz
+                        //                                span.title 教學影片
+                        //                            span.title 作者（講義第199頁）
+                        //                            span.info 08:11
+                        //                        span.action
+                        //                        span.seen
+                        //                li.textbook.TEACH
+                        //                    input.list-switch-input.TEACH(id="",level="2",type="checkbox")
+                        //                    label.title(for="")
+                        //                        span.info
+                        //                            span.type
+                        //                                span.icon
+                        //                                    i.flaticon-masterlist_classquiz
+                        //                                span.title 教學影片
+                        //                            span.title 作者（講義第199頁）
+                        //                            span.info 08:11
+                        //                        span.action
+                        //                        span.seen
+                        //                li.textbook.TEACH
+                        //                    input.list-switch-input.TEACH(id="",level="2",type="checkbox")
+                        //                    label.title(for="")
+                        //                        span.info
+                        //                            span.type
+                        //                                span.icon
+                        //                                    i.flaticon-masterlist_classquiz
+                        //                                span.title 教學影片
+                        //                            span.title 作者（講義第199頁）
+                        //                            span.info 08:11
+                        //                        span.action
+                        //                        span.seen
+
+        // x-template of Vue Component
+        include ./x-template/template-history.pug
 
         footer#ehanlin-footer
 
-        script(data-module='ehanlin-header, ehanlin-menu, ehanlin-info-left-side, ehanlin-footer', src='https://s3-ap-northeast-1.amazonaws.com/ehanlin-web-resource/common_webcomponent/current/js/ehanlin-loader.js', type='text/javascript')
+        script(data-module='ehanlin-header, ehanlin-footer',
+            src='https://s3-ap-northeast-1.amazonaws.com/ehanlin-web-resource/common_webcomponent/current/js/ehanlin-loader.js', type='text/javascript')
         script(src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js", type='text/javascript')
-        script(src="./js/index.js")
-        script(src="./js/bundle.min.js")
+        script(src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.min.js")
+        script(src="./js/class-record.min.js")
