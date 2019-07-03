@@ -9,7 +9,7 @@ export default {
     return {
       bonuses: [],
       ehanlinUser: '',
-      LIMITED_COMBO_BONUS: 5,
+      LIMITED_SHOW_COMBO_BONUS: 5,
       currentComboBonus: 0,
       bonusUnReceived: 0
     }
@@ -43,6 +43,7 @@ export default {
     },
 
     determineShowReceivedBonusBtn (bonusUnReceived) {
+      $('#bonus-received .gift-get-number').text(bonusUnReceived)
       if (bonusUnReceived > 0) {
         $('#bonus-received .btn-get').css({ display: '' })
         $('#bonus-received .btn-none').css({ display: 'none' })
@@ -54,15 +55,15 @@ export default {
 
     composeBonusInfo (userAchievement) {
       const vueModel = this
-      const comboBonus = userAchievement.continuous % vueModel.LIMITED_COMBO_BONUS
+      const comboBonus = userAchievement.continuous % vueModel.LIMITED_SHOW_COMBO_BONUS
       vueModel.currentComboBonus = comboBonus
       vueModel.bonusUnReceived = userAchievement.bonus
 
       // initial bonuses
       vueModel.bonuses = []
-      for (let i = 1; i <= vueModel.LIMITED_COMBO_BONUS; i++) {
+      for (let i = 1; i <= vueModel.LIMITED_SHOW_COMBO_BONUS; i++) {
         const bonusInfo = {}
-        const isBonusLabel = ((i <= comboBonus) || (comboBonus === 0 && vueModel.bonusUnReceived > 0))
+        const isBonusLabel = ((i < comboBonus) || (comboBonus === 0 && vueModel.bonusUnReceived > 0))
 
         if (i === comboBonus) {
           bonusInfo.isStampFinish = true
@@ -109,7 +110,7 @@ export default {
               }
 
               case 'modified': {
-                let comboBonus = userAchievement.continuous % vueModel.LIMITED_COMBO_BONUS
+                let comboBonus = userAchievement.continuous % vueModel.LIMITED_SHOW_COMBO_BONUS
                 if (comboBonus !== vueModel.currentComboBonus) {
                   vueModel.currentComboBonus = comboBonus
                   if (comboBonus === 0 && userAchievement.bonus > 0) {
@@ -118,7 +119,7 @@ export default {
 
                   for (let index = 0; index < comboBonus; index++) {
                     let stampInfo
-                    if (i === comboBonus) {
+                    if (index === comboBonus) {
                       stampInfo = {
                         isStampFinish: true,
                         isStampNone: false,
@@ -135,7 +136,7 @@ export default {
                     Vue.set(vueModel.bonuses, index, stampInfo)
                   }
 
-                  for (let index = comboBonus; index < vueModel.LIMITED_COMBO_BONUS; index++) {
+                  for (let index = comboBonus; index < vueModel.LIMITED_SHOW_COMBO_BONUS; index++) {
                     Vue.set(vueModel.bonuses, index, {
                         isStampFinish: false,
                         isStampNone: true,

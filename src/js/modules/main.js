@@ -1,5 +1,5 @@
-import courses from './for-ui/ui-courses'
-import bonuses from './for-ui/ui-bonuses'
+import courses from './courses'
+import bonuses from './bonuses'
 import util from './util/util'
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-tw'
@@ -15,6 +15,14 @@ Vue.prototype.$delay = millisecond => {
       setTimeout(resolve, millisecond)
     }
   )
+}
+
+Vue.prototype.$preventDoubleClick = (target, processFn) => {
+  const dataLockedAt = target.attr('data-locked-at')
+  if (!dataLockedAt || +(new Date() - dataLockedAt) > 2000) {
+    processFn()
+  }
+  target.attr('data-locked-at', +new Date())
 }
 
 new Vue({
