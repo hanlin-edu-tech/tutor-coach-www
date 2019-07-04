@@ -1,0 +1,104 @@
+#histories.eh-list-stage
+    ol.eh-list.level-0
+        li(is="history"
+            v-for="(historyInfo, index) in histories"
+            :history-info="historyInfo" :key="historyInfo.courseId")
+
+
+
+//// 課程清單
+//                        .eh-list-stage
+//                            ol.eh-list.level-0
+//                                li.group
+//                                    input.list-switch-input(id="check",level="0",type="checkbox")
+//                                    label.title(for="check")
+//                                        span.info 第7堂 唐詩四期
+//                                        span.action
+//                                            span.switch
+//                                                i.fa.fa-chevron-circle-down
+//                                    ol.eh-list.level-2
+//                                        li.textbook.TEACH
+//                                            input.list-switch-input.TEACH(id="",level="2",type="checkbox")
+//                                            label.title(for="")
+//                                                span.info
+//                                                    span.type
+//                                                        span.icon
+//                                                            i.flaticon-masterlist_classquiz
+//                                                        span.title 教學影片
+//                                                    span.title 作者（講義第199頁）
+//                                                    span.info 08:11
+//                                                span.action
+//                                                span.seen
+//                                        li.textbook.TEACH
+//                                            input.list-switch-input.TEACH(id="",level="2",type="checkbox")
+//                                            label.title(for="")
+//                                                span.info
+//                                                    span.type
+//                                                        span.icon
+//                                                            i.flaticon-masterlist_classquiz
+//                                                        span.title 教學影片
+//                                                    span.title 作者（講義第199頁）
+//                                                    span.info 08:11
+//                                                span.action
+//                                                span.seen
+//                                        li.textbook.TEACH
+//                                            input.list-switch-input.TEACH(id="",level="2",type="checkbox")
+//                                            label.title(for="")
+//                                                span.info
+//                                                    span.type
+//                                                        span.icon
+//                                                            i.flaticon-masterlist_classquiz
+//                                                        span.title 教學影片
+//                                                    span.title 作者（講義第199頁）
+//                                                    span.info 08:11
+//                                                span.action
+//                                                span.seen
+//
+//
+//
+//                                li.group
+//                                    input.list-switch-input(id="check",level="0",type="checkbox")
+//                                    label.title(for="check")
+//                                        span.info 第7堂 唐詩四期
+//                                        span.action
+//                                            span.switch
+//                                                i.fa.fa-chevron-circle-down
+//                                    ol.eh-list.level-2
+//                                        li.textbook.TEACH
+//                                            input.list-switch-input.TEACH(id="",level="2",type="checkbox")
+//                                            label.title(for="")
+//                                                span.info
+//                                                    span.type
+//                                                        span.icon
+//                                                            i.flaticon-masterlist_classquiz
+//                                                        span.title 教學影片
+//                                                    span.title 作者（講義第199頁）
+//                                                    span.info 08:11
+//                                                span.action
+//                                                span.seen
+//                                        li.textbook.TEACH
+//                                            input.list-switch-input.TEACH(id="",level="2",type="checkbox")
+//                                            label.title(for="")
+//                                                span.info
+//                                                    span.type
+//                                                        span.icon
+//                                                            i.flaticon-masterlist_classquiz
+//                                                        span.title 教學影片
+//                                                    span.title 作者（講義第199頁）
+//                                                    span.info 08:11
+//                                                span.action
+//                                                span.seen
+//                                        li.textbook.TEACH
+//                                            input.list-switch-input.TEACH(id="",level="2",type="checkbox")
+//                                            label.title(for="")
+//                                                span.info
+//                                                    span.type
+//                                                        span.icon
+//                                                            i.flaticon-masterlist_classquiz
+//                                                        span.title 教學影片
+//                                                    span.title 作者（講義第199頁）
+//                                                    span.info 08:11
+//                                                span.action
+//                                                span.seen
+
+
