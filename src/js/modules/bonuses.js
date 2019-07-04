@@ -140,13 +140,14 @@ export default {
 
                 if (comboBonus !== vueModel.currentComboBonus) {
                   vueModel.currentComboBonus = comboBonus
+
                   if (comboBonus === 0 && userAchievement.bonus > 0) {
-                    comboBonus = 4
+                    comboBonus = 5
                   }
 
-                  for (let index = 0; index <= comboBonus; index++) {
+                  for (let index = 0; index < comboBonus; index++) {
                     let stampInfo
-                    if (index === comboBonus) {
+                    if (index === (comboBonus - 1)) {
                       stampInfo = {
                         isStampFinish: true,
                         isStampNone: false,
@@ -159,7 +160,6 @@ export default {
                         isAnimationStamp: false
                       }
                     }
-
                     Vue.set(vueModel.bonuses, index, stampInfo)
                   }
 
