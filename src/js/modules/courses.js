@@ -1,6 +1,7 @@
 import { db, ehanlinAuth } from './firestore/firebase-config'
 import singleCourse from './components/single-course'
 import showModal from './util/show-modal'
+import { PopupText } from './util/modal-text'
 
 export default {
   name: 'courses',
@@ -16,7 +17,7 @@ export default {
     }
   },
   components: {
-    'course': singleCourse
+    course: singleCourse
   },
 
   async mounted () {
@@ -27,40 +28,70 @@ export default {
   },
 
   methods: {
-    determineCourseStatus (userCourse, startDate, endDate, coins, gems) {
+    determineCourseStatus (id, userCourse, startDate, endDate) {
       const vueModel = this
-      const nowDiffMinStartDate = vueModel.now.diff(startDate, 'minutes')
+      const nowDiffMinStartDate = vueModel.now.diff(startDate, 'second')
       const nowBeforeEndDate = vueModel.now.isBefore(endDate)
       const status = userCourse.status
+      const hourSeconds = 3600
+      const statusCount = !!status ? Object.keys(status).length : 0
 
-      // 準備開始上課
-      const isReady = (nowDiffMinStartDate < 0 && Math.abs(nowDiffMinStartDate) < 60)
+      // 進入上課
+      const isReady = (
+        (nowDiffMinStartDate < 0 && Math.abs(nowDiffMinStartDate) < hourSeconds)
+        && (
+          statusCount === 0 || (statusCount === 1 && status.hasOwnProperty('started'))
+        )
+      )
 
-      // 可開始上課，已開始上課
-      const isStart = (nowDiffMinStartDate > 0 && nowBeforeEndDate
-        && (Object.keys(status).length === 0 || status.started && !status.finished && !status.checked))
+      // 已開始上課
+      const isStart = (
+        nowDiffMinStartDate >= 0 && nowBeforeEndDate
+        && (
+          statusCount === 0 || (statusCount === 1 && status.hasOwnProperty('started'))
+        )
+      )
 
       // 補課中
       const isAdd = (
         !nowBeforeEndDate
-        && (!status || (status && (!status.finished && !status.checked && !status.rejected)))
+        && (
+          statusCount === 0 || (statusCount === 1 && status.hasOwnProperty('started'))
+        )
       )
 
       // 老師審核中
-      const isCheck = (status && status.finished && !status.checked)
+      const isCheck = (
+        statusCount > 0
+        && status.hasOwnProperty('finished')
+        && !status.hasOwnProperty('checked')
+        && !status.hasOwnProperty('rejected')
+      )
 
       // 完成課程審核，待領獎
-      const isDone = (status && status.checked && !status.received)
+      const isDone = (
+        statusCount > 0
+        && status.hasOwnProperty('checked')
+      )
 
       // 課程審核不通過
-      const isRejected = (status && status.rejected)
+      const isRejected = (
+        statusCount > 0
+        && status.hasOwnProperty('rejected')
+      )
 
-      const retrieveCourseStatus = ({ isReady, isStart, isAdd, isCheck, isDone }) => {
+      const retrieveCourseStatus = ({ isReady, isStart, isAdd, isCheck, isDone, isRejected }) => {
         const userCourseId = userCourse['_id']
         if (isReady) {
           return {
             classBtnCss: 'class-btn-ready',
-            classBtnImg: './img/btn-ready.png'
+            classBtnImg: './img/btn-ready.png',
+            process: () => {
+              if (window.sessionStorage) {
+                sessionStorage.setItem('course', userCourseId)
+                window.location.href = `/coach-web/enterCourse.html?id=${userCourseId}`
+              }
+            }
           }
         }
 
@@ -106,12 +137,11 @@ export default {
                 await $.ajax({
                   type: 'PUT',
                   contentType: 'application/json',
-                  url: `https://www.tbbt.com.tw/coach-web/UserCourse/${userCourseId}/status/received`,
+                  url: `/coach-web/UserCourse/${userCourseId}/status/received`,
                 })
-                showModal(`恭喜獲得金幣 ${coins} 寶石 ${gems}`)
               } catch (error) {
                 console.error(error)
-                showModal('獎勵領取失敗')
+                showModal(PopupText.REWARD_ERROR)
               }
             }
           }
@@ -121,6 +151,13 @@ export default {
           return {
             classBtnCss: 'class-btn-check-error',
             classBtnImg: './img/btn-check-error.png',
+            process: async () => {
+              await $.ajax({
+                type: 'PUT',
+                contentType: 'application/json',
+                url: `/coach-web/UserCourse/${userCourseId}/status/received`,
+              })
+            }
           }
         }
 
@@ -131,10 +168,10 @@ export default {
         }
       }
 
-      return retrieveCourseStatus({ isReady, isStart, isAdd, isCheck, isDone })
+      return retrieveCourseStatus({ isReady, isStart, isAdd, isCheck, isDone, isRejected })
     },
 
-    composeCourseInfo (data) {
+    composeCourseInfo (id, data) {
       const vueModel = this
       const subject = data.userPlan.name
       const userCourse = data.userCourse
@@ -153,13 +190,14 @@ export default {
         coins: coins,
         gems: gems,
         process: () => {}
-      }, vueModel.determineCourseStatus(userCourse, startDate, endDate, coins, gems))
+      }, vueModel.determineCourseStatus(id, userCourse, startDate, endDate))
     },
 
-    attachPreventDoubleClick (data) {
+    attachPreventDoubleClick (id, data) {
       const vueModel = this
-      const courseInfo = vueModel.composeCourseInfo(data)
+      const courseInfo = vueModel.composeCourseInfo(id, data)
       courseInfo.action = event => {
+        event.stopPropagation()
         vueModel.$preventDoubleClick($(event.currentTarget), courseInfo.process)
       }
       return courseInfo
@@ -168,8 +206,10 @@ export default {
     filterStatusReceived (id, data, showBanner = () => {}) {
       const vueModel = this
       const status = data.userCourse.status
-      if (status && !status.received) {
-        Vue.set(vueModel.courses, id, vueModel.attachPreventDoubleClick(data))
+      const statusCount = !!status ? Object.keys(status).length : 0
+
+      if (statusCount >= 0 && !status.hasOwnProperty('received')) {
+        Vue.set(vueModel.courses, id, vueModel.attachPreventDoubleClick(id, data))
         showBanner()
       }
     },
@@ -193,6 +233,12 @@ export default {
         $('.box.banner-finish').css({ display: 'none' })
         $('.box.banner-arrange').css({ display: 'none' })
       }
+    },
+
+    removeCourse (id) {
+      const vueModel = this
+      Vue.delete(vueModel.courses, id)
+      vueModel.showBanner()
     },
 
     listeningOnUserCourseChange () {
@@ -220,17 +266,29 @@ export default {
                 const userCourse = data.userCourse
                 const status = userCourse.status
                 if (status && status.received) {
-                  Vue.delete(vueModel.courses, id)
+                  const result = userCourse.result
+                  let message
+                  if (!result) {
+                    break
+                  }
+                  message = result.message ? result.message.replace(/\n/g, '<br />') : ''
+                  if (status.rejected) {
+                    showModal(message)
+                  } else if (result.rewards) {
+                    const coins = result.rewards.filter(reward => reward.type === 'coin').first().amount
+                    const gems = result.rewards.filter(reward => reward.type === 'gem').first().amount
+                    showModal(PopupText.reward(coins, gems, message))
+                  }
+                  vueModel.removeCourse(id)
                   break
                 }
 
-                Vue.set(vueModel.courses, id, vueModel.composeCourseInfo(data))
+                Vue.set(vueModel.courses, id, vueModel.attachPreventDoubleClick(id, data))
                 break
               }
 
               case 'removed': {
-                Vue.delete(vueModel.courses, id)
-                vueModel.showBanner()
+                vueModel.removeCourse(id)
                 break
               }
             }
@@ -240,7 +298,7 @@ export default {
 
     async userCoursesHandler () {
       const vueModel = this
-      let userCourseQuerySnapshot, userCourseDocs
+      let userCourseQuerySnapshot
       vueModel.userCourseRef = vueModel.userCourseOriginalRef
         .where('userCourse.user', '==', vueModel.ehanlinUser)
         .where('userCourse.enabled', '==', true)
@@ -264,15 +322,17 @@ export default {
 
       userPlanQuerySnapshot = await db.collection('UserPlan')
         .where('user', '==', vueModel.ehanlinUser)
+        .where('enabled', '==', true)
+        .get()
 
-      isBannerBuyEcoach = (!userPlanQuerySnapshot.empty || userPlanQuerySnapshot.empty === true)
+      isBannerBuyEcoach = !!userPlanQuerySnapshot.empty
       if (isBannerBuyEcoach === false) {
         userCourseQuerySnapshot = await vueModel.userCourseOriginalRef
           .where('userCourse.user', '==', vueModel.ehanlinUser)
           .where('userCourse.enabled', '==', true)
           .get()
 
-        isBannerArrange = userCourseQuerySnapshot.empty
+        isBannerArrange = !!userCourseQuerySnapshot.empty
         isBannerFinish = !userCourseQuerySnapshot.empty && (Object.keys(vueModel.courses).length === 0)
       }
 

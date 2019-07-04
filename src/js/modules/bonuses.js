@@ -1,6 +1,7 @@
 import { db, ehanlinAuth } from './firestore/firebase-config'
 import singleBonus from './components/single-bonus'
 import showModal from './util/show-modal'
+import { PopupText } from './util/modal-text'
 
 export default {
   name: 'bonuses',
@@ -28,26 +29,38 @@ export default {
   methods: {
     onReceivedBonus () {
       const vueModel = this
-      $('#bonus-received').on('click', async () => {
-        let coins, gems
-        const receivedReward = await $.ajax({
-          type: 'PUT',
-          url: '/coach-web/UserAchievement/received',
-        })
-        coins = receivedReward.filter(reward => reward.type === 'coin').first().amount
-        gems = receivedReward.filter(reward => reward.type === 'gem').first().amount
-        showModal(`恭喜獲得金幣 ${coins} 寶石 ${gems}`)
-        vueModel.bonusUnReceived--
-        vueModel.determineShowReceivedBonusBtn(vueModel.bonusUnReceived)
+      $('#bonus-received .btn-get').on('click', async () => {
+        try {
+          let coins = 0, gems = 0
+          const receivedReward = await $.ajax({
+            type: 'PUT',
+            url: '/coach-web/UserAchievement/received',
+          })
+          receivedReward.forEach(
+            reward => {
+              coins = reward.type === 'coin' ? reward.amount : 0
+              gems = reward.type === 'gem' ? reward.amount : 0
+            }
+          )
+          showModal(PopupText.reward(coins, gems))
+
+          vueModel.bonusUnReceived--
+          vueModel.determineShowReceivedBonusBtn(vueModel.bonusUnReceived)
+        } catch (error) {
+          console.error(error)
+          showModal(PopupText.REWARD_ERROR)
+        }
       })
     },
 
     determineShowReceivedBonusBtn (bonusUnReceived) {
       $('#bonus-received .gift-get-number').text(bonusUnReceived)
       if (bonusUnReceived > 0) {
+        $('#bonus-received .text-get-number').css({ display: '' })
         $('#bonus-received .btn-get').css({ display: '' })
         $('#bonus-received .btn-none').css({ display: 'none' })
       } else {
+        $('#bonus-received .text-get-number').css({ display: 'none' })
         $('#bonus-received .btn-get').css({ display: 'none' })
         $('#bonus-received .btn-none').css({ display: '' })
       }
@@ -65,7 +78,8 @@ export default {
         const bonusInfo = {}
         const isBonusLabel = ((i < comboBonus) || (comboBonus === 0 && vueModel.bonusUnReceived > 0))
 
-        if (i === comboBonus) {
+        /* 獲得最新 bonus 徽章加入動畫 */
+        if (comboBonus !== 0 && i === comboBonus) {
           bonusInfo.isStampFinish = true
           bonusInfo.isStampNone = false
           bonusInfo.isAnimationStamp = true
@@ -111,13 +125,26 @@ export default {
 
               case 'modified': {
                 let comboBonus = userAchievement.continuous % vueModel.LIMITED_SHOW_COMBO_BONUS
+                vueModel.bonusUnReceived = userAchievement.bonus
+                if (comboBonus === 0 && vueModel.bonusUnReceived === 0) {
+                  for (let index = comboBonus; index < vueModel.LIMITED_SHOW_COMBO_BONUS; index++) {
+                    Vue.set(vueModel.bonuses, index, {
+                        isStampFinish: false,
+                        isStampNone: true,
+                        isAnimationStamp: false
+                      }
+                    )
+                  }
+                  break
+                }
+
                 if (comboBonus !== vueModel.currentComboBonus) {
                   vueModel.currentComboBonus = comboBonus
                   if (comboBonus === 0 && userAchievement.bonus > 0) {
-                    comboBonus = 5
+                    comboBonus = 4
                   }
 
-                  for (let index = 0; index < comboBonus; index++) {
+                  for (let index = 0; index <= comboBonus; index++) {
                     let stampInfo
                     if (index === comboBonus) {
                       stampInfo = {
