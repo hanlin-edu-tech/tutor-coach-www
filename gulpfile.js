@@ -130,14 +130,14 @@ const copyStaticTask = dest => {
   }
 }
 
-const switchEnv = env => {
+const switchUiJsMode = mode => {
   return gulp
     .src(['./src/js/modules/main.js'], {
       base: './'
     })
     .pipe(
       replace(/(from '(.\/for-ui\/ui-courses|.\/courses)')/g, () => {
-        if (env === 'ui') {
+        if (mode === 'ui') {
           return 'from \'./for-ui/ui-courses\''
         } else {
           return 'from \'./courses\''
@@ -146,10 +146,27 @@ const switchEnv = env => {
     )
     .pipe(
       replace(/(from '(.\/for-ui\/ui-bonuses|.\/bonuses)')/g, () => {
-        if (env === 'ui') {
+        if (mode === 'ui') {
           return 'from \'./for-ui/ui-bonuses\''
         } else {
           return 'from \'./bonuses\''
+        }
+      })
+    )
+    .pipe(gulp.dest('./'))
+}
+
+const switchEnv = env => {
+  return gulp
+    .src(['./src/js/modules/firestore/firebase-auth.js'], {
+      base: './'
+    })
+    .pipe(
+      replace(/(export default (productionConfig|testConfig))/g, () => {
+        if (env === 'test') {
+          return 'export default testConfig'
+        } else {
+          return 'export default productionConfig'
         }
       })
     )
@@ -185,15 +202,31 @@ gulp.task('style', styleTask('./dist/css'))
 gulp.task('minifyImage', minifyImage.bind(minifyImage, './src/img/**/*.@(jpg|png)'))
 gulp.task('compilePugSass', gulp.series(['style', 'html']))
 
-/* 依據環境佈署 */
-gulp.task('switchUiEnv', switchEnv.bind(switchEnv, 'ui'))
-gulp.task('switchDevEnv', switchEnv.bind(switchEnv, 'dev'))
+/* 依據開發方式佈署 */
+gulp.task('switchUi', switchUiJsMode.bind(switchUiJsMode, 'ui'))
+gulp.task('switchJs', switchUiJsMode.bind(switchUiJsMode, 'js'))
+
+gulp.task('switchProductionEnv', switchEnv.bind(switchEnv, 'production'))
+gulp.task('switchTestEnv', switchEnv.bind(switchEnv, 'test'))
 
 gulp.task('packageToUi', gulp.series(clean.bind(clean, './dist'), 'copyToDist',
-  gulp.parallel('compilePugSass', 'minifyImage', 'switchUiEnv')))
+  gulp.parallel('compilePugSass', 'minifyImage', 'switchUi')))
 
-gulp.task('packageToDev', gulp.series(clean.bind(clean, './dist'), 'copyToDist',
-  gulp.parallel('compilePugSass', 'minifyImage', 'switchDevEnv')))
+gulp.task('packageToJs',
+  gulp.series(
+    clean.bind(clean, './dist'),
+    'copyToDist',
+    gulp.parallel('compilePugSass', 'minifyImage', 'switchJs', 'switchTestEnv')
+  )
+)
+
+gulp.task('packageToProduction',
+  gulp.series(
+    clean.bind(clean, './dist'),
+    'copyToDist',
+    gulp.parallel('compilePugSass', 'minifyImage', 'switchJs', 'switchProductionEnv')
+  )
+)
 
 gulp.task('watch', gulp.series('copyToDist', gulp.parallel(watchPugSassImages)))
 

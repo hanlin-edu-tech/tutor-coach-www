@@ -5,8 +5,9 @@
   "scripts": {
     "test": "echo 'skip test'",
     "ui": "gulp packageToUi && rollup -c rollup.base.config.js && gulp watch",
-    "dev": "gulp packageToDev && rollup -c rollup.dev.config.js -w",
-    "deployToTest": "gulp packageToDev && rollup -c rollup.base.config.js && gulp uploadToGcsTest"
+    "js": "gulp packageToJs && rollup -c rollup.dev.config.js -w",
+    "deployToTest": "gulp packageToJs && rollup -c rollup.base.config.js && gulp uploadToGcsTest",
+    "deployToProduction": "gulp packageToProduction && rollup -c rollup.base.config.js && gulp uploadToGcsProduction"
   },
   "repository": {
     "type": "git",
