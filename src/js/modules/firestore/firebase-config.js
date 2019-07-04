@@ -32,7 +32,7 @@ const ehanlinAuth = async () => {
       ehanlinUser = result.user
     }
   } catch (error) {
-    console.error(error.message)
+    console.error(error)
   }
 
   if (!ehanlinUser) {
@@ -43,7 +43,7 @@ const ehanlinAuth = async () => {
   try {
     await auth.signInWithCustomToken(token)
   } catch (error) {
-    console.error(error.message)
+    console.error(error)
   }
 
   return ehanlinUser
