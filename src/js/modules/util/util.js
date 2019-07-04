@@ -15,6 +15,18 @@ const util = {
         return arraySelf[0]
       }
     }
+  },
+
+  groupBy () {
+    Array.prototype.groupBy = function (key) {
+      const arraySelf = this
+      return arraySelf.reduce(function (accumulator, currentValue) {
+        if (currentValue.hasOwnProperty(key)) {
+          (accumulator[currentValue[key]] = accumulator[currentValue[key]] || []).push(currentValue)
+        }
+        return accumulator
+      }, {})
+    }
   }
 }
 
