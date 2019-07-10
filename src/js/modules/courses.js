@@ -304,7 +304,7 @@ export default {
         .where('userCourse.enabled', '==', true)
         .where('userCourse.visible', '==', true)
         .where('userCourse.start', '>=', vueModel.oneYearAgo)
-        .orderBy('userCourse.start', 'desc')
+        .orderBy('userCourse.start', 'asc')
 
       userCourseQuerySnapshot = await vueModel.userCourseRef.get()
       if (!userCourseQuerySnapshot.empty) {

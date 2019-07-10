@@ -20,12 +20,12 @@ script(type="text/x-template" id="template-history")
             li.textbook.TEACH(v-for="(item, index) in historyInfo.items" :key="item._id")
                 input.list-switch-input.TEACH(:id="item._id",level="2",type="checkbox")
                 label.title(:for="item._id")
-                    span.info
+                    span.info(@click="item.redirect")
                         span.type
                             span.icon
                                 i(:class="item.class")
                             span.title {{ item.type }}
-                        span.title(@click="item.redirect") {{ item.name }}
+                        span.title {{ item.name }}
                         span.info.duration {{ item.startTime }} - {{ item.endTime }}
                     span.action
                     span.seen

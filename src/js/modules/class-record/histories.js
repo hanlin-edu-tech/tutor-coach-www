@@ -50,9 +50,11 @@ export default {
       const items = data.userCourseItem.map(
         item => {
           const itemStatus = item.status
-          let startTime, finishedTime
-          if (status.started) {
+          let startTime = '', finishedTime = ''
+          if (!!itemStatus.started) {
             startTime = vueModel.$dayjs(itemStatus.started.toDate()).format('YYYY/MM/DD HH:mm')
+          }
+          if (!!itemStatus.finished) {
             finishedTime = vueModel.$dayjs(itemStatus.finished.toDate()).format('HH:mm')
           }
 
@@ -62,7 +64,7 @@ export default {
             name: item.name,
             redirect: () => {
               if ((status && status.checked)) {
-                window.location.href = `/coach-web/gotoCourseItem.html?id=${item._id}`
+                window.open(`./history-redirect.html?itemId=${item._id}`, '_blank')
               }
             },
             startTime: startTime,
@@ -100,6 +102,8 @@ export default {
         .map(vueModel.composeHistory)
         .groupBy('userPlanName')
 
+      vueModel.historiesByUserPlan = historiesByUserPlan
+
       userPlansTarget.css({ display: '' })
       for (let userPlanName in historiesByUserPlan) {
         const option = new Option(userPlanName, userPlanName)
@@ -109,7 +113,6 @@ export default {
         const userPlanName = $(event.currentTarget).val()
         vueModel.histories = historiesByUserPlan[userPlanName]
       })
-
     },
 
     listeningOnUserCourseChange () {
@@ -124,9 +127,22 @@ export default {
             const id = userCourseNewestChange.doc.id
             const data = userCourseNewestChange.doc.data()
 
-            if (userCourseNewestChange.type === 'added') {
-              if (!vueModel.courses.hasOwnProperty(id)) {
-                vueModel.filterStatusReceived(id, data, vueModel.showBanner)
+            const userCourse = data.userCourse
+            const userPlan = data.userPlan
+            const userPlanName = userPlan.name
+            if (userCourseNewestChange.type === 'modified') {
+              const histories = historiesByUserPlan[userPlanName]
+              const isIncludingHistories = histories
+                .some(history => {
+                  return history.courseId === userCourse._id
+                })
+
+              if (!isIncludingHistories) {
+                histories.push(
+                  vueModel.composeHistory(userCourseNewestChange.doc)
+                )
+              } else {
+
               }
             }
           }
@@ -146,33 +162,9 @@ export default {
       if (!userCourseQuerySnapshot.empty) {
         vueModel.retrieveUserCourses(userCourseQuerySnapshot.docs)
         //vueModel.listeningOnUserCourseChange()
+      } else {
+        $('.noclass-record').style({ display: '' })
       }
-    },
-
-    initialUserPlan () {
-      const vueModel = this
-      vueModel.userPlanRef
-        .where('user', '==', vueModel.ehanlinUser)
-        .where('enabled', '==', true)
-        .orderBy('start', 'desc')
-        .onSnapshot(
-          async userPlanQuerySnapshot => {
-            if (userPlanQuerySnapshot.empty) {
-              return
-            }
-
-            userPlanQuerySnapshot.docChanges()
-              .forEach(
-                userPlanChange => {
-                  if (userPlanChange.type === 'added') {
-                    const userPlan = userPlanChange.doc.data()
-                    const option = new Option(userPlan.name, userPlan._id)
-                    $('#user-plans').append($(option))
-                  }
-                }
-              )
-          }
-        )
     }
   }
 }
