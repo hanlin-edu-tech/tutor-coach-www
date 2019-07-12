@@ -23,8 +23,14 @@ export default {
   async mounted () {
     const vueModel = this
     vueModel.ehanlinUser = await ehanlinAuth()
-    await vueModel.userCoursesHandler()
-    await vueModel.initialBanner()
+
+    try {
+      await vueModel.userCoursesHandler()
+      await vueModel.initialBanner()
+    } catch (error) {
+      console.error(error)
+      showModal(PopupText.FIRE_STORE_ERROR)
+    }
   },
 
   methods: {

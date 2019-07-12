@@ -1,5 +1,5 @@
 const AuthText = {
-  WARNING: '使用者尚未登入'
+  WARNING: '使用者尚未登入',
 }
 
 const PopupText = {
@@ -7,6 +7,7 @@ const PopupText = {
     return `恭喜獲得金幣 ${coins} 寶石 ${gems}<br/>${message}`
   },
   REWARD_ERROR: '獎勵領取失敗',
+  FIRE_STORE_ERROR: '資料暫時無法存取'
 }
 
 const ItemType = new Map()
