@@ -35,8 +35,14 @@ export default {
       const result = userCourse.result
       let coins = 0, gems = 0, message = ''
       if (result && result.rewards) {
-        coins = result.rewards.filter(reward => reward.type === 'coin').first().amount
-        gems = result.rewards.filter(reward => reward.type === 'gem').first().amount
+        coins = result.reward
+          .filter(reward => reward.type === 'coin')
+          .map(reward => reward.amount)
+          .reduce((prev, curr) => prev + curr)
+        gems = result.rewards
+          .filter(reward => reward.type === 'gem')
+          .map(reward => reward.amount)
+          .reduce((prev, curr) => prev + curr)
       }
 
       if (result && result.message) {

@@ -31,17 +31,21 @@ export default {
       const vueModel = this
       $('#bonus-received .btn-get').on('click', async () => {
         try {
-          let coins = 0, gems = 0
           const receivedReward = await $.ajax({
             type: 'PUT',
             url: '/coach-web/UserAchievement/received',
           })
-          receivedReward.forEach(
-            reward => {
-              coins = reward.type === 'coin' ? reward.amount : 0
-              gems = reward.type === 'gem' ? reward.amount : 0
-            }
-          )
+
+          let coins = receivedReward
+            .filter(reward => reward.type === 'coin')
+            .map(reward => reward.amount)
+            .reduce((prev, curr) => prev + curr)
+          
+          let gems = receivedReward
+            .filter(reward => reward.type === 'gem')
+            .map(reward => reward.amount)
+            .reduce((prev, curr) => prev + curr)
+            
           showModal(PopupText.reward(coins, gems))
 
           vueModel.bonusUnReceived--

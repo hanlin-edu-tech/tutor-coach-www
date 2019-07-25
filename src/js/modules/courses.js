@@ -184,8 +184,14 @@ export default {
       const rewards = userCourse.rewards
       const startDate = vueModel.$dayjs(userCourse.start.toDate())
       const endDate = vueModel.$dayjs(userCourse.end.toDate())
-      const coins = rewards.filter(reward => reward.type === 'coin').first().amount
-      const gems = rewards.filter(reward => reward.type === 'gem').first().amount
+      const coins = rewards
+        .filter(reward => reward.type === 'coin')
+        .map(reward => reward.amount)
+        .reduce((prev, curr) => prev + curr)
+      const gems = rewards
+        .filter(reward => reward.type === 'gem')
+        .map(reward => reward.amount)
+        .reduce((prev, curr) => prev + curr)
 
       return Object.assign({
         date: startDate.format('YYYY-MM-DD'),
@@ -281,8 +287,14 @@ export default {
                   if (status.rejected) {
                     showModal(message)
                   } else if (result.rewards) {
-                    const coins = result.rewards.filter(reward => reward.type === 'coin').first().amount
-                    const gems = result.rewards.filter(reward => reward.type === 'gem').first().amount
+                    const coins = result.rewards
+                      .filter(reward => reward.type === 'coin')
+                      .map(reward => reward.amount)
+                      .reduce((prev, curr) => prev + curr)
+                    const gems = result.rewards
+                      .filter(reward => reward.type === 'gem')
+                      .map(reward => reward.amount)
+                      .reduce((prev, curr) => prev + curr)
                     showModal(PopupText.reward(coins, gems, message))
                   }
                   vueModel.removeCourse(id)
