@@ -27,10 +27,6 @@ html(lang='zh-Hant-TW')
                 .info-stage
                     .title-bar.flaticon-header_record  課堂紀錄
 
-                    // 尚未有課堂紀錄則顯示此class
-                    .noclass-record(style="display:none")
-                        img.img-banner(src="./img/banner-norecord.png", alt="")
-
                     // 有課堂紀錄則顯示此class
                     .stage
                         // 選單列
@@ -43,6 +39,10 @@ html(lang='zh-Hant-TW')
 
                         // 課程清單
                         include ./vue/vue-history.pug
+
+                    // 尚未有課堂紀錄則顯示此class
+                    .noclass-record(style="display:none")
+                        img.img-banner(src="./img/banner-norecord.png", alt="")    
 
         // x-template of Vue Component
         include ./x-template/template-history.pug
