@@ -35,7 +35,7 @@ export default {
       const result = userCourse.result
       let coins = 0, gems = 0, message = ''
       if (result && result.rewards) {
-        coins = result.reward
+        coins = result.rewards
           .filter(reward => reward.type === 'coin')
           .map(reward => reward.amount)
           .reduce((prev, curr) => prev + curr)
@@ -147,8 +147,6 @@ export default {
                 histories.push(
                   vueModel.composeHistory(userCourseNewestChange.doc)
                 )
-              } else {
-
               }
             }
           }
@@ -169,7 +167,7 @@ export default {
         vueModel.retrieveUserCourses(userCourseQuerySnapshot.docs)
         //vueModel.listeningOnUserCourseChange()
       } else {
-        $('.noclass-record').style({ display: '' })
+        $('.noclass-record').css({ display: '' })
       }
     }
   }

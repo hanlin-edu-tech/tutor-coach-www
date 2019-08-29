@@ -24,6 +24,7 @@
     "dayjs": "^1.8.14",
     "del": "^4.1.1",
     "firebase": "^6.0.2",
+    "fs": "0.0.1-security",
     "jquery-modal": "^0.9.1"
   },
   "devDependencies": {
