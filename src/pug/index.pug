@@ -7,7 +7,7 @@ html(lang='zh-Hant-TW')
         link(type='text/css', href='https://www.ehanlin.com.tw/lesscss/ehanlin-basicss.css', rel='stylesheet')
         link(type='text/css', href='./css/lib/flaticon.css', rel='stylesheet')
         link(type='text/css', href='./css/tutor-coach.css', rel='stylesheet')
-        link(type='text/css', href='./css/ecoach-widget.css', rel='stylesheet')
+        //link(type='text/css', href='./css/ecoach-widget.css', rel='stylesheet')
         link(type='text/css', href='./css/style.css', rel='stylesheet')
         link(type='image/png', href='./img/favicon.png', rel='icon')
         title 翰林雲端學院 - 線上學習首選 - 免費試用小中高課程
@@ -23,14 +23,21 @@ html(lang='zh-Hant-TW')
                 a(href="/my/owned/Courses.html") 我的課程
         .box.container-banner
             .title-bar.flaticon-header_curriculum  學習課表
-            img.banner(src="./img/bg-banner.png", alt="")
+                .row-assets
+                    img.img-assets(src="./img/diamond.png", alt="")
+                    h3.diamond 1092
+                    img.img-assets(src="./img/ecoin.png", alt="")
+                    h3.ecoin 1023
+                    a.btn-activity(href="https://www.ehanlin.com.tw/app/magic/", target="_blank")
+                        img(src="./img/btn-activity.png", alt="")
+            img.banner(src="./img/bg-banner2.png", alt="")
 
             // 引入獎勵內容的 vue 模組
             include ./vue/vue-bonuses.pug
 
             .row-gift(id="bonus-received")
                 .gift-bg
-                    img(src="./img/cont-gift.png", alt="")
+                    img(src="./img/cont-gift-treasure.png", alt="")
                 .class-btn
                     // 領取獎勵按鈕
                     .btn-get(style="display:none")
@@ -45,7 +52,7 @@ html(lang='zh-Hant-TW')
 
 
         // 引入課程內容的 vue 模組
-        include ./vue/vue-courses.pug
+        //include ./vue/vue-courses.pug
 
         // Banner
         include ./banner.pug
@@ -54,7 +61,7 @@ html(lang='zh-Hant-TW')
         include ./popup.pug
 
         // widget 引入 e 導師
-        include ./ecoach.pug
+        //include ./ecoach.pug
 
         // x-template of Vue Component
         include ./x-template/template-course.pug

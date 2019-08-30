@@ -39,6 +39,34 @@
     font-size: 15pt
     color: #fff
     border-radius: 6px 6px 0px 0px
+    position: relative
+    .row-assets
+        top: 50%
+        transform: translateY(-50%)
+        right: 10px
+        position: absolute
+        display: flex
+        align-items: center
+        justify-content: center
+        h3
+            font-weight: normal
+            font-size: 18px
+            letter-spacing: 1px
+            text-align: right
+            margin-right: 10px
+    .img-assets
+        width: 25px
+        height: 25px
+        margin-right: 6px
+    .btn-activity
+        height: 31px
+        img
+            width: 100px
+            transition: 0.2s
+            cursor: pointer
+            &:hover
+                transform: scale(1.05)
+
 .container-banner
     position: relative
     padding-top: 0
@@ -210,7 +238,7 @@
                         margin: 0
 
 // 各種banner情境
-.banner-arrange,.banner-buy-ecoach,.banner-finish
+.banner-arrange,.banner-buy-ecoach,.banner-finish,.banner-finish-course
     position: relative
     img
         width: 98%
@@ -222,7 +250,14 @@
     img
         width: 200px
         +btn-hover
-
+.btn-outclass
+    position: absolute
+    left: 50%
+    transform: translateX(-50%)
+    bottom: 6%
+    img
+        width: 250px
+        +btn-hover
 
 
 // popup
