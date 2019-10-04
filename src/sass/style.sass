@@ -209,8 +209,9 @@
                         padding-right: 5px
                         margin: 0
 
+
 // 各種banner情境
-.banner-arrange,.banner-buy-ecoach,.banner-finish
+.banner-arrange,.banner-buy-ecoach,.banner-finish,.banner-soldout
     position: relative
     img
         width: 98%
@@ -222,6 +223,19 @@
     img
         width: 200px
         +btn-hover
+
+.banner-soldout
+    position: relative
+    .iframe-soldout
+        position: absolute
+        right: 160px
+        top: 175px
+        iframe
+            width: 340px
+            height: 180px
+
+    img
+        cursor: pointer
 
 
 
@@ -272,6 +286,63 @@
             font-size: 15px
         &:hover
             color: #757575
+
+
+.popup-unlogin
+    z-index: 1100
+    position: fixed
+    background: rgba(#000,0.7)
+    top: 0
+    left: 0
+    right: 0
+    bottom: 0
+.popup-con
+    margin: 70px auto
+    position: relative
+    padding: 20px
+    background: #fff
+    border-radius: 5px
+    width: 400px
+    box-shadow: 0 0 20px rgba(0,0,0,0.2)
+    transform: translateY(-30px)
+    .popup-title
+        text-align: center
+        font-size: 20px
+        letter-spacing: 1px
+        font-weight: 500
+        margin-bottom: 20px
+        color: #282828
+    a
+        padding: 10px 20px
+        border-radius: 5px
+        font-size: 18px
+        letter-spacing: 1px
+        color: #fff
+        display: block
+        width: 50%
+        text-align: center
+        margin-right: auto
+        margin-left: auto
+        text-shadow: 0 0 5px rgba(#000,0.5)
+    .btn-login
+        background-image: linear-gradient(to bottom, #9BD93F , #6AC94A)
+        margin-bottom: 10px
+        &:hover
+            text-decoration: none
+            color: #fff
+            background-image: linear-gradient(to bottom, #6AC94A , #6AC94A)
+    .btn-intro
+        background-image: linear-gradient(to bottom, #42DFFF , #29ABE2)
+        &:hover
+            text-decoration: none
+            color: #fff
+            background-image: linear-gradient(to bottom, #29ABE2 , #29ABE2)
+
+.hide
+    display: none
+
+
+
 
 @media screen and (max-width: 700px)
     .modal-con

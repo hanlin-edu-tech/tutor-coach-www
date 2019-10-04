@@ -28,3 +28,7 @@ $(document).click(function(event) {
     }
 });
 
+
+$(".btn-intro").click(function(){
+  $(".popup-unlogin").addClass("hide");
+});
