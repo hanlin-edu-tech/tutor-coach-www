@@ -14,16 +14,17 @@ const pngquant = require('imagemin-pngquant')
 const { Storage } = require('@google-cloud/storage')
 const fs = require('fs').promises
 const path = require('path')
+const appPath = 'app/coach2/'
 
 const distDir = path.join(__dirname, 'dist/')
 const storage = new Storage({
-  projectId: 'tutor-204108',
+  projectId: 'tutor-test-238709',
   keyFilename: './tutor.json'
 })
 
 const cleanGCS = async bucketName => {
   const options = {
-    prefix: 'app/coach/',
+    prefix: appPath,
   }
 
   const [files] = await storage.bucket(bucketName).getFiles(options)
@@ -60,7 +61,7 @@ const uploadToGCS = async bucketName => {
     storage.bucket(bucketName)
       .upload(distEntireFilePath,
         {
-          destination: `/app/coach/${distEntireFilePath.replace(distDir, '')}`,
+          destination: `/${appPath}${distEntireFilePath.replace(distDir, '')}`,
           metadata: {
             cacheControl: 'no-store',
           },
@@ -231,5 +232,5 @@ gulp.task('packageToProduction',
 gulp.task('watch', gulp.series('copyToDist', gulp.parallel(watchPugSassImages)))
 
 /* 上傳 GCS */
-gulp.task('uploadToGcsTest', uploadToGCS.bind(uploadToGCS, 'tutor-apps-test/'))
+gulp.task('uploadToGcsTest', uploadToGCS.bind(uploadToGCS, 'tutor-test-apps/'))
 gulp.task('uploadToGcsProduction', uploadToGCS.bind(uploadToGCS, 'tutor-apps/'))

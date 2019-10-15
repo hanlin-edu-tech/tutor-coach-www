@@ -36,7 +36,8 @@ const ehanlinAuth = async () => {
   }
 
   if (!ehanlinUser) {
-    showModal(AuthText.WARNING)
+    $('.popup-unlogin').removeClass("hide")
+    //showModal(AuthText.WARNING)
     throw AuthText.WARNING
   }
 
