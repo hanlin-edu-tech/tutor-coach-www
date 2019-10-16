@@ -244,6 +244,7 @@ export default {
         $('.box.banner-buy-ecoach').css({ display: 'none' })
         $('.box.banner-finish').css({ display: 'none' })
         $('.box.banner-arrange').css({ display: 'none' })
+        $('.box.banner-soldout').css({ display: 'none' })
       }
     },
 
@@ -356,7 +357,7 @@ export default {
 
       const determineBanner = ({ isBannerBuyEcoach, isBannerArrange, isBannerFinish }) => {
         if (isBannerBuyEcoach) {
-          $('.box.banner-buy-ecoach').css({ display: '' })
+          $('.box.banner-soldout').css({ display: '' })
         }
 
         if (isBannerArrange) {

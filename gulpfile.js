@@ -14,11 +14,12 @@ const pngquant = require('imagemin-pngquant')
 const { Storage } = require('@google-cloud/storage')
 const fs = require('fs').promises
 const path = require('path')
-const appPath = 'app/coach2/'
+const appPath = 'app/coach/'
 
 const distDir = path.join(__dirname, 'dist/')
 const storage = new Storage({
-  projectId: 'tutor-test-238709',
+  //projectId: 'tutor-test-238709',
+  projectId: 'tutor-204108',
   keyFilename: './tutor.json'
 })
 

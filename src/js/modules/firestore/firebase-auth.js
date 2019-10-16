@@ -18,4 +18,5 @@ const productionConfig = {
   appId: '1:745967530532:web:de55031a35d6d680'
 }
 
-export default testConfig
+//export default productionConfig
+export default productionConfig

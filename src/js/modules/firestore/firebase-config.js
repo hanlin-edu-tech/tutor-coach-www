@@ -21,7 +21,7 @@ const ehanlinAuth = async () => {
   try {
     if (window.location.host.indexOf('localhost') >= 0) {
       await $.ajax({
-        url: 'http://labs.ehanlin.com.tw/coach-web/token.js',
+        url: 'http://www.tbbt.com.tw/coach-web/token.js',
         dataType: 'script',
       })
       token = window.ehanlinToken
