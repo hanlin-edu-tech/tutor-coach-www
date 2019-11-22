@@ -17,13 +17,8 @@ const path = require('path')
 const appPath = 'app/coach/'
 
 const distDir = path.join(__dirname, 'dist/')
-const storage = new Storage({
-  //projectId: 'tutor-test-238709',
-  projectId: 'tutor-204108',
-  keyFilename: './tutor.json'
-})
 
-const cleanGCS = async bucketName => {
+const cleanGCS = async (bucketName, storage) => {
   const options = {
     prefix: appPath,
   }
@@ -54,8 +49,13 @@ const findAllUploadFilesPath = async (dir, multiDistEntireFilePath = []) => {
   return multiDistEntireFilePath
 }
 
-const uploadToGCS = async bucketName => {
-  await cleanGCS(bucketName)
+const uploadToGCS = async (bucketName, projectId, gcsKeyPath) => {
+  let storage = new Storage({
+    projectId: projectId,
+    keyFilename: gcsKeyPath
+  })
+
+  await cleanGCS(bucketName, storage)
 
   const multiDistEntireFilePath = await findAllUploadFilesPath(distDir)
   multiDistEntireFilePath.forEach(distEntireFilePath => {
@@ -233,5 +233,5 @@ gulp.task('packageToProduction',
 gulp.task('watch', gulp.series('copyToDist', gulp.parallel(watchPugSassImages)))
 
 /* 上傳 GCS */
-gulp.task('uploadToGcsTest', uploadToGCS.bind(uploadToGCS, 'tutor-test-apps/'))
-gulp.task('uploadToGcsProduction', uploadToGCS.bind(uploadToGCS, 'tutor-apps/'))
+gulp.task('uploadToGcsTest', uploadToGCS.bind(uploadToGCS, 'tutor-test-apps/', 'tutor-test-238709', './tutor-test.json'))
+gulp.task('uploadToGcsProduction', uploadToGCS.bind(uploadToGCS, 'tutor-apps/', 'tutor-204108', './tutor.json'))
