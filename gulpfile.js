@@ -218,7 +218,8 @@ gulp.task('packageToJs',
   gulp.series(
     clean.bind(clean, './dist'),
     'copyToDist',
-    gulp.parallel('compilePugSass', 'minifyImage', 'switchJs', 'switchTestEnv')
+    gulp.parallel('compilePugSass', 'minifyImage', 'switchJs', 'switchTestEnv'),
+    'copyToDist'
   )
 )
 
@@ -226,7 +227,8 @@ gulp.task('packageToProduction',
   gulp.series(
     clean.bind(clean, './dist'),
     'copyToDist',
-    gulp.parallel('compilePugSass', 'minifyImage', 'switchJs', 'switchProductionEnv')
+    gulp.parallel('compilePugSass', 'minifyImage', 'switchJs', 'switchProductionEnv'),
+    'copyToDist'
   )
 )
 
