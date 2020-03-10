@@ -87,16 +87,16 @@ export default {
       )
 
 
-      // e家教可否進入, 10分鐘前即可進入
+      // e家教可否進入, 10分鐘前即可進入, 課程審查後不可進入
       const canEnterETutor = (
-           nowDiffMinStartDate >= -600 && nowBeforeEndDate
+           nowDiffMinStartDate >= -600 && (!isDone && !isRejected)
       )
 
       const retrieveCourseStatus = ({ isReady, isStart, isAdd, isCheck, isDone, isRejected, canEnterETutor }) => {
         const userCourseId = userCourse['_id']
-        let etutorClass = "class-btn-ready"
+        let etutorClass = "class-btn-not-ready"
         if(canEnterETutor)
-          etutorClass = "class-btn-not-ready"
+          etutorClass = "class-btn-ready"
         if (isReady) {
           return {
             classBtnCss: 'class-btn-ready',
