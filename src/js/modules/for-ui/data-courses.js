@@ -10,6 +10,8 @@ dataCourses = Object.assign(dataCourses, {
     userPlan: '國一上數學',
     unit: '通貫古今--鄭伯克段于鄢',
     tool: '天元突破',
+    eTutorUrl: 'https://www.tbbt.com.tw/index.html',
+    eTutorBtnClass: 'class-btn-ready',
     classBtnCss: 'class-btn-start',
     classBtnImg: './img/btn-start.png'
   },
@@ -19,6 +21,8 @@ dataCourses = Object.assign(dataCourses, {
     userPlan: '國一上數學',
     unit: '通貫古今--鄭伯克段于鄢',
     tool: '天元突破',
+    eTutorUrl: 'https://www.tbbt.com.tw/index.html',
+    eTutorBtnClass: 'class-btn-not-ready',
     classBtnCss: 'class-btn-ready',
     classBtnImg: './img/btn-ready.png'
   },
@@ -28,6 +32,8 @@ dataCourses = Object.assign(dataCourses, {
     userPlan: '國一上數學',
     unit: '通貫古今--鄭伯克段于鄢',
     tool: '天元突破',
+    eTutorUrl: '',
+    eTutorBtnClass:'class-btn-not-ready',
     classBtnCss: 'class-btn-noclass',
     classBtnImg: './img/btn-noclass.png'
   },
@@ -37,6 +43,8 @@ dataCourses = Object.assign(dataCourses, {
     userPlan: '國一上數學',
     unit: '通貫古今--鄭伯克段于鄢',
     tool: '天元突破',
+    eTutorUrl: 'https://www.tbbt.com.tw/index.html',
+    eTutorBtnClass: 'class-btn-not-ready',
     classBtnCss: 'class-btn-done',
     classBtnImg: './img/btn-done.png'
   },
@@ -46,6 +54,8 @@ dataCourses = Object.assign(dataCourses, {
     userPlan: '國一上數學',
     unit: '通貫古今--鄭伯克段于鄢',
     tool: '天元突破',
+    eTutorUrl: '',
+    eTutorBtnClass: 'class-btn-not-ready',
     classBtnCss: 'class-btn-check',
     classBtnImg: './img/btn-check.png'
   },
@@ -55,6 +65,8 @@ dataCourses = Object.assign(dataCourses, {
     userPlan: '國一上數學',
     unit: '通貫古今--鄭伯克段于鄢',
     tool: '天元突破',
+    eTutorUrl: 'https://www.tbbt.com.tw/index.html',
+    eTutorBtnClass: 'class-btn-ready',
     classBtnCss: 'class-btn-add',
     classBtnImg: './img/btn-add.png'
   },
@@ -64,6 +76,8 @@ dataCourses = Object.assign(dataCourses, {
     userPlan: '國一上數學',
     unit: '通貫古今--鄭伯克段于鄢',
     tool: '天元突破',
+    eTutorUrl: '',
+    eTutorBtnClass: 'class-btn-not-ready',
     classBtnCss: 'class-btn-check-error',
     classBtnImg: './img/btn-check-error.png'
   }

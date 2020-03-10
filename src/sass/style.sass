@@ -156,6 +156,8 @@
         border-radius: 5px
         .class-time
             width: 120px
+            max-width: 120px
+            min-width: 120px
             display: flex
             justify-content: center
             align-items: center
@@ -170,6 +172,8 @@
                 font-size: 18px
         .class-icon
             width: 90px
+            min-width: 90px
+            max-width: 90px
             padding: 0px 15px
             display: flex
             align-items: center
@@ -214,14 +218,21 @@
                     right: 12px
                     text-shadow: 1.6px 1.6px 0 #912092,-1.6px -1.6px 0 #912092,1.6px -1.6px 0 #912092,-1.6px 1.6px 0 #912092
         .class-btn
-            width: 140px
+            max-width: 100px
+            min-width: 100px
+            width: 100px
+            margin-right: 10px
             display: flex
             align-items: center
+
             img
                 width: 100%
             .class-btn-start,.class-btn-add,.class-btn-done,.class-btn-ready,.class-btn-check-error
                 img
                     +btn-hover
+            .class-btn-not-ready
+                -webkit-filter: grayscale(1)
+                pointer-events: none
             .class-btn-ready
                 position: relative
                 .count-time

@@ -86,12 +86,22 @@ export default {
         && status.hasOwnProperty('rejected')
       )
 
-      const retrieveCourseStatus = ({ isReady, isStart, isAdd, isCheck, isDone, isRejected }) => {
+
+      // e家教可否進入, 10分鐘前即可進入
+      const canEnterETutor = (
+           nowDiffMinStartDate >= -600 && nowBeforeEndDate
+      )
+
+      const retrieveCourseStatus = ({ isReady, isStart, isAdd, isCheck, isDone, isRejected, canEnterETutor }) => {
         const userCourseId = userCourse['_id']
+        let etutorClass = "class-btn-ready"
+        if(canEnterETutor)
+          etutorClass = "class-btn-not-ready"
         if (isReady) {
           return {
             classBtnCss: 'class-btn-ready',
             classBtnImg: './img/btn-ready.png',
+            eTutorBtnClass: etutorClass,
             process: () => {
               if (window.sessionStorage) {
                 sessionStorage.setItem('course', userCourseId)
@@ -105,6 +115,7 @@ export default {
           return {
             classBtnCss: 'class-btn-start',
             classBtnImg: './img/btn-start.png',
+            eTutorBtnClass: etutorClass,
             process: () => {
               if (window.sessionStorage) {
                 sessionStorage.setItem('course', userCourseId)
@@ -118,6 +129,7 @@ export default {
           return {
             classBtnCss: 'class-btn-add',
             classBtnImg: './img/btn-add.png',
+            eTutorBtnClass: etutorClass,
             process: () => {
               if (window.sessionStorage) {
                 sessionStorage.setItem('course', userCourseId)
@@ -130,7 +142,8 @@ export default {
         if (isCheck) {
           return {
             classBtnCss: 'class-btn-check',
-            classBtnImg: './img/btn-check.png'
+            classBtnImg: './img/btn-check.png',
+            eTutorBtnClass: etutorClass
           }
         }
 
@@ -138,6 +151,7 @@ export default {
           return {
             classBtnCss: 'class-btn-done',
             classBtnImg: './img/btn-done.png',
+            eTutorBtnClass: etutorClass,
             process: async () => {
               try {
                 await $.ajax({
@@ -157,6 +171,7 @@ export default {
           return {
             classBtnCss: 'class-btn-check-error',
             classBtnImg: './img/btn-check-error.png',
+            eTutorBtnClass: etutorClass,
             process: async () => {
               await $.ajax({
                 type: 'PUT',
@@ -170,11 +185,12 @@ export default {
         // 尚未開課
         return {
           classBtnCss: 'class-btn-noclass',
-          classBtnImg: './img/btn-noclass.png'
+          classBtnImg: './img/btn-noclass.png',
+          eTutorBtnClass: etutorClass
         }
       }
 
-      return retrieveCourseStatus({ isReady, isStart, isAdd, isCheck, isDone, isRejected })
+      return retrieveCourseStatus({ isReady, isStart, isAdd, isCheck, isDone, isRejected, canEnterETutor })
     },
 
     composeCourseInfo (id, data) {
@@ -199,6 +215,7 @@ export default {
         subject: subject,
         unit: userCourse.name,
         tool: userCourse.description,
+        eTutorUrl: userCourse.eTutorUrl,
         coins: coins,
         gems: gems,
         process: () => {}

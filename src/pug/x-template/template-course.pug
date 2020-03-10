@@ -14,6 +14,10 @@ script(type="text/x-template" id="template-course")
                 img(src="./img/class-gift.png" alt="")
                 .gift-diamond {{ singleCourse.gems }}
                 .gift-ecoin {{ singleCourse.coins }}
+        .class-btn(v-if="singleCourse.eTutorUrl")
+            div(:class="singleCourse.eTutorBtnClass")
+                a(:href="singleCourse.eTutorUrl" target="_blank")
+                    img(src="./img/btn-eTutor.png" alt="")
         .class-btn
             // 已開始上課
             div(:class="singleCourse.classBtnCss"
