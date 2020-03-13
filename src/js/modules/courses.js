@@ -6,7 +6,7 @@ import { PopupText } from './util/modal-text'
 export default {
   name: 'courses',
   el: '#courses',
-  data () {
+  data() {
     const vueModel = this
     return {
       courses: {},
@@ -20,9 +20,10 @@ export default {
     course: singleCourse
   },
 
-  async mounted () {
+  async mounted() {
     const vueModel = this
     vueModel.ehanlinUser = await ehanlinAuth()
+    console.log("vueModel.now: ",vueModel.now)
 
     try {
       await vueModel.userCoursesHandler()
@@ -34,7 +35,7 @@ export default {
   },
 
   methods: {
-    determineCourseStatus (id, userCourse, startDate, endDate) {
+    determineCourseStatus(id, userCourse, startDate, endDate) {
       const vueModel = this
       const nowDiffMinStartDate = vueModel.now.diff(startDate, 'second')
       const nowBeforeEndDate = vueModel.now.isBefore(endDate)
@@ -89,33 +90,54 @@ export default {
 
       // e家教可否進入, 10分鐘前即可進入, 課程審查後不可進入
       const canEnterETutor = (
-           nowDiffMinStartDate >= -600 && (!isDone && !isRejected)
+        nowDiffMinStartDate >= -600 && (!isDone && !isRejected)
       )
 
       const retrieveCourseStatus = ({ isReady, isStart, isAdd, isCheck, isDone, isRejected, canEnterETutor }) => {
         const userCourseId = userCourse['_id']
-        let etutorClass = "class-btn-not-ready"
-        if(canEnterETutor)
-          etutorClass = "class-btn-ready"
-        if (isReady) {
-          return {
-            classBtnCss: 'class-btn-ready',
-            classBtnImg: './img/btn-ready.png',
-            eTutorBtnClass: etutorClass,
-            process: () => {
-              if (window.sessionStorage) {
-                sessionStorage.setItem('course', userCourseId)
-                window.location.href = `/coach-web/enterCourse.html?id=${userCourseId}`
-              }
+        let eTutorUrl = userCourse['eTutorUrl']
+        let eTutorStatus = ''
+        if (eTutorUrl !== '') {
+          let diffStart = vueModel.$dayjs(Date.now()).diff(startDate, 'second')
+          if (canEnterETutor) {
+            if(nowDiffMinStartDate < 0){
+              eTutorStatus = 'ready'
+              console.log("about to start, wait for ", Math.abs(diffStart), " seconds: ")
+              window.setTimeout((() => {
+                console.log("update status: start")
+                vueModel.courses[id].eTutorStatus = 'start'
+              }), Math.abs(diffStart) * 1000);
+            }else {
+              eTutorStatus = 'start'
+            }
+          } else {
+            if(!isDone && !isRejected){
+              eTutorStatus = 'not-ready'
+              console.log("not ready, wait for ", Math.abs(diffStart + 600), " seconds")
+              window.setTimeout((() => {
+                console.log("update status: ready")
+                vueModel.courses[id].eTutorStatus = 'ready'
+                diffStart = vueModel.$dayjs(Date.now()).diff(startDate, 'second')
+                console.log("about to start, wait for ", Math.abs(diffStart), " seconds: ")
+                window.setTimeout(() => {
+                  console.log("update status: start")
+                  vueModel.courses[id].eTutorStatus = 'start'
+                }, Math.abs(diffStart) * 1000)
+              }), Math.abs(diffStart + 600) * 1000);
+            }else {
+              eTutorStatus = isDone? 'done':'rejected'
             }
           }
+        }else {
+          eTutorStatus = 'no-class'
         }
-
         if (isStart) {
+          eTutorStatus = 'start'
           return {
             classBtnCss: 'class-btn-start',
             classBtnImg: './img/btn-start.png',
-            eTutorBtnClass: etutorClass,
+            eTutorStatus: eTutorStatus,
+            canEnterETutor: canEnterETutor,
             process: () => {
               if (window.sessionStorage) {
                 sessionStorage.setItem('course', userCourseId)
@@ -129,7 +151,8 @@ export default {
           return {
             classBtnCss: 'class-btn-add',
             classBtnImg: './img/btn-add.png',
-            eTutorBtnClass: etutorClass,
+            eTutorStatus: eTutorStatus,
+            canEnterETutor: canEnterETutor,
             process: () => {
               if (window.sessionStorage) {
                 sessionStorage.setItem('course', userCourseId)
@@ -143,7 +166,8 @@ export default {
           return {
             classBtnCss: 'class-btn-check',
             classBtnImg: './img/btn-check.png',
-            eTutorBtnClass: etutorClass
+            eTutorStatus: eTutorStatus,
+            canEnterETutor: canEnterETutor,
           }
         }
 
@@ -151,7 +175,8 @@ export default {
           return {
             classBtnCss: 'class-btn-done',
             classBtnImg: './img/btn-done.png',
-            eTutorBtnClass: etutorClass,
+            eTutorStatus: eTutorStatus,
+            canEnterETutor: canEnterETutor,
             process: async () => {
               try {
                 await $.ajax({
@@ -171,7 +196,8 @@ export default {
           return {
             classBtnCss: 'class-btn-check-error',
             classBtnImg: './img/btn-check-error.png',
-            eTutorBtnClass: etutorClass,
+            eTutorStatus: eTutorStatus,
+            canEnterETutor: canEnterETutor,
             process: async () => {
               await $.ajax({
                 type: 'PUT',
@@ -186,14 +212,15 @@ export default {
         return {
           classBtnCss: 'class-btn-noclass',
           classBtnImg: './img/btn-noclass.png',
-          eTutorBtnClass: etutorClass
+          eTutorStatus: eTutorStatus,
+          canEnterETutor: canEnterETutor,
         }
       }
 
       return retrieveCourseStatus({ isReady, isStart, isAdd, isCheck, isDone, isRejected, canEnterETutor })
     },
 
-    composeCourseInfo (id, data) {
+    composeCourseInfo(id, data) {
       const vueModel = this
       const subject = data.userPlan.name
       const userCourse = data.userCourse
@@ -208,7 +235,6 @@ export default {
         .filter(reward => reward.type === 'gem')
         .map(reward => reward.amount)
         .reduce((prev, curr) => prev + curr)
-
       return Object.assign({
         date: startDate.format('YYYY-MM-DD'),
         time: `${startDate.format('HH:mm')} - ${endDate.format('HH:mm')}`,
@@ -218,11 +244,12 @@ export default {
         eTutorUrl: userCourse.eTutorUrl,
         coins: coins,
         gems: gems,
-        process: () => {}
+        hasCourseItem: data.userCourseItem.length > 0,
+        process: () => { }
       }, vueModel.determineCourseStatus(id, userCourse, startDate, endDate))
     },
 
-    attachPreventDoubleClick (id, data) {
+    attachPreventDoubleClick(id, data) {
       const vueModel = this
       const courseInfo = vueModel.composeCourseInfo(id, data)
       courseInfo.action = event => {
@@ -232,7 +259,7 @@ export default {
       return courseInfo
     },
 
-    filterStatusReceived (id, data, showBanner = () => {}) {
+    filterStatusReceived(id, data, showBanner = () => { }) {
       const vueModel = this
       const status = data.userCourse.status
       const statusCount = !!status ? Object.keys(status).length : 0
@@ -243,7 +270,7 @@ export default {
       }
     },
 
-    retrieveUserCourses (userCourseDocs) {
+    retrieveUserCourses(userCourseDocs) {
       const vueModel = this
       userCourseDocs.forEach(
         userCourseDoc => {
@@ -253,7 +280,7 @@ export default {
         })
     },
 
-    showBanner () {
+    showBanner() {
       const vueModel = this
       if (Object.keys(vueModel.courses).length === 0) {
         $('.box.banner-finish').css({ display: '' })
@@ -265,13 +292,13 @@ export default {
       }
     },
 
-    removeCourse (id) {
+    removeCourse(id) {
       const vueModel = this
       Vue.delete(vueModel.courses, id)
       vueModel.showBanner()
     },
 
-    listeningOnUserCourseChange () {
+    listeningOnUserCourseChange() {
       const vueModel = this
       vueModel.userCourseRef
         .onSnapshot(
@@ -332,7 +359,7 @@ export default {
         )
     },
 
-    async userCoursesHandler () {
+    async userCoursesHandler() {
       const vueModel = this
       let userCourseQuerySnapshot
       vueModel.userCourseRef = vueModel.userCourseOriginalRef
@@ -349,7 +376,7 @@ export default {
       }
     },
 
-    async initialBanner () {
+    async initialBanner() {
       const vueModel = this
       let userPlanQuerySnapshot, userCourseQuerySnapshot
       let isBannerBuyEcoach
@@ -387,6 +414,6 @@ export default {
       }
 
       determineBanner({ isBannerBuyEcoach, isBannerArrange, isBannerFinish })
-    }
+    },
   }
 }

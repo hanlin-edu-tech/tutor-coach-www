@@ -14,11 +14,16 @@ script(type="text/x-template" id="template-course")
                 img(src="./img/class-gift.png" alt="")
                 .gift-diamond {{ singleCourse.gems }}
                 .gift-ecoin {{ singleCourse.coins }}
-        .class-btn(v-if="singleCourse.eTutorUrl")
-            div(:class="singleCourse.eTutorBtnClass")
-                a(:href="singleCourse.eTutorUrl" target="_blank")
-                    img(src="./img/btn-eTutor.png" alt="")
-        .class-btn
+        .class-btn(v-if="singleCourse.eTutorStatus !== 'no-class' && singleCourse.eTutorStatus !== 'done'" :class="singleCourse.eTutorStatus")
+            div
+                a(:href="singleCourse.eTutorUrl" target="_blank" :class="[singleCourse.canEnterETutor ? '' : 'disabled']" v-if="singleCourse.eTutorStatus !== 'done' || singleCourse.hasCourseItem")
+                    img.focus-animation(src="./img/btn-eTutor-ready.png" alt="" v-if="singleCourse.eTutorStatus === 'ready'")
+                    img(src="./img/btn-eTutor-ready.png" alt="" v-if="singleCourse.eTutorStatus === 'start'")
+                    img(src="./img/btn-eTutor-noclass.png" alt="" v-if="singleCourse.eTutorStatus === 'not-ready'")
+        .class-btn(v-if="singleCourse.eTutorStatus === 'done' && !singleCourse.hasCourseItem" :class="singleCourse.eTutorStatus")
+            div
+                img(src="./img/btn-done.png" alt="" @click="singleCourse.action")
+        .class-btn(v-if="singleCourse.hasCourseItem")
             // 已開始上課
             div(:class="singleCourse.classBtnCss"
                 @click="singleCourse.action")
