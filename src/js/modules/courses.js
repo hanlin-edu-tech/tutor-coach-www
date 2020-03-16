@@ -23,7 +23,6 @@ export default {
   async mounted() {
     const vueModel = this
     vueModel.ehanlinUser = await ehanlinAuth()
-    console.log("vueModel.now: ",vueModel.now)
 
     try {
       await vueModel.userCoursesHandler()
@@ -35,21 +34,26 @@ export default {
   },
 
   methods: {
+    updateStatus(time, update) {
+      window.setTimeout((() => {
+        update()
+      }), time);
+    },
     determineCourseStatus(id, userCourse, startDate, endDate) {
       const vueModel = this
       const nowDiffMinStartDate = vueModel.now.diff(startDate, 'second')
       const nowBeforeEndDate = vueModel.now.isBefore(endDate)
       const status = userCourse.status
-      const hourSeconds = 3600
       const statusCount = !!status ? Object.keys(status).length : 0
 
-      // 進入上課
-      const isReady = (
-        (nowDiffMinStartDate < 0 && Math.abs(nowDiffMinStartDate) < hourSeconds)
-        && (
-          statusCount === 0 || (statusCount === 1 && status.hasOwnProperty('started'))
-        )
-      )
+      /*   deprecated 開始時間前一小時可進入自學課程     */
+      // const hourSeconds = 3600
+      // const isReady = (
+      //   (nowDiffMinStartDate < 0 && Math.abs(nowDiffMinStartDate) < hourSeconds)
+      //   && (
+      //     statusCount === 0 || (statusCount === 1 && status.hasOwnProperty('started'))
+      //   )
+      // )
 
       // 已開始上課
       const isStart = (
@@ -87,57 +91,56 @@ export default {
         && status.hasOwnProperty('rejected')
       )
 
-
-      // e家教可否進入, 10分鐘前即可進入, 課程審查後不可進入
-      const canEnterETutor = (
-        nowDiffMinStartDate >= -600 && (!isDone && !isRejected)
-      )
-
-      const retrieveCourseStatus = ({ isReady, isStart, isAdd, isCheck, isDone, isRejected, canEnterETutor }) => {
-        const userCourseId = userCourse['_id']
-        let eTutorUrl = userCourse['eTutorUrl']
-        let eTutorStatus = ''
-        if (eTutorUrl !== '') {
-          let diffStart = vueModel.$dayjs(Date.now()).diff(startDate, 'second')
-          if (canEnterETutor) {
-            if(nowDiffMinStartDate < 0){
-              eTutorStatus = 'ready'
-              console.log("about to start, wait for ", Math.abs(diffStart), " seconds: ")
-              window.setTimeout((() => {
-                console.log("update status: start")
-                vueModel.courses[id].eTutorStatus = 'start'
-              }), Math.abs(diffStart) * 1000);
-            }else {
-              eTutorStatus = 'start'
-            }
+      // 判斷eTutor當前狀態
+      let eTutorStatus = ''
+      if(userCourse.eTutorUrl){
+        if(!isDone && !isRejected){
+          if(nowDiffMinStartDate >= -600 && nowDiffMinStartDate < 0){
+            eTutorStatus = 'ready'
+          } else if(nowDiffMinStartDate >= 0){
+            eTutorStatus = 'start'
           } else {
-            if(!isDone && !isRejected){
-              eTutorStatus = 'not-ready'
-              console.log("not ready, wait for ", Math.abs(diffStart + 600), " seconds")
-              window.setTimeout((() => {
-                console.log("update status: ready")
-                vueModel.courses[id].eTutorStatus = 'ready'
-                diffStart = vueModel.$dayjs(Date.now()).diff(startDate, 'second')
-                console.log("about to start, wait for ", Math.abs(diffStart), " seconds: ")
-                window.setTimeout(() => {
-                  console.log("update status: start")
-                  vueModel.courses[id].eTutorStatus = 'start'
-                }, Math.abs(diffStart) * 1000)
-              }), Math.abs(diffStart + 600) * 1000);
-            }else {
-              eTutorStatus = isDone? 'done':'rejected'
-            }
+            eTutorStatus = 'not-ready'
           }
-        }else {
-          eTutorStatus = 'no-class'
+        } else {
+          eTutorStatus = isDone ? 'done' : 'rejected'
         }
+      } else {
+        eTutorStatus = 'no-class'
+      }
+        
+
+      const retrieveCourseStatus = ({ isStart, isAdd, isCheck, isDone, isRejected, eTutorStatus }) => {
+        const userCourseId = userCourse['_id']
+        let diffStart = vueModel.$dayjs(Date.now()).diff(startDate, 'second')
+        if (!isStart) {
+          this.updateStatus(Math.abs(diffStart) * 1000, () => {
+            vueModel.courses[id].classBtnCss = 'class-btn-start'
+            vueModel.courses[id].classBtnImg = './img/btn-start.png'
+            vueModel.courses[id].process = () => {
+              if (window.sessionStorage) {
+                sessionStorage.setItem('course', userCourseId)
+                window.location.href = `/coach-web/enterCourse.html?id=${userCourseId}`
+              }
+            }
+          })
+        }
+
+        // 倒數計時修改狀態 not-ready 到 ready
+        if(eTutorStatus === 'not-ready'){
+          this.updateStatus(Math.abs(diffStart + 600) * 1000, () => vueModel.courses[id].eTutorStatus = 'ready')
+        }
+
+        // 倒數計時修改狀態 ready 到 start
+        if(eTutorStatus === 'ready'){
+          this.updateStatus(Math.abs(diffStart) * 1000, () => vueModel.courses[id].eTutorStatus = 'start')
+        }
+
         if (isStart) {
-          eTutorStatus = 'start'
           return {
             classBtnCss: 'class-btn-start',
             classBtnImg: './img/btn-start.png',
             eTutorStatus: eTutorStatus,
-            canEnterETutor: canEnterETutor,
             process: () => {
               if (window.sessionStorage) {
                 sessionStorage.setItem('course', userCourseId)
@@ -152,7 +155,6 @@ export default {
             classBtnCss: 'class-btn-add',
             classBtnImg: './img/btn-add.png',
             eTutorStatus: eTutorStatus,
-            canEnterETutor: canEnterETutor,
             process: () => {
               if (window.sessionStorage) {
                 sessionStorage.setItem('course', userCourseId)
@@ -167,7 +169,6 @@ export default {
             classBtnCss: 'class-btn-check',
             classBtnImg: './img/btn-check.png',
             eTutorStatus: eTutorStatus,
-            canEnterETutor: canEnterETutor,
           }
         }
 
@@ -176,7 +177,6 @@ export default {
             classBtnCss: 'class-btn-done',
             classBtnImg: './img/btn-done.png',
             eTutorStatus: eTutorStatus,
-            canEnterETutor: canEnterETutor,
             process: async () => {
               try {
                 await $.ajax({
@@ -197,7 +197,6 @@ export default {
             classBtnCss: 'class-btn-check-error',
             classBtnImg: './img/btn-check-error.png',
             eTutorStatus: eTutorStatus,
-            canEnterETutor: canEnterETutor,
             process: async () => {
               await $.ajax({
                 type: 'PUT',
@@ -213,11 +212,10 @@ export default {
           classBtnCss: 'class-btn-noclass',
           classBtnImg: './img/btn-noclass.png',
           eTutorStatus: eTutorStatus,
-          canEnterETutor: canEnterETutor,
         }
       }
 
-      return retrieveCourseStatus({ isReady, isStart, isAdd, isCheck, isDone, isRejected, canEnterETutor })
+      return retrieveCourseStatus({ isStart, isAdd, isCheck, isDone, isRejected, eTutorStatus })
     },
 
     composeCourseInfo(id, data) {
