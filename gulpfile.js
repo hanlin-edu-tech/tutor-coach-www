@@ -64,7 +64,7 @@ const uploadToGCS = async (bucketName, projectId, gcsKeyPath) => {
         {
           destination: `/${appPath}${distEntireFilePath.replace(distDir, '')}`,
           metadata: {
-            cacheControl: 'no-store',
+            cacheControl: 'public, max-age=10800',
           },
           public: true
         },
