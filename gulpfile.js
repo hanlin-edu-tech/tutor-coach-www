@@ -49,7 +49,7 @@ const findAllUploadFilesPath = async (dir, multiDistEntireFilePath = []) => {
   return multiDistEntireFilePath
 }
 
-const uploadToGCS = async (bucketName, projectId, gcsKeyPath) => {
+const uploadToGCS = async (bucketName, projectId, gcsKeyPath, cacheControlConfig) => {
   let storage = new Storage({
     projectId: projectId,
     keyFilename: gcsKeyPath
@@ -64,7 +64,7 @@ const uploadToGCS = async (bucketName, projectId, gcsKeyPath) => {
         {
           destination: `/${appPath}${distEntireFilePath.replace(distDir, '')}`,
           metadata: {
-            cacheControl: 'public, max-age=10800',
+            cacheControl: cacheControlConfig,
           },
           public: true
         },
@@ -235,5 +235,5 @@ gulp.task('packageToProduction',
 gulp.task('watch', gulp.series('copyToDist', gulp.parallel(watchPugSassImages)))
 
 /* 上傳 GCS */
-gulp.task('uploadToGcsTest', uploadToGCS.bind(uploadToGCS, 'tutor-test-apps/', 'tutor-test-238709', './tutor-test.json'))
-gulp.task('uploadToGcsProduction', uploadToGCS.bind(uploadToGCS, 'tutor-apps/', 'tutor-204108', './tutor.json'))
+gulp.task('uploadToGcsTest', uploadToGCS.bind(uploadToGCS, 'tutor-test-apps/', 'tutor-test-238709', './tutor-test.json', 'no-store'))
+gulp.task('uploadToGcsProduction', uploadToGCS.bind(uploadToGCS, 'tutor-apps/', 'tutor-204108', './tutor.json', 'public, max-age=10800'))
