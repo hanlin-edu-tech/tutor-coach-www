@@ -56,6 +56,7 @@ export default {
       // )
 
       // 已開始上課
+  
       const isStart = (
         nowDiffMinStartDate >= 0 && nowBeforeEndDate
         && (
@@ -90,51 +91,52 @@ export default {
         statusCount > 0
         && status.hasOwnProperty('rejected')
       )
+      let diffStart = vueModel.$dayjs(Date.now()).diff(startDate, 'second')
+
+      // 倒數計時修改
+      if (nowDiffMinStartDate < 0) {
+        this.updateStatus(Math.abs(diffStart) * 1000, () => {
+          vueModel.courses[id].classBtnCss = 'class-btn-start'
+          vueModel.courses[id].classBtnImg = './img/btn-start.png'
+          vueModel.courses[id].process = () => {
+            if (window.sessionStorage) {
+              
+              sessionStorage.setItem('course', userCourseId)
+              window.location.href = `/coach-web/enterCourse.html?id=${userCourseId}`
+            }
+          }
+        })
+      }
 
       // 判斷eTutor當前狀態
       let eTutorStatus = ''
-      if(userCourse.eTutorUrl){
-        if(!isDone && !isRejected){
-          if(nowDiffMinStartDate >= -600 && nowDiffMinStartDate < 0){
-            eTutorStatus = 'ready'
-          } else if(nowDiffMinStartDate >= 0){
-            eTutorStatus = 'start'
-          } else {
+      // 有 eTutor
+      if (userCourse.eTutorUrl) {
+        // 還沒完成或退回
+        if (!isDone && !isRejected) {
+          // 距離上課時間大於十分鐘
+          if (nowDiffMinStartDate < -600) {
             eTutorStatus = 'not-ready'
+            this.updateStatus(Math.abs(diffStart + 600) * 1000, () => vueModel.courses[id].eTutorStatus = 'ready')
+            // 距離上課時間小於十分鐘 
+          } else if (nowDiffMinStartDate >= -600 && nowDiffMinStartDate < 0) {
+            eTutorStatus = 'ready'
+            this.updateStatus(Math.abs(diffStart) * 1000, () => vueModel.courses[id].eTutorStatus = 'start')
+          } else {
+            eTutorStatus = 'start'
           }
+          // 完成或退回  
         } else {
           eTutorStatus = isDone ? 'done' : 'rejected'
         }
+        // 沒有 eTutor  
       } else {
         eTutorStatus = 'no-class'
       }
-        
 
       const retrieveCourseStatus = ({ isStart, isAdd, isCheck, isDone, isRejected, eTutorStatus }) => {
         const userCourseId = userCourse['_id']
-        let diffStart = vueModel.$dayjs(Date.now()).diff(startDate, 'second')
-        if (!isStart) {
-          this.updateStatus(Math.abs(diffStart) * 1000, () => {
-            vueModel.courses[id].classBtnCss = 'class-btn-start'
-            vueModel.courses[id].classBtnImg = './img/btn-start.png'
-            vueModel.courses[id].process = () => {
-              if (window.sessionStorage) {
-                sessionStorage.setItem('course', userCourseId)
-                window.location.href = `/coach-web/enterCourse.html?id=${userCourseId}`
-              }
-            }
-          })
-        }
 
-        // 倒數計時修改狀態 not-ready 到 ready
-        if(eTutorStatus === 'not-ready'){
-          this.updateStatus(Math.abs(diffStart + 600) * 1000, () => vueModel.courses[id].eTutorStatus = 'ready')
-        }
-
-        // 倒數計時修改狀態 ready 到 start
-        if(eTutorStatus === 'ready'){
-          this.updateStatus(Math.abs(diffStart) * 1000, () => vueModel.courses[id].eTutorStatus = 'start')
-        }
 
         if (isStart) {
           return {
