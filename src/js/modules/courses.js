@@ -45,7 +45,7 @@ export default {
       const nowBeforeEndDate = vueModel.now.isBefore(endDate)
       const status = userCourse.status
       const statusCount = !!status ? Object.keys(status).length : 0
-
+      const userCourseId = userCourse['_id']
       /*   deprecated 開始時間前一小時可進入自學課程     */
       // const hourSeconds = 3600
       // const isReady = (
@@ -99,8 +99,7 @@ export default {
           vueModel.courses[id].classBtnCss = 'class-btn-start'
           vueModel.courses[id].classBtnImg = './img/btn-start.png'
           vueModel.courses[id].process = () => {
-            if (window.sessionStorage) {
-              
+            if (window.sessionStorage) {             
               sessionStorage.setItem('course', userCourseId)
               window.location.href = `/coach-web/enterCourse.html?id=${userCourseId}`
             }
