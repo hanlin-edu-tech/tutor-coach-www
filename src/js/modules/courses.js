@@ -56,7 +56,6 @@ export default {
       // )
 
       // 已開始上課
-  
       const isStart = (
         nowDiffMinStartDate >= 0 && nowBeforeEndDate
         && (
@@ -113,12 +112,12 @@ export default {
       if (userCourse.eTutorUrl) {
         // 還沒完成或退回
         if (!isDone && !isRejected) {
-          // 距離上課時間大於十分鐘
-          if (nowDiffMinStartDate < -600) {
+          // 距離上課時間大於兩分鐘
+          if (nowDiffMinStartDate < -120) {
             eTutorStatus = 'not-ready'
-            this.updateStatus(Math.abs(diffStart + 600) * 1000, () => vueModel.courses[id].eTutorStatus = 'ready')
-            // 距離上課時間小於十分鐘 
-          } else if (nowDiffMinStartDate >= -600 && nowDiffMinStartDate < 0) {
+            this.updateStatus(Math.abs(diffStart + 120) * 1000, () => vueModel.courses[id].eTutorStatus = 'ready')
+            // 距離上課時間小於兩分鐘 
+          } else if (nowDiffMinStartDate >= -120 && nowDiffMinStartDate < 0) {
             eTutorStatus = 'ready'
             this.updateStatus(Math.abs(diffStart) * 1000, () => vueModel.courses[id].eTutorStatus = 'start')
           } else {
