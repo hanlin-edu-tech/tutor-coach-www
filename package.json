@@ -19,11 +19,11 @@
   ],
   "dependencies": {
     "@babel/runtime": "^7.4.5",
-    "@firebase/app": "^0.4.1",
-    "@firebase/util": "^0.2.15",
+    "@firebase/app": "^0.6.0",
+    "@firebase/util": "^0.2.43",
     "dayjs": "^1.8.14",
     "del": "^4.1.1",
-    "firebase": "^6.0.2",
+    "firebase": "^7.13.1",
     "fs": "0.0.1-security",
     "jquery-modal": "^0.9.1"
   },
