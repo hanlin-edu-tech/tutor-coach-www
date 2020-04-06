@@ -34,11 +34,6 @@ export default {
   },
 
   methods: {
-    updateStatus(time, update) {
-      window.setTimeout((() => {
-        update()
-      }), time);
-    },
     determineCourseStatus(id, userCourse, startDate, endDate) {
       const vueModel = this
       const nowDiffMinStartDate = vueModel.now.diff(startDate, 'second')
@@ -90,51 +85,61 @@ export default {
         statusCount > 0
         && status.hasOwnProperty('rejected')
       )
-      let diffStart = vueModel.$dayjs(Date.now()).diff(startDate, 'second')
 
       // 倒數計時修改
       if (nowDiffMinStartDate < 0) {
-        this.updateStatus(Math.abs(diffStart) * 1000, () => {
+        setTimeout(() => {
           vueModel.courses[id].classBtnCss = 'class-btn-start'
           vueModel.courses[id].classBtnImg = './img/btn-start.png'
           vueModel.courses[id].process = () => {
-            if (window.sessionStorage) {             
+            if (window.sessionStorage) {
               sessionStorage.setItem('course', userCourseId)
               window.location.href = `/coach-web/enterCourse.html?id=${userCourseId}`
             }
           }
-        })
+        }, Math.abs(vueModel.$dayjs(Date.now()).diff(startDate, 'second')) * 1000)
       }
 
-      // 判斷eTutor當前狀態
-      let eTutorStatus = ''
-      // 有 eTutor
-      if (userCourse.eTutorUrl) {
-        // 還沒完成或退回
-        if (!isDone && !isRejected) {
-          // 距離上課時間大於兩分鐘
-          if (nowDiffMinStartDate < -120) {
-            eTutorStatus = 'not-ready'
-            this.updateStatus(Math.abs(diffStart + 120) * 1000, () => vueModel.courses[id].eTutorStatus = 'ready')
-            // 距離上課時間小於兩分鐘 
-          } else if (nowDiffMinStartDate >= -120 && nowDiffMinStartDate < 0) {
-            eTutorStatus = 'ready'
-            this.updateStatus(Math.abs(diffStart) * 1000, () => vueModel.courses[id].eTutorStatus = 'start')
-          } else {
-            eTutorStatus = 'start'
-          }
-          // 完成或退回  
-        } else {
-          eTutorStatus = isDone ? 'done' : 'rejected'
+      const retrieveETutorStatus = (userCourse, isDone, isRejected, nowDiffMinStartDate) => {
+        if (!userCourse.eTutorUrl) {
+          return 'no-class'
         }
-        // 沒有 eTutor  
-      } else {
-        eTutorStatus = 'no-class'
+        if (isDone || isRejected) {
+          return isDone ? 'done' : 'rejected'
+        }
+        if (nowDiffMinStartDate < -120) {
+          return 'not-ready'
+        }
+        if (nowDiffMinStartDate >= -120 && nowDiffMinStartDate < 0) {
+          return 'ready'
+        }
+        if (nowDiffMinStartDate >= 0) {
+          return 'start'
+        }
+      }
+      const eTutorStatus = retrieveETutorStatus(userCourse, isDone, isRejected, nowDiffMinStartDate)
+      const threeDays = -(3 * 24 * 60 * 60)
+      // 距開課日期三天以內才setTimeout
+      if (eTutorStatus === 'not-ready' && nowDiffMinStartDate > threeDays) {
+        var aboutToReady = Math.abs(vueModel.$dayjs(Date.now()).diff(startDate, 'second') + 120)
+        setTimeout(() => {
+          console.log("update ready ")
+          vueModel.courses[id].eTutorStatus = 'ready'
+        }, aboutToReady * 1000)
+      }
+
+      if (eTutorStatus === 'ready') {
+        var aboutToStart = Math.abs(vueModel.$dayjs(Date.now()).diff(startDate, 'second'))
+        console.log('about to start ', aboutToStart)
+        setTimeout(() => {
+          console.log("update start ")
+          vueModel.courses[id].eTutorStatus = 'start'
+        }, aboutToStart * 1000)
       }
 
       const retrieveCourseStatus = ({ isStart, isAdd, isCheck, isDone, isRejected, eTutorStatus }) => {
         const userCourseId = userCourse['_id']
-
+        console.log("eTutorStatus ", eTutorStatus, " ", userCourseId)
 
         if (isStart) {
           return {
