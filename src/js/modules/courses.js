@@ -107,10 +107,10 @@ export default {
         if (isDone || isRejected) {
           return isDone ? 'done' : 'rejected'
         }
-        if (nowDiffMinStartDate < -120) {
+        if (nowDiffMinStartDate < -300) {
           return 'not-ready'
         }
-        if (nowDiffMinStartDate >= -120 && nowDiffMinStartDate < 0) {
+        if (nowDiffMinStartDate >= -300 && nowDiffMinStartDate < 0) {
           return 'ready'
         }
         if (nowDiffMinStartDate >= 0) {
@@ -121,7 +121,7 @@ export default {
       const threeDays = -(3 * 24 * 60 * 60)
       // 距開課日期三天以內才setTimeout
       if (eTutorStatus === 'not-ready' && nowDiffMinStartDate > threeDays) {
-        var aboutToReady = Math.abs(vueModel.$dayjs(Date.now()).diff(startDate, 'second') + 120)
+        var aboutToReady = Math.abs(vueModel.$dayjs(Date.now()).diff(startDate, 'second') + 300)
         setTimeout(() => {
           console.log("update ready ")
           vueModel.courses[id].eTutorStatus = 'ready'
@@ -313,7 +313,6 @@ export default {
 
             const id = userCourseNewestChange.doc.id
             const data = userCourseNewestChange.doc.data()
-
             switch (userCourseNewestChange.type) {
               case 'added': {
                 if (!vueModel.courses.hasOwnProperty(id)) {
@@ -333,7 +332,7 @@ export default {
                   }
                   message = result.message ? result.message.replace(/\n/g, '<br />') : ''
                   if (status.rejected) {
-                    showModal(message)
+                    if (message) showModal(message)
                   } else if (result.rewards) {
                     const coins = result.rewards
                       .filter(reward => reward.type === 'coin')
