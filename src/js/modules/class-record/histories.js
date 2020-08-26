@@ -69,7 +69,7 @@ export default {
             type: ItemType.get(item.type),
             name: item.name,
             redirect: () => {
-              if ((status && status.checked)) {
+              if ((item.status && item.status.finished)) {
                 window.open(`./history-redirect.html?itemId=${item._id}`, '_blank')
               }
             },
@@ -99,12 +99,6 @@ export default {
       const userPlansTarget = $('#user-plans')
       const selectTarget = userPlansTarget.find('select')
       const historiesByUserPlan = userCourseDocs
-        .filter(
-          userCourseDoc => {
-            const data = userCourseDoc.data()
-            const status = data.userCourse.status
-            return (status && (status.checked || status.rejected))
-          })
         .map(vueModel.composeHistory)
         .groupBy('userPlanName')
 
