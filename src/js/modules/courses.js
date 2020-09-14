@@ -97,6 +97,13 @@ export default {
               window.location.href = `/coach-web/enterCourse.html?id=${userCourseId}`
             }
           }
+          vueModel.courses[id].tutorProcess = () => {
+            $.ajax({
+              type: 'PUT',
+              contentType: 'application/json',
+              url: `/coach-web/${userCourseId}/enterTutorCourse`,
+            })
+          }
         }, Math.abs(vueModel.$dayjs(Date.now()).diff(startDate, 'second')) * 1000)
       }
 
@@ -123,23 +130,19 @@ export default {
       if (eTutorStatus === 'not-ready' && nowDiffMinStartDate > threeDays) {
         var aboutToReady = Math.abs(vueModel.$dayjs(Date.now()).diff(startDate, 'second') + 300)
         setTimeout(() => {
-          console.log("update ready ")
           vueModel.courses[id].eTutorStatus = 'ready'
         }, aboutToReady * 1000)
       }
 
       if (eTutorStatus === 'ready') {
         var aboutToStart = Math.abs(vueModel.$dayjs(Date.now()).diff(startDate, 'second'))
-        console.log('about to start ', aboutToStart)
         setTimeout(() => {
-          console.log("update start ")
           vueModel.courses[id].eTutorStatus = 'start'
         }, aboutToStart * 1000)
       }
 
       const retrieveCourseStatus = ({ isStart, isAdd, isCheck, isDone, isRejected, eTutorStatus }) => {
         const userCourseId = userCourse['_id']
-        console.log("eTutorStatus ", eTutorStatus, " ", userCourseId)
 
         if (isStart) {
           return {
@@ -151,6 +154,13 @@ export default {
                 sessionStorage.setItem('course', userCourseId)
                 window.location.href = `/coach-web/enterCourse.html?id=${userCourseId}`
               }
+            },
+            tutorProcess: () => {
+              $.ajax({
+                type: 'PUT',
+                contentType: 'application/json',
+                url: `/coach-web/${userCourseId}/enterTutorCourse`,
+              })
             }
           }
         }
@@ -165,6 +175,13 @@ export default {
                 sessionStorage.setItem('course', userCourseId)
                 window.location.href = `/coach-web/enterCourse.html?id=${userCourseId}`
               }
+            },
+            tutorProcess: () => {
+              $.ajax({
+                type: 'PUT',
+                contentType: 'application/json',
+                url: `/coach-web/${userCourseId}/enterTutorCourse`,
+              })
             }
           }
         }
@@ -248,7 +265,8 @@ export default {
         coins: coins,
         gems: gems,
         hasCourseItem: data.userCourseItem.length > 0,
-        process: () => { }
+        process: () => { },
+        tutorProcess:() => {}
       }, vueModel.determineCourseStatus(id, userCourse, startDate, endDate))
     },
 
@@ -258,6 +276,10 @@ export default {
       courseInfo.action = event => {
         event.stopPropagation()
         vueModel.$preventDoubleClick($(event.currentTarget), courseInfo.process)
+      }
+      courseInfo.tutorAction = event => {
+        event.stopPropagation()
+        vueModel.$preventDoubleClick($(event.currentTarget), courseInfo.tutorProcess)
       }
       return courseInfo
     },
