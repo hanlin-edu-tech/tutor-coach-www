@@ -1,8 +1,9 @@
 script(type="text/x-template" id="template-course")
     .content-class(:id="singleCourseId")
         .class-time
-            .date {{ singleCourse.date }}
-            .time {{ singleCourse.time }}
+            .date {{ singleCourse.startDate }}
+            span ~
+            .date {{ singleCourse.endDate }}
         .class-icon
             img(src="./img/icon/icon.png" alt="")
         .class-detail

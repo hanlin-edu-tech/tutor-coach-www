@@ -256,8 +256,8 @@ export default {
         .map(reward => reward.amount)
         .reduce((prev, curr) => prev + curr)
       return Object.assign({
-        date: startDate.format('YYYY-MM-DD'),
-        time: `${startDate.format('HH:mm')} - ${endDate.format('HH:mm')}`,
+        startDate: startDate.format('MM月DD日 HH:mm'),
+        endDate: endDate.format('MM月DD日 HH:mm'),
         subject: subject,
         unit: userCourse.name,
         tool: userCourse.description,
