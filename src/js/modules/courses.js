@@ -38,18 +38,9 @@ export default {
       const vueModel = this
       const nowDiffMinStartDate = vueModel.now.diff(startDate, 'second')
       const nowBeforeEndDate = vueModel.now.isBefore(endDate)
-      const status = userCourse.status
+      const { tutorStarted, ...status } = userCourse.status;
       const statusCount = !!status ? Object.keys(status).length : 0
       const userCourseId = userCourse['_id']
-      /*   deprecated 開始時間前一小時可進入自學課程     */
-      // const hourSeconds = 3600
-      // const isReady = (
-      //   (nowDiffMinStartDate < 0 && Math.abs(nowDiffMinStartDate) < hourSeconds)
-      //   && (
-      //     statusCount === 0 || (statusCount === 1 && status.hasOwnProperty('started'))
-      //   )
-      // )
-
       // 已開始上課
       const isStart = (
         nowDiffMinStartDate >= 0 && nowBeforeEndDate
@@ -85,7 +76,6 @@ export default {
         statusCount > 0
         && status.hasOwnProperty('rejected')
       )
-
       // 倒數計時修改
       if (nowDiffMinStartDate < 0) {
         setTimeout(() => {
@@ -96,13 +86,6 @@ export default {
               sessionStorage.setItem('course', userCourseId)
               window.location.href = `/coach-web/enterCourse.html?id=${userCourseId}`
             }
-          }
-          vueModel.courses[id].tutorProcess = () => {
-            $.ajax({
-              type: 'PUT',
-              contentType: 'application/json',
-              url: `/coach-web/${userCourseId}/enterTutorCourse`,
-            })
           }
         }, Math.abs(vueModel.$dayjs(Date.now()).diff(startDate, 'second')) * 1000)
       }
@@ -141,7 +124,7 @@ export default {
         }, aboutToStart * 1000)
       }
 
-      const retrieveCourseStatus = ({ isStart, isAdd, isCheck, isDone, isRejected, eTutorStatus }) => {
+      const retrieveCourseStatus = ({ isStart, isAdd, isCheck, isDone, isRejected, eTutorStatus, tutorStarted}) => {
         const userCourseId = userCourse['_id']
 
         if (isStart) {
@@ -156,11 +139,13 @@ export default {
               }
             },
             tutorProcess: () => {
-              $.ajax({
-                type: 'PUT',
-                contentType: 'application/json',
-                url: `/coach-web/${userCourseId}/enterTutorCourse`,
-              })
+              if(!tutorStarted){
+                $.ajax({
+                  type: 'PUT',
+                  contentType: 'application/json',
+                  url: `/coach-web/${userCourseId}/enterTutorCourse`,
+                })
+              }
             }
           }
         }
@@ -177,11 +162,13 @@ export default {
               }
             },
             tutorProcess: () => {
-              $.ajax({
-                type: 'PUT',
-                contentType: 'application/json',
-                url: `/coach-web/${userCourseId}/enterTutorCourse`,
-              })
+              if(!tutorStarted){
+                $.ajax({
+                  type: 'PUT',
+                  contentType: 'application/json',
+                  url: `/coach-web/${userCourseId}/enterTutorCourse`,
+                })
+              }
             }
           }
         }
@@ -191,6 +178,15 @@ export default {
             classBtnCss: 'class-btn-check',
             classBtnImg: './img/btn-check.png',
             eTutorStatus: eTutorStatus,
+            tutorProcess: () => {
+              if(!tutorStarted){
+                $.ajax({
+                  type: 'PUT',
+                  contentType: 'application/json',
+                  url: `/coach-web/${userCourseId}/enterTutorCourse`,
+                })
+              }
+            }
           }
         }
 
@@ -210,6 +206,15 @@ export default {
                 console.error(error)
                 showModal(PopupText.REWARD_ERROR)
               }
+            },
+            tutorProcess: () => {
+              if(!tutorStarted){
+                $.ajax({
+                  type: 'PUT',
+                  contentType: 'application/json',
+                  url: `/coach-web/${userCourseId}/enterTutorCourse`,
+                })
+              }
             }
           }
         }
@@ -225,6 +230,15 @@ export default {
                 contentType: 'application/json',
                 url: `/coach-web/UserCourse/${userCourseId}/status/received`,
               })
+            },
+            tutorProcess: () => {
+              if(!tutorStarted){
+                $.ajax({
+                  type: 'PUT',
+                  contentType: 'application/json',
+                  url: `/coach-web/${userCourseId}/enterTutorCourse`,
+                })
+              }
             }
           }
         }
@@ -234,10 +248,19 @@ export default {
           classBtnCss: 'class-btn-noclass',
           classBtnImg: './img/btn-noclass.png',
           eTutorStatus: eTutorStatus,
+          tutorProcess: () => {
+            if(!tutorStarted){
+              $.ajax({
+                type: 'PUT',
+                contentType: 'application/json',
+                url: `/coach-web/${userCourseId}/enterTutorCourse`,
+              })
+            }
+          }
         }
       }
 
-      return retrieveCourseStatus({ isStart, isAdd, isCheck, isDone, isRejected, eTutorStatus })
+      return retrieveCourseStatus({ isStart, isAdd, isCheck, isDone, isRejected, eTutorStatus, tutorStarted})
     },
 
     composeCourseInfo(id, data) {
