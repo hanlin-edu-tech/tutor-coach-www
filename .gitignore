@@ -4,3 +4,5 @@ package-lock.json
 WARNING.md
 tutor-test.json
 tutor.json
+.idea/
+yarn.lock
