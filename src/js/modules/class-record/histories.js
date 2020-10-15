@@ -63,22 +63,26 @@ export default {
           if (!!itemStatus.finished) {
             finishedTime = vueModel.$dayjs(itemStatus.finished.toDate()).format('HH:mm')
           }
-
           return {
             _id: item._id,
             type: ItemType.get(item.type),
             name: item.name,
             redirect: () => {
-              if ((item.status && item.status.finished)) {
-                window.open(`./history-redirect.html?itemId=${item._id}`, '_blank')
+              if (item.status && item.status.finished) {
+                window.open(`./history-redirect.html?courseId=${courseId}&itemId=${item._id}&action=gotoCourseItem`, '_blank')
+              } else if(item.status && item.status.started) {
+                window.open(`./history-redirect.html?courseId=${courseId}&itemId=${item._id}&action=enterCourse`, '_blank')
               }
             },
             startTime: startTime,
             endTime: finishedTime,
-            class: ItemIconClass.get(item.type)
+            class: ItemIconClass.get(item.type),
+            order: item.order
           }
         }
-      )
+      ).sort((a, b) => {
+        return a.order - b.order;
+      });
 
       return {
         userPlanId,
