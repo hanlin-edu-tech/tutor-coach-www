@@ -41,6 +41,8 @@ export default {
       const { tutorStarted, ...status } = userCourse.status;
       const statusCount = !!status ? Object.keys(status).length : 0
       const userCourseId = userCourse['_id']
+
+      // 一般課堂狀態
       // 已開始上課
       const isStart = (
         nowDiffMinStartDate >= 0 && nowBeforeEndDate
@@ -76,6 +78,29 @@ export default {
         statusCount > 0
         && status.hasOwnProperty('rejected')
       )
+
+      const retrieveETutorStatus = (userCourse, isDone, isRejected, nowDiffMinStartDate, tutorStarted) => {
+        if (!userCourse.eTutorUrl) {
+          return 'no-class'
+        }
+        if (isDone || isRejected) {
+          return isDone ? ['done', 'class-btn-done', './img/btn-done.png'] : ['rejected', 'class-btn-check-error', './img/btn-check-error.png']
+        }
+        if (nowDiffMinStartDate < -300) {
+          return ['not-ready', 'disabled', './img/btn-eTutor-noclass.png']
+        }
+        if (nowDiffMinStartDate >= -300 && nowDiffMinStartDate < 0) {
+          return ['ready', 'class-btn-start focus-animation', './img/btn-eTutor-ready.png']
+        }
+        const fifteenMin = 15 * 60
+        if(!tutorStarted && nowDiffMinStartDate > fifteenMin){
+          return ['expired', '', './img/btn-check-error.png']
+        }
+        return ['start', '', './img/btn-eTutor-ready.png']
+      }
+
+      const [eTutorStatus, eTutorClassBtnCss, eTutorClassBtnImg] = retrieveETutorStatus(userCourse, isDone, isRejected,
+          nowDiffMinStartDate, tutorStarted)
       // 倒數計時修改
       if (nowDiffMinStartDate < 0) {
         setTimeout(() => {
@@ -88,57 +113,49 @@ export default {
             }
           }
         }, Math.abs(vueModel.$dayjs(Date.now()).diff(startDate, 'second')) * 1000)
-      }
+        const threeDays = -(3 * 24 * 60 * 60)
+        // 距開課日期三天以內才setTimeout
+        if (eTutorStatus === 'not-ready' && nowDiffMinStartDate > threeDays) {
+          let aboutToReady = Math.abs(vueModel.$dayjs(Date.now()).diff(startDate, 'second') + 300)
+          setTimeout(() => {
+            vueModel.courses[id].eTutorStatus = 'ready'
+          }, aboutToReady * 1000)
+        }
 
-      const retrieveETutorStatus = (userCourse, isDone, isRejected, nowDiffMinStartDate) => {
-        if (!userCourse.eTutorUrl) {
-          return 'no-class'
-        }
-        if (isDone || isRejected) {
-          return isDone ? 'done' : 'rejected'
-        }
-        if (nowDiffMinStartDate < -300) {
-          return 'not-ready'
-        }
-        if (nowDiffMinStartDate >= -300 && nowDiffMinStartDate < 0) {
-          return 'ready'
-        }
-        if (nowDiffMinStartDate >= 0) {
-          return 'start'
+        if (eTutorStatus === 'ready') {
+          let aboutToStart = Math.abs(vueModel.$dayjs(Date.now()).diff(startDate, 'second'))
+          setTimeout(() => {
+            vueModel.courses[id].eTutorStatus = 'start'
+          }, aboutToStart * 1000)
         }
       }
-      const eTutorStatus = retrieveETutorStatus(userCourse, isDone, isRejected, nowDiffMinStartDate)
-      const threeDays = -(3 * 24 * 60 * 60)
-      // 距開課日期三天以內才setTimeout
-      if (eTutorStatus === 'not-ready' && nowDiffMinStartDate > threeDays) {
-        var aboutToReady = Math.abs(vueModel.$dayjs(Date.now()).diff(startDate, 'second') + 300)
+      const fifteenMin = 15 * 60
+      if(userCourse.eTutorUrl && !tutorStarted && nowDiffMinStartDate < fifteenMin){
+        let aboutToStart = Math.abs(vueModel.$dayjs(Date.now()).diff(startDate, 'second'))
         setTimeout(() => {
-          vueModel.courses[id].eTutorStatus = 'ready'
-        }, aboutToReady * 1000)
+          vueModel.courses[id].eTutorStatus = 'expired'
+        }, (aboutToStart + fifteenMin) * 1000)
       }
 
-      if (eTutorStatus === 'ready') {
-        var aboutToStart = Math.abs(vueModel.$dayjs(Date.now()).diff(startDate, 'second'))
-        setTimeout(() => {
-          vueModel.courses[id].eTutorStatus = 'start'
-        }, aboutToStart * 1000)
-      }
-
-      const retrieveCourseStatus = ({ isStart, isAdd, isCheck, isDone, isRejected, eTutorStatus, tutorStarted}) => {
+      const retrieveCourseStatus = ({ isStart, isAdd, isCheck, isDone, isRejected,
+                                      eTutorStatus, eTutorClassBtnCss, eTutorClassBtnImg, tutorStarted}) => {
         const userCourseId = userCourse['_id']
+        const eTutorUrl = userCourse['eTutorUrl']
 
         if (isStart) {
           return {
             classBtnCss: 'class-btn-start',
             classBtnImg: './img/btn-start.png',
             eTutorStatus: eTutorStatus,
+            eTutorClassBtnCss: eTutorClassBtnCss,
+            eTutorClassBtnImg: eTutorClassBtnImg,
             process: () => {
               if (window.sessionStorage) {
                 sessionStorage.setItem('course', userCourseId)
                 window.location.href = `/coach-web/enterCourse.html?id=${userCourseId}`
               }
             },
-            tutorProcess: () => {
+            eTutorProcess: () => {
               if(!tutorStarted){
                 $.ajax({
                   type: 'PUT',
@@ -146,6 +163,7 @@ export default {
                   url: `/coach-web/${userCourseId}/enterTutorCourse`,
                 })
               }
+              window.open(eTutorUrl, '_blank')
             }
           }
         }
@@ -155,13 +173,15 @@ export default {
             classBtnCss: 'class-btn-add',
             classBtnImg: './img/btn-add.png',
             eTutorStatus: eTutorStatus,
+            eTutorClassBtnCss: eTutorClassBtnCss,
+            eTutorClassBtnImg: eTutorClassBtnImg,
             process: () => {
               if (window.sessionStorage) {
                 sessionStorage.setItem('course', userCourseId)
                 window.location.href = `/coach-web/enterCourse.html?id=${userCourseId}`
               }
             },
-            tutorProcess: () => {
+            eTutorProcess: () => {
               if(!tutorStarted){
                 $.ajax({
                   type: 'PUT',
@@ -169,6 +189,7 @@ export default {
                   url: `/coach-web/${userCourseId}/enterTutorCourse`,
                 })
               }
+              window.open(eTutorUrl, '_blank')
             }
           }
         }
@@ -178,7 +199,9 @@ export default {
             classBtnCss: 'class-btn-check',
             classBtnImg: './img/btn-check.png',
             eTutorStatus: eTutorStatus,
-            tutorProcess: () => {
+            eTutorClassBtnCss: eTutorClassBtnCss,
+            eTutorClassBtnImg: eTutorClassBtnImg,
+            eTutorProcess: () => {
               if(!tutorStarted){
                 $.ajax({
                   type: 'PUT',
@@ -186,15 +209,19 @@ export default {
                   url: `/coach-web/${userCourseId}/enterTutorCourse`,
                 })
               }
+              window.open(eTutorUrl, '_blank')
             }
           }
         }
+
 
         if (isDone) {
           return {
             classBtnCss: 'class-btn-done',
             classBtnImg: './img/btn-done.png',
             eTutorStatus: eTutorStatus,
+            eTutorClassBtnCss: eTutorClassBtnCss,
+            eTutorClassBtnImg: eTutorClassBtnImg,
             process: async () => {
               try {
                 await $.ajax({
@@ -207,13 +234,16 @@ export default {
                 showModal(PopupText.REWARD_ERROR)
               }
             },
-            tutorProcess: () => {
-              if(!tutorStarted){
-                $.ajax({
+            eTutorProcess: async () => {
+              try {
+                await $.ajax({
                   type: 'PUT',
                   contentType: 'application/json',
-                  url: `/coach-web/${userCourseId}/enterTutorCourse`,
+                  url: `/coach-web/UserCourse/${userCourseId}/status/received`,
                 })
+              } catch (error) {
+                console.error(error)
+                showModal(PopupText.REWARD_ERROR)
               }
             }
           }
@@ -224,6 +254,8 @@ export default {
             classBtnCss: 'class-btn-check-error',
             classBtnImg: './img/btn-check-error.png',
             eTutorStatus: eTutorStatus,
+            eTutorClassBtnCss: eTutorClassBtnCss,
+            eTutorClassBtnImg: eTutorClassBtnImg,
             process: async () => {
               await $.ajax({
                 type: 'PUT',
@@ -231,7 +263,7 @@ export default {
                 url: `/coach-web/UserCourse/${userCourseId}/status/received`,
               })
             },
-            tutorProcess: () => {
+            eTutorProcess: () => {
               if(!tutorStarted){
                 $.ajax({
                   type: 'PUT',
@@ -239,6 +271,7 @@ export default {
                   url: `/coach-web/${userCourseId}/enterTutorCourse`,
                 })
               }
+              window.open(eTutorUrl, '_blank')
             }
           }
         }
@@ -248,7 +281,9 @@ export default {
           classBtnCss: 'class-btn-noclass',
           classBtnImg: './img/btn-noclass.png',
           eTutorStatus: eTutorStatus,
-          tutorProcess: () => {
+          eTutorClassBtnCss: eTutorClassBtnCss,
+          eTutorClassBtnImg: eTutorClassBtnImg,
+          eTutorProcess: () => {
             if(!tutorStarted){
               $.ajax({
                 type: 'PUT',
@@ -256,11 +291,13 @@ export default {
                 url: `/coach-web/${userCourseId}/enterTutorCourse`,
               })
             }
+            window.open(eTutorUrl, '_blank')
           }
         }
       }
 
-      return retrieveCourseStatus({ isStart, isAdd, isCheck, isDone, isRejected, eTutorStatus, tutorStarted})
+      return retrieveCourseStatus({ isStart, isAdd, isCheck, isDone, isRejected, eTutorStatus, eTutorClassBtnCss,
+        eTutorClassBtnImg, tutorStarted})
     },
 
     composeCourseInfo(id, data) {
@@ -288,8 +325,9 @@ export default {
         coins: coins,
         gems: gems,
         hasCourseItem: data.userCourseItem.length > 0,
+        hasETutorCourseItem: userCourse.eTutorUrl != null,
         process: () => { },
-        tutorProcess:() => {}
+        eTutorProcess:() => {}
       }, vueModel.determineCourseStatus(id, userCourse, startDate, endDate))
     },
 
@@ -300,9 +338,9 @@ export default {
         event.stopPropagation()
         vueModel.$preventDoubleClick($(event.currentTarget), courseInfo.process)
       }
-      courseInfo.tutorAction = event => {
+      courseInfo.eTutorAction = event => {
         event.stopPropagation()
-        vueModel.$preventDoubleClick($(event.currentTarget), courseInfo.tutorProcess)
+        vueModel.$preventDoubleClick($(event.currentTarget), courseInfo.eTutorProcess)
       }
       return courseInfo
     },
