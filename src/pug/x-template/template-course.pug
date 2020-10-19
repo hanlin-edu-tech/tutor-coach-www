@@ -26,4 +26,4 @@ script(type="text/x-template" id="template-course")
                 @click="singleCourse.action")
                 img(:src="singleCourse.classBtnImg" alt="")
         .class-valid(v-if="singleCourse.eTutorStatus === 'expired'")
-            span 已逾時超過15分鐘，請與規劃師另約補課時間。
+            span.class-expired 已逾時超過15分鐘，請與規劃師另約補課時間。
