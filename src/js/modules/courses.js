@@ -131,10 +131,11 @@ export default {
       }
       const fifteenMin = 15 * 60
       if(userCourse.eTutorUrl && !tutorStarted && nowDiffMinStartDate < fifteenMin){
-        let aboutToStart = Math.abs(vueModel.$dayjs(Date.now()).diff(startDate, 'second'))
+        let aboutToStart = vueModel.$dayjs(Date.now()).diff(startDate, 'second')
+        const delayReload = 3000
         setTimeout(() => {
-          vueModel.courses[id].eTutorStatus = 'expired'
-        }, (aboutToStart + fifteenMin) * 1000)
+          window.location.reload();
+        }, Math.abs(fifteenMin - aboutToStart) * 1000 + delayReload)
       }
 
       const retrieveCourseStatus = ({ isStart, isAdd, isCheck, isDone, isRejected,
