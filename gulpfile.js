@@ -62,7 +62,7 @@ const uploadToGCS = async (bucketName, projectId, gcsKeyPath, cacheControlConfig
     storage.bucket(bucketName)
       .upload(distEntireFilePath,
         {
-          destination: `/${appPath}${distEntireFilePath.replace(distDir, '')}`,
+          destination: `${appPath}${distEntireFilePath.replace(distDir, '')}`,
           metadata: {
             cacheControl: cacheControlConfig,
           },
