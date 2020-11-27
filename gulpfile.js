@@ -235,5 +235,5 @@ gulp.task('packageToProduction',
 gulp.task('watch', gulp.series('copyToDist', gulp.parallel(watchPugSassImages)))
 
 /* 上傳 GCS */
-gulp.task('uploadToGcsTest', uploadToGCS.bind(uploadToGCS, 'tutor-test-apps/', 'tutor-test-238709', './tutor-test.json', 'no-store'))
-gulp.task('uploadToGcsProduction', uploadToGCS.bind(uploadToGCS, 'tutor-apps/', 'tutor-204108', './tutor.json', 'public, max-age=10800'))
+gulp.task('uploadGcsTest', uploadToGCS.bind(uploadToGCS, 'tutor-test-apps/', 'tutor-test-238709', './tutor-test.json', 'no-store'))
+gulp.task('uploadGcsProd', uploadToGCS.bind(uploadToGCS, 'tutor-apps/', 'tutor-204108', './tutor.json', 'public, max-age=10800'))

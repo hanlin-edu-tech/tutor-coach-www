@@ -1,13 +1,16 @@
 {
   "name": "tutor-coach-www",
   "version": "0.0.01",
+  "engines": {
+    "node": ">=12.0.0"
+  },
   "main": "index.js",
   "scripts": {
     "test": "echo 'skip test'",
     "ui": "gulp packageToUi && rollup -c rollup.base.config.js && gulp watch",
     "js": "gulp packageToJs && rollup -c rollup.dev.config.js -w",
-    "deployToTest": "gulp packageToJs && rollup -c rollup.base.config.js && gulp uploadToGcsTest",
-    "deployToProduction": "gulp packageToProduction && rollup -c rollup.base.config.js && gulp uploadToGcsProduction"
+    "deployToTest": "gulp packageToJs && rollup -c rollup.base.config.js && gulp uploadGcsTest",
+    "deployToProduction": "gulp packageToProduction && rollup -c rollup.base.config.js && gulp uploadGcsProd"
   },
   "repository": {
     "type": "git",
