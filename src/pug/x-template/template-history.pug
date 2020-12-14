@@ -3,18 +3,14 @@ script(type="text/x-template" id="template-history")
         input.list-switch-input(:id="historyInfo.courseId",level="0",type="checkbox")
         label.title(:for="historyInfo.courseId")
             span.info {{ historyInfo.courseName }}
+            span.status.wait(v-if="!historyInfo.isChecked && !historyInfo.isRejected") 審核中
             span.status.pass(v-show="historyInfo.isChecked") 審核通過
             span.status.fail(v-show="historyInfo.isRejected") 審核不通過
-            span.detail(v-show="historyInfo.isChecked")
-                span 金幣
-                span.ecoin {{ historyInfo.coins }}
-                span 寶石
-                span.diamond {{ historyInfo.gems }}
+            span.status.class-notes(href="https://www.ehanlin.com.tw/app/magic/", target="_blank") 上課筆記
+            span.status.course-diary 課後日誌
             span.action
                 span.switch
                     i.fa.fa-chevron-circle-down
-            article.row-feedback
-                div(v-html="historyInfo.message")
 
         ol.eh-list.level-2
             li.textbook.TEACH(v-for="(item, index) in historyInfo.items" :key="item._id")
