@@ -1,5 +1,6 @@
 import { db, ehanlinAuth } from '../firestore/firebase-config'
 import singleHistory from '../components/single-history'
+import { resultModal} from '../util/show-modal'
 import { ItemType, ItemIconClass } from '../util/modal-text'
 
 export default {
@@ -20,10 +21,17 @@ export default {
   async mounted () {
     const vueModel = this
     vueModel.ehanlinUser = await ehanlinAuth()
+    vueModel.initModal()
     vueModel.userCoursesHandler()
   },
 
   methods: {
+    initModal() {
+      $(".js-close-modal").click(function(){
+        $(".modal").removeClass("visible");
+        $(".modal-con").removeClass("slideDown");
+      });
+    },
     composeHistory (userCourseDoc) {
       const vueModel = this
       const data = userCourseDoc.data()
@@ -33,17 +41,33 @@ export default {
       const courseName = userCourse.name
       const status = userCourse.status
       const result = userCourse.result
-      let coins = 0, gems = 0, chests = 0
+      let coins = 0, gems = 0, chestLevel = 0, chestCount = 0, details = {}
+      console.log(result)
       if (result && result.rewards) {
         coins =  result.rewards.coin
         gems = result.rewards.gem
-        chests = result.rewards.chest
+        if(Array.isArray(result.rewards)){
+          coins =  result.rewards
+              .filter(reward => reward.type === 'coin')
+              .map(reward => reward.amount)
+              .reduce((prev, curr) => prev + curr, 0)
+          gems = result.rewards
+              .filter(reward => reward.type === 'gem')
+              .map(reward => reward.amount)
+              .reduce((prev, curr) => prev + curr, 0)
+        }
+        chestLevel = result.rewards.chestLevel
+        chestCount = result.rewards.chestCount
+        if(result.rewardsDetails && result.rewardsDetails.rawData){
+          details = result.rewardsDetails.rawData
+        }
       }
 
       const userPlan = data.userPlan
       const userPlanId = userPlan._id
       const userPlanName = userPlan.name
-
+      const hasCourseItem = data.userCourseItem.length > 0
+      const hasETutorCourseItem = userCourse.eTutorUrl != null
       const items = data.userCourseItem.map(
         item => {
           const itemStatus = item.status
@@ -79,13 +103,20 @@ export default {
         userPlanId,
         userPlanName,
         courseId,
+        hasCourseItem: hasCourseItem,
+        hasETutorCourseItem: hasETutorCourseItem,
         courseName: courseName,
         items: items,
         isChecked: (status && status.checked),
         isRejected: (status && status.rejected),
         coins: coins,
         gems: gems,
-        chests: chests
+        chestLevel: chestLevel,
+        chestCount: chestCount,
+        showResult:(e) => {
+          e.preventDefault();
+          resultModal(coins, gems, chestLevel, chestCount, details)
+        }
       }
     },
 

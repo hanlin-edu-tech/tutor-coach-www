@@ -51,8 +51,7 @@ function resultModal(coin, gem, chestLevel, chestCount, details) {
   const tutor = modalConTarget.find('.tutor');
   tutor.css("display", 'None');
   selfStudy.css("display", 'None');
-  console.log(details);
-  if(details){
+  if(details && !isEmpty(details)){
     if(details['tutorTime']){
       let resultMap = new Map();
       resultMap.set('time-a', "準時到課");
@@ -112,7 +111,6 @@ function resultModal(coin, gem, chestLevel, chestCount, details) {
     modalConTarget.find('.chest-name-award').html(`Lv${chestLevel} 水晶球`);
     modalConTarget.find('.chest-number-award').empty();
     modalConTarget.find('.chest-number-award').html(`x${chestCount}`);
-
     modalConTarget.find('.reward-detail').css("display", '');
     modalConTarget.find('.coin-item-award').css("display", 'None');
     modalConTarget.find('.gem-item-award').css("display", 'None');
@@ -122,6 +120,14 @@ function resultModal(coin, gem, chestLevel, chestCount, details) {
   }
   modalConTarget.addClass('slideDown');
   modalTarget.addClass('visible');
+}
+
+function isEmpty(obj) {
+  for(let key in obj) {
+    if(obj.hasOwnProperty(key))
+      return false;
+  }
+  return true;
 }
 
 export {

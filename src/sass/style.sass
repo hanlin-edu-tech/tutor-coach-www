@@ -6,7 +6,7 @@
 
 *
     cursor: default
-    
+
 
 // navbar //
 .navbar
@@ -212,7 +212,7 @@
                     bottom: 8px
                     right: 65px
                     text-shadow: 1.6px 1.6px 0 #912092,-1.6px -1.6px 0 #912092,1.6px -1.6px 0 #912092,-1.6px 1.6px 0 #912092
-                    
+
                 .gift-ecoin
                     position: absolute
                     font-size: 20px
@@ -221,16 +221,15 @@
                     right: 12px
                     text-shadow: 1.6px 1.6px 0 #912092,-1.6px -1.6px 0 #912092,1.6px -1.6px 0 #912092,-1.6px 1.6px 0 #912092
         .class-btn
-            max-width: 100px
-            min-width: 100px
-            width: 100px
-            margin-right: 10px
+            width: 340px
             display: flex
             align-items: center
-
+            justify-content: flex-end
             img
                 width: 100%
-            .class-btn-start,.class-btn-add,.class-btn-done,.class-btn-ready,.class-btn-check-error
+            .class-btn-start,.class-btn-add,.class-btn-done,.class-btn-ready,.class-btn-check-error,.class-btn-check,.class-btn-eTutor,.disabled,.class-btn-noclass
+                width: 100px
+                margin-right: 12px
                 img
                     +btn-hover
             .class-btn-not-ready
@@ -362,8 +361,8 @@
                 transform: scale(0.95)
         &:last-child
             margin-right: 0px
-        
-    
+
+
     .gift1
         animation: switch1 1s forwards cubic-bezier(0, 0.55, 0.45, 1)
     .gift2
@@ -467,7 +466,7 @@
     .coin-name-award,.gem-name-award,.chest-name-award
         letter-spacing: 1px
         font-size: 20px
-        color: #E94840 
+        color: #E94840
         font-weight: bold
         margin-left: 8px
     .coin-number-award,.gem-number-award,.chest-number-award
@@ -475,7 +474,7 @@
         font-size: 20px
         color: #E94840
         font-weight: bold
-        
+
 @keyframes congrats-glow
     0%
         transform: rotate(0deg)
@@ -547,7 +546,7 @@
             color: #454545
             font-weight: normal
 
-    
+
 .title-result
     font-size: 20px
     font-weight: bold

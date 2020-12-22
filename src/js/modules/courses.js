@@ -235,6 +235,7 @@ export default {
                   contentType: 'application/json',
                   url: `/coach-web/UserCourse/${userCourseId}/status/received`,
                 })
+                await vueModel.userAssetsHandler()
               } catch (error) {
                 if(error && error.responseJSON && error.responseJSON.message === "活動空格已滿"){
                   messageModal(PopupText.CHEST_ERROR)
@@ -250,6 +251,7 @@ export default {
                   contentType: 'application/json',
                   url: `/coach-web/UserCourse/${userCourseId}/status/received`,
                 })
+                await vueModel.userAssetsHandler()
               } catch (error) {
                 console.error(error)
                 messageModal(PopupText.REWARD_ERROR)
