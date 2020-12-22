@@ -130,7 +130,9 @@ export default {
         }
       }
       const fifteenMin = 15 * 60
-      if(userCourse.eTutorUrl && !tutorStarted && nowDiffMinStartDate < 0 && Math.abs(nowDiffMinStartDate) <= fifteenMin){
+      const hasETutorClassAndNotStarted = userCourse.eTutorUrl && !tutorStarted;
+      // 倒數計時15分鐘, 逾時鎖課程
+      if(hasETutorClassAndNotStarted && Math.abs(nowDiffMinStartDate) <= fifteenMin){
         let aboutToStart = vueModel.$dayjs(Date.now()).diff(startDate, 'second')
         const delayReload = 3000
         setTimeout(() => {
