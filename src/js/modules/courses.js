@@ -130,11 +130,13 @@ export default {
         }
       }
       const fifteenMin = 15 * 60
-      if(userCourse.eTutorUrl && !tutorStarted && nowDiffMinStartDate < fifteenMin){
+      if(userCourse.eTutorUrl && !tutorStarted && nowDiffMinStartDate < 0 && Math.abs(nowDiffMinStartDate) <= fifteenMin){
         let aboutToStart = vueModel.$dayjs(Date.now()).diff(startDate, 'second')
         const delayReload = 3000
         setTimeout(() => {
-          window.location.reload();
+          vueModel.courses[id].eTutorStatus = 'expired'
+          vueModel.courses[id].eTutorClassBtnCss = ''
+          vueModel.courses[id].eTutorClassBtnImg = './img/btn-check-error.png'
         }, Math.abs(fifteenMin - aboutToStart) * 1000 + delayReload)
       }
 
@@ -311,11 +313,11 @@ export default {
       const coins = rewards
         .filter(reward => reward.type === 'coin')
         .map(reward => reward.amount)
-        .reduce((prev, curr) => prev + curr)
+        .reduce((prev, curr) => prev + curr, 0)
       const gems = rewards
         .filter(reward => reward.type === 'gem')
         .map(reward => reward.amount)
-        .reduce((prev, curr) => prev + curr)
+        .reduce((prev, curr) => prev + curr, 0)
       return Object.assign({
         startDate: startDate.format('MM月DD日 HH:mm'),
         endDate: endDate.format('MM月DD日 HH:mm'),
