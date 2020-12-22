@@ -33,20 +33,11 @@ export default {
       const courseName = userCourse.name
       const status = userCourse.status
       const result = userCourse.result
-      let coins = 0, gems = 0, message = ''
+      let coins = 0, gems = 0, chests = 0
       if (result && result.rewards) {
-        coins = result.rewards
-          .filter(reward => reward.type === 'coin')
-          .map(reward => reward.amount)
-          .reduce((prev, curr) => prev + curr)
-        gems = result.rewards
-          .filter(reward => reward.type === 'gem')
-          .map(reward => reward.amount)
-          .reduce((prev, curr) => prev + curr)
-      }
-
-      if (result && result.message) {
-        message = result.message.replace(/\n/g, '<br />')
+        coins =  result.rewards.coin
+        gems = result.rewards.gem
+        chests = result.rewards.chest
       }
 
       const userPlan = data.userPlan
@@ -94,7 +85,7 @@ export default {
         isRejected: (status && status.rejected),
         coins: coins,
         gems: gems,
-        message: `老師的話：${message}`
+        chests: chests
       }
     },
 

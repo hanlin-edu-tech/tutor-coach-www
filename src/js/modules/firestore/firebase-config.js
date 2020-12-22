@@ -3,7 +3,6 @@ import firebase from '@firebase/app'
 import '@firebase/firestore'
 import '@firebase/auth'
 import '@firebase/storage'
-import showModal from '../util/show-modal'
 import { AuthText } from '../util/modal-text'
 
 firebase.initializeApp(authConfig)
@@ -37,7 +36,6 @@ const ehanlinAuth = async () => {
 
   if (!ehanlinUser) {
     $('.popup-unlogin').removeClass("hide")
-    //showModal(AuthText.WARNING)
     throw AuthText.WARNING
   }
 

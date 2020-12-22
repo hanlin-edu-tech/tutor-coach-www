@@ -5,7 +5,7 @@ script(type="text/x-template" id="template-course")
             span ~
             .date {{ singleCourse.endDate }}
         .class-icon
-            img(src="./img/icon/icon.png" alt="")
+            img(:src="singleCourse.icon" :alt="singleCourse.subject")
         .class-detail
             .course-subject {{ singleCourse.subject }}
             .course-unit {{ singleCourse.unit }}

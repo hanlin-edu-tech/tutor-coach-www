@@ -1,5 +1,5 @@
-// 領獎popup
-.modal
+// 訊息
+.modal.modal-message
     .modal-con.modal-style
         .js-close-modal.flaticon-close
         .content-gift
@@ -10,3 +10,85 @@
         .popup-title 目前還未登入哦！
         a.btn-login(href="/app/member-center/login.html?redirect=/app/coach/") 馬上登入開始上課
         a.btn-intro 看看e家教有哪些功能
+
+// 選擇寶箱popup
+.modal.modal-chest
+    .modal-con
+        .js-close-modal.flaticon-close
+        .modal-body
+            .title-choose
+                img(src="./img/title-choose.png", alt="選擇寶箱")
+            .wrap-gift
+                .gift.chest
+                    img(src="./img/cont-gift-treasure.png", alt="寶箱")
+                .gift.chest
+                    img(src="./img/cont-gift-treasure.png", alt="寶箱")
+                .gift.chest
+                    img(src="./img/cont-gift-treasure.png", alt="寶箱")
+
+// 獲得獎勵popup
+.modal.modal-rewards
+    .modal-con
+        .js-close-modal.flaticon-close
+        .modal-body.modal-body-award
+            .title-congrats
+                img.congrats-glow(src="./img/congrats-glow.png")
+                img.congrats-deco(src="./img/title-deco.png")
+                img.congrats-title(src="./img/title-get.png", alt="獲得獎勵")
+            .wrap-award
+                .coin-item-award
+                    img.img-award(src="./img/ecoin.png", alt="獎勵圖")
+                    .coin-name-award
+                    .coin-number-award x1000
+                .gem-item-award
+                    img.img-award(src="./img/diamond.png", alt="獎勵圖")
+                    .gem-name-award
+                    .gem-number-award x1000
+                .chest-item-award
+                    img.img-award(src="./img/crystal/lv1.png", alt="獎勵圖")
+                    .chest-name-award Lv1水晶球
+                    .chest-number-award x1
+
+
+// 審核結果popup
+.modal.modal-result
+    .modal-con
+        .js-close-modal.flaticon-close
+        .modal-body.modal-body-result
+            .title-result 審核結果
+            .wrap-result.self-study
+                .item-result
+                    .title 完成時間
+                    .time 逾時完成
+                .item-result
+                    .title 認真程度
+                    .serious 普通
+                .item-result
+                    .title 學習成就
+                    .achievement 符合學生程度
+            .wrap-result.tutor
+                .item-result
+                    .title 準時上課
+                    .tutorTime 逾時到課
+                .item-result
+                    .title 專心程度
+                    .concentrate 普通
+                .item-result
+                    .title 互動回答
+                    .interactive 普通
+            .reward-detail
+                hr
+                .title-result 獲得獎勵
+                .wrap-award.wrap-result-award
+                    .coin-item-award
+                        img.img-award(src="./img/ecoin.png", alt="獎勵圖")
+                        .coin-name-award
+                        .coin-number-award x1000
+                    .gem-item-award
+                        img.img-award(src="./img/diamond.png", alt="獎勵圖")
+                        .gem-name-award
+                        .gem-number-award x1000
+                    .chest-item-award
+                        img.img-award(src="./img/crystal/lv1.png", alt="獎勵圖")
+                        .chest-name-award Lv1水晶球
+                        .chest-number-award x1
