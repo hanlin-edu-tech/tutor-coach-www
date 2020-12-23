@@ -3,18 +3,22 @@ script(type="text/x-template" id="template-history")
         input.list-switch-input(:id="historyInfo.courseId",level="0",type="checkbox")
         label.title(:for="historyInfo.courseId")
             span.info {{ historyInfo.courseName }}
-            span.status.pass(v-show="historyInfo.isChecked") 審核通過
-            span.status.fail(v-show="historyInfo.isRejected") 審核不通過
-            span.detail(v-show="historyInfo.isChecked")
-                span 金幣
-                span.ecoin {{ historyInfo.coins }}
-                span 寶石
-                span.diamond {{ historyInfo.gems }}
-            span.action
+            span.status.wait(v-if="!historyInfo.isChecked && !historyInfo.isRejected") 審核中
+            span.status.pass(v-show="historyInfo.isChecked" @click="historyInfo.showResult") 審核通過
+            span.status.fail(v-show="historyInfo.isRejected" @click="historyInfo.showResult") 審核不通過
+            span.status.class-notes-disabled(v-if="historyInfo.hasETutorCourseItem && " +
+            "((!historyInfo.isChecked && !historyInfo.isRejected) || !historyInfo.noteUploaded)") 上課筆記
+            a.status.class-notes(:href="'/coach-web/eTutor/view-file?type=課堂筆記&userCourse=' + historyInfo.courseId",
+                target="_blank", v-if="historyInfo.hasETutorCourseItem && (historyInfo.isChecked || " +
+            "historyInfo.isRejected) && historyInfo.noteUploaded") 上課筆記
+            span.status.course-diary-disabled(v-if="historyInfo.hasETutorCourseItem &&" +
+            " ((!historyInfo.isChecked && !historyInfo.isRejected) || !historyInfo.diaryFinished)") 課後日誌
+            a.status.course-diary(:href="'/coach-web/diary-view.html?userCourse=' + historyInfo.courseId",
+                target="_blank", v-if="historyInfo.hasETutorCourseItem && (historyInfo.isChecked || historyInfo.isRejected)" +
+            " && historyInfo.diaryFinished") 課後日誌
+            span.action(v-if="historyInfo.hasCourseItem")
                 span.switch
                     i.fa.fa-chevron-circle-down
-            article.row-feedback
-                div(v-html="historyInfo.message")
 
         ol.eh-list.level-2
             li.textbook.TEACH(v-for="(item, index) in historyInfo.items" :key="item._id")

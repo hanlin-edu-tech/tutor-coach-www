@@ -1,5 +1,6 @@
 import { db, ehanlinAuth } from '../firestore/firebase-config'
 import singleHistory from '../components/single-history'
+import { resultModal} from '../util/show-modal'
 import { ItemType, ItemIconClass } from '../util/modal-text'
 
 export default {
@@ -20,39 +21,59 @@ export default {
   async mounted () {
     const vueModel = this
     vueModel.ehanlinUser = await ehanlinAuth()
+    vueModel.initModal()
     vueModel.userCoursesHandler()
   },
 
   methods: {
+    initModal() {
+      $(".js-close-modal").click(function(){
+        $(".modal").removeClass("visible");
+        $(".modal-con").removeClass("slideDown");
+      });
+    },
     composeHistory (userCourseDoc) {
       const vueModel = this
       const data = userCourseDoc.data()
-
       const userCourse = data.userCourse
       const courseId = userCourse._id
       const courseName = userCourse.name
       const status = userCourse.status
       const result = userCourse.result
-      let coins = 0, gems = 0, message = ''
-      if (result && result.rewards) {
-        coins = result.rewards
-          .filter(reward => reward.type === 'coin')
-          .map(reward => reward.amount)
-          .reduce((prev, curr) => prev + curr)
-        gems = result.rewards
-          .filter(reward => reward.type === 'gem')
-          .map(reward => reward.amount)
-          .reduce((prev, curr) => prev + curr)
+      const info = userCourse.info
+      let noteUploaded  = false, diaryFinished = false
+      if(info && info.noteUploaded){
+        noteUploaded = info.noteUploaded
       }
-
-      if (result && result.message) {
-        message = result.message.replace(/\n/g, '<br />')
+      if(info && info.diaryFinished){
+        diaryFinished = info.diaryFinished
+      }
+      let coins = 0, gems = 0, chestLevel = 0, chestCount = 0, details = {}
+      if (result && result.rewards) {
+        coins =  result.rewards.coin
+        gems = result.rewards.gem
+        if(Array.isArray(result.rewards)){
+          coins =  result.rewards
+              .filter(reward => reward.type === 'coin')
+              .map(reward => reward.amount)
+              .reduce((prev, curr) => prev + curr, 0)
+          gems = result.rewards
+              .filter(reward => reward.type === 'gem')
+              .map(reward => reward.amount)
+              .reduce((prev, curr) => prev + curr, 0)
+        }
+        chestLevel = result.rewards.chestLevel
+        chestCount = result.rewards.chestCount
+        if(result.rewardsDetails && result.rewardsDetails.rawData){
+          details = result.rewardsDetails.rawData
+        }
       }
 
       const userPlan = data.userPlan
       const userPlanId = userPlan._id
       const userPlanName = userPlan.name
-
+      const hasCourseItem = data.userCourseItem.length > 0
+      const hasETutorCourseItem = userCourse.eTutorUrl != null
       const items = data.userCourseItem.map(
         item => {
           const itemStatus = item.status
@@ -88,13 +109,22 @@ export default {
         userPlanId,
         userPlanName,
         courseId,
+        hasCourseItem: hasCourseItem,
+        hasETutorCourseItem: hasETutorCourseItem,
         courseName: courseName,
         items: items,
         isChecked: (status && status.checked),
         isRejected: (status && status.rejected),
         coins: coins,
         gems: gems,
-        message: `老師的話：${message}`
+        chestLevel: chestLevel,
+        chestCount: chestCount,
+        noteUploaded: noteUploaded,
+        diaryFinished: diaryFinished,
+        showResult:(e) => {
+          e.preventDefault();
+          resultModal(coins, gems, chestLevel, chestCount, details)
+        }
       }
     },
 

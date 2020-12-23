@@ -3,10 +3,21 @@ const AuthText = {
 }
 
 const PopupText = {
-  reward (coins, gems, message = '') {
-    return `恭喜獲得金幣 ${coins} 寶石 ${gems}<br/>${message}`
+  reward (isChecked, coins, gems, chestLevel, chestCount,details) {
+    console.log("PopupText", isChecked, coins, gems, chestLevel, chestCount, details)
+    if(isChecked){
+      if(chestCount === 0){
+        return `審核結果<br/>審核通過<br/>${details}<br/>恭喜獲得金幣 ${coins} 寶石 ${gems}<br/>`
+      } else {
+        return `審核結果<br/>審核通過<br/>${details}<br/>恭喜獲得水晶球LV.${chestLevel} ${chestCount} 顆<br/>`
+      }
+    } else{
+      return `審核結果<br/>審核未通過<br/>`
+    }
+
   },
   REWARD_ERROR: '獎勵領取失敗',
+  CHEST_ERROR: '水晶球剩餘空間不足, 請至活動頁進行調配',
   FIRE_STORE_ERROR: '資料暫時無法存取'
 }
 

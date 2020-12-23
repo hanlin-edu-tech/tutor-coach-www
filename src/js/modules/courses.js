@@ -1,6 +1,6 @@
 import { db, ehanlinAuth } from './firestore/firebase-config'
 import singleCourse from './components/single-course'
-import showModal from './util/show-modal'
+import {messageModal, resultModal} from './util/show-modal'
 import { PopupText } from './util/modal-text'
 
 export default {
@@ -25,11 +25,12 @@ export default {
     vueModel.ehanlinUser = await ehanlinAuth()
 
     try {
+      await vueModel.userAssetsHandler()
       await vueModel.userCoursesHandler()
       await vueModel.initialBanner()
     } catch (error) {
       console.error(error)
-      showModal(PopupText.FIRE_STORE_ERROR)
+      messageModal(PopupText.FIRE_STORE_ERROR)
     }
   },
 
@@ -84,7 +85,7 @@ export default {
           return 'no-class'
         }
         if (isDone || isRejected) {
-          return isDone ? ['done', 'class-btn-done', './img/btn-done.png'] : ['rejected', 'class-btn-check-error', './img/btn-check-error.png']
+          return ['done', 'class-btn-done', './img/btn-done-purple.png']
         }
         if (nowDiffMinStartDate < -300) {
           return ['not-ready', 'disabled', './img/btn-eTutor-noclass.png']
@@ -223,7 +224,7 @@ export default {
         if (isDone) {
           return {
             classBtnCss: 'class-btn-done',
-            classBtnImg: './img/btn-done.png',
+            classBtnImg: './img/btn-done-purple.png',
             eTutorStatus: eTutorStatus,
             eTutorClassBtnCss: eTutorClassBtnCss,
             eTutorClassBtnImg: eTutorClassBtnImg,
@@ -234,9 +235,13 @@ export default {
                   contentType: 'application/json',
                   url: `/coach-web/UserCourse/${userCourseId}/status/received`,
                 })
+                await vueModel.userAssetsHandler()
               } catch (error) {
-                console.error(error)
-                showModal(PopupText.REWARD_ERROR)
+                if(error && error.responseJSON && error.responseJSON.message === "活動空格已滿"){
+                  messageModal(PopupText.CHEST_ERROR)
+                } else {
+                  messageModal(PopupText.REWARD_ERROR)
+                }
               }
             },
             eTutorProcess: async () => {
@@ -246,9 +251,10 @@ export default {
                   contentType: 'application/json',
                   url: `/coach-web/UserCourse/${userCourseId}/status/received`,
                 })
+                await vueModel.userAssetsHandler()
               } catch (error) {
                 console.error(error)
-                showModal(PopupText.REWARD_ERROR)
+                messageModal(PopupText.REWARD_ERROR)
               }
             }
           }
@@ -256,8 +262,8 @@ export default {
 
         if (isRejected) {
           return {
-            classBtnCss: 'class-btn-check-error',
-            classBtnImg: './img/btn-check-error.png',
+            classBtnCss: 'class-btn-done',
+            classBtnImg: './img/btn-done-purple.png',
             eTutorStatus: eTutorStatus,
             eTutorClassBtnCss: eTutorClassBtnCss,
             eTutorClassBtnImg: eTutorClassBtnImg,
@@ -268,15 +274,12 @@ export default {
                 url: `/coach-web/UserCourse/${userCourseId}/status/received`,
               })
             },
-            eTutorProcess: () => {
-              if(!tutorStarted){
-                $.ajax({
-                  type: 'PUT',
-                  contentType: 'application/json',
-                  url: `/coach-web/${userCourseId}/enterTutorCourse`,
-                })
-              }
-              window.open(eTutorUrl, '_blank')
+            eTutorProcess:async () => {
+              await $.ajax({
+                type: 'PUT',
+                contentType: 'application/json',
+                url: `/coach-web/UserCourse/${userCourseId}/status/received`,
+              })
             }
           }
         }
@@ -309,26 +312,42 @@ export default {
       const vueModel = this
       const subject = data.userPlan.name
       const userCourse = data.userCourse
+      let subjectIcon = "./img/icon/icon.png"
+      let su = userCourse.userPlan.split("_")
+      if(su.length > 4){
+        subjectIcon = `./img/icon/${su[3]}.png`
+      }
       const rewards = userCourse.rewards
       const startDate = vueModel.$dayjs(userCourse.start.toDate())
       const endDate = vueModel.$dayjs(userCourse.end.toDate())
-      const coins = rewards
-        .filter(reward => reward.type === 'coin')
-        .map(reward => reward.amount)
-        .reduce((prev, curr) => prev + curr, 0)
+      const coins =  rewards
+            .filter(reward => reward.type === 'coin')
+            .map(reward => reward.amount)
+            .reduce((prev, curr) => prev + curr, 0)
       const gems = rewards
-        .filter(reward => reward.type === 'gem')
-        .map(reward => reward.amount)
-        .reduce((prev, curr) => prev + curr, 0)
+            .filter(reward => reward.type === 'gem')
+            .map(reward => reward.amount)
+            .reduce((prev, curr) => prev + curr, 0)
+      const chestLevel = rewards
+            .filter(reward => reward.type === 'chestLevel')
+            .map(reward => reward.amount)
+            .reduce((prev, curr) => prev + curr, 0)
+      const chestCount = rewards
+          .filter(reward => reward.type === 'chestCount')
+          .map(reward => reward.amount)
+          .reduce((prev, curr) => prev + curr, 0)
       return Object.assign({
         startDate: startDate.format('MM月DD日 HH:mm'),
         endDate: endDate.format('MM月DD日 HH:mm'),
         subject: subject,
         unit: userCourse.name,
+        icon: subjectIcon,
         tool: userCourse.description,
         eTutorUrl: userCourse.eTutorUrl,
         coins: coins,
         gems: gems,
+        chestLevel: chestLevel,
+        chestCount: chestCount,
         hasCourseItem: data.userCourseItem.length > 0,
         hasETutorCourseItem: userCourse.eTutorUrl != null,
         process: () => { },
@@ -414,23 +433,19 @@ export default {
                 const status = userCourse.status
                 if (status && status.received) {
                   const result = userCourse.result
-                  let message
                   if (!result) {
                     break
                   }
-                  message = result.message ? result.message.replace(/\n/g, '<br />') : ''
                   if (status.rejected) {
-                    if (message) showModal(message)
+                    resultModal(0, 0, 0, 0, '')
                   } else if (result.rewards) {
-                    const coins = result.rewards
-                      .filter(reward => reward.type === 'coin')
-                      .map(reward => reward.amount)
-                      .reduce((prev, curr) => prev + curr)
-                    const gems = result.rewards
-                      .filter(reward => reward.type === 'gem')
-                      .map(reward => reward.amount)
-                      .reduce((prev, curr) => prev + curr)
-                    showModal(PopupText.reward(coins, gems, message))
+                    const rewards = result.rewards;
+                    const coins = rewards.coin;
+                    const gems = rewards.gem;
+                    const chestLevel = rewards.chestLevel;
+                    const chestCount = rewards.chestCount;
+                    const details = result.rewardsDetails.rawData;
+                    resultModal(coins, gems, chestLevel, chestCount, details)
                   }
                   vueModel.removeCourse(id)
                   break
@@ -447,6 +462,18 @@ export default {
             }
           }
         )
+    },
+    async userAssetsHandler() {
+      fetch(`/currencyBank/totalAssets?ts=${new Date().getTime()}`,{
+        method: "GET",
+        headers: {"content-type":"application/json"},
+      }).then(res => {
+        if(res.ok) return res.json();
+      }).then(result => {
+        const asset = result.content;
+        $(".ecoin").html(asset.coins);
+        $(".diamond").html(asset.gems);
+      })
     },
 
     async userCoursesHandler() {

@@ -1,6 +1,6 @@
 import { db, ehanlinAuth } from './firestore/firebase-config'
 import singleBonus from './components/single-bonus'
-import showModal from './util/show-modal'
+import {messageModal, chestModal, rewardsModal} from './util/show-modal'
 import { PopupText } from './util/modal-text'
 
 export default {
@@ -31,28 +31,49 @@ export default {
       const vueModel = this
       $('#bonus-received .btn-get').on('click', async () => {
         try {
-          const receivedReward = await $.ajax({
-            type: 'PUT',
-            url: '/coach-web/UserAchievement/received',
+          await $.ajax({
+            type: 'GET',
+            url: '/coach-web/UserAchievement/check',
           })
+          chestModal()
+          $(".gift.chest").on('click', async () => {
+            try {
+              const receivedReward = await $.ajax({
+                type: 'PUT',
+                url: '/coach-web/UserAchievement/received',
+              })
+              let coins = receivedReward
+                  .filter(reward => reward.type === 'coin')
+                  .map(reward => reward.amount)
+                  .reduce((prev, curr) => prev + curr, 0)
+              let gems = receivedReward
+                  .filter(reward => reward.type === 'gem')
+                  .map(reward => reward.amount)
+                  .reduce((prev, curr) => prev + curr, 0)
+              let chestLevel = receivedReward
+                  .filter(reward => reward.type === 'chest_level')
+                  .map(reward => reward.amount)
+                  .reduce((prev, curr) => prev + curr, 0)
+              let chestCount = receivedReward
+                  .filter(reward => reward.type === 'chest_count')
+                  .map(reward => reward.amount)
+                  .reduce((prev, curr) => prev + curr, 0)
 
-          let coins = receivedReward
-            .filter(reward => reward.type === 'coin')
-            .map(reward => reward.amount)
-            .reduce((prev, curr) => prev + curr)
-          
-          let gems = receivedReward
-            .filter(reward => reward.type === 'gem')
-            .map(reward => reward.amount)
-            .reduce((prev, curr) => prev + curr)
-            
-          showModal(PopupText.reward(coins, gems))
-
-          vueModel.bonusUnReceived--
-          vueModel.determineShowReceivedBonusBtn(vueModel.bonusUnReceived)
+              rewardsModal(coins, gems, chestLevel, chestCount)
+              vueModel.bonusUnReceived--
+              vueModel.determineShowReceivedBonusBtn(vueModel.bonusUnReceived)
+            } catch (error) {
+              console.error(error)
+              messageModal(PopupText.REWARD_ERROR)
+            }
+          })
         } catch (error) {
           console.error(error)
-          showModal(PopupText.REWARD_ERROR)
+          if(error && error.responseJSON && error.responseJSON.message === "活動空格已滿"){
+            messageModal(PopupText.CHEST_ERROR)
+          } else {
+            messageModal(PopupText.REWARD_ERROR)
+          }
         }
       })
     },

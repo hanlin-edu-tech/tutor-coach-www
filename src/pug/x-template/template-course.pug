@@ -5,25 +5,22 @@ script(type="text/x-template" id="template-course")
             span ~
             .date {{ singleCourse.endDate }}
         .class-icon
-            img(src="./img/icon/icon.png" alt="")
+            img(:src="singleCourse.icon" :alt="singleCourse.subject")
         .class-detail
             .course-subject {{ singleCourse.subject }}
             .course-unit {{ singleCourse.unit }}
             .course-tool {{ singleCourse.tool }}
-        .class-gift(v-if="singleCourse.eTutorStatus !== 'expired'")
-            .gift-pic(id="single-course-gift-received")
-                img(src="./img/class-gift.png" alt="")
-                .gift-diamond {{ singleCourse.gems }}
-                .gift-ecoin {{ singleCourse.coins }}
-        .class-btn(v-if="singleCourse.hasETutorCourseItem && singleCourse.eTutorStatus !== 'expired'")
-            // e家教開始上課
-            div(:class="singleCourse.eTutorClassBtnCss"
-                @click="singleCourse.eTutorAction")
-                img(:src="singleCourse.eTutorClassBtnImg" alt="")
-        .class-btn(v-if="singleCourse.hasCourseItem && singleCourse.eTutorStatus !== 'expired'")
-            // 已開始上課
-            div(:class="singleCourse.classBtnCss"
-                @click="singleCourse.action")
-                img(:src="singleCourse.classBtnImg" alt="")
+        .class-btn(v-if="singleCourse.eTutorStatus !== 'expired'")
+            div(v-if="singleCourse.hasETutorCourseItem && singleCourse.eTutorStatus !== 'expired'")
+                // e家教開始上課
+                div.class-btn-eTutor(:class="singleCourse.eTutorClassBtnCss"
+                    @click="singleCourse.eTutorAction")
+                    img(:src="singleCourse.eTutorClassBtnImg" alt="")
+            div(v-if="singleCourse.hasCourseItem && singleCourse.eTutorStatus !== 'expired' &&" +
+            " !(singleCourse.hasETutorCourseItem && singleCourse.eTutorStatus === 'done')")
+                // 已開始上課
+                div(:class="singleCourse.classBtnCss"
+                    @click="singleCourse.action")
+                    img(:src="singleCourse.classBtnImg" alt="")
         .class-valid(v-if="singleCourse.eTutorStatus === 'expired'")
             span.class-expired 已逾時超過15分鐘，請與規劃師另約補課時間。

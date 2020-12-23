@@ -35,7 +35,7 @@ html(lang='zh-Hant-TW')
                             setcion(id="user-plans" style="display:none;")
                                 span.label 課程:
                                 select
-                                    option(value="", selected, disabled, hidden) 請選擇課程
+                                    option(value="", selected, disabled) 請選擇課程
 
                         // 課程清單
                         include ./vue/vue-history.pug
@@ -46,6 +46,8 @@ html(lang='zh-Hant-TW')
 
         // x-template of Vue Component
         include ./x-template/template-history.pug
+
+        include ./popup.pug
 
         footer#ehanlin-footer
 
