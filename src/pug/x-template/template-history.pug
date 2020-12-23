@@ -6,12 +6,16 @@ script(type="text/x-template" id="template-history")
             span.status.wait(v-if="!historyInfo.isChecked && !historyInfo.isRejected") 審核中
             span.status.pass(v-show="historyInfo.isChecked" @click="historyInfo.showResult") 審核通過
             span.status.fail(v-show="historyInfo.isRejected" @click="historyInfo.showResult") 審核不通過
-            span.status.class-notes-disabled(v-if="historyInfo.hasETutorCourseItem && !historyInfo.isChecked && !historyInfo.isRejected") 上課筆記
-            a.status.class-notes(:href="'/eTutor/view-file?type=課堂筆記&userCourse=' + historyInfo.courseId",
-                target="_blank", v-if="historyInfo.hasETutorCourseItem && (historyInfo.isChecked || historyInfo.isRejected)") 上課筆記
-            span.status.course-diary-disabled(v-if="historyInfo.hasETutorCourseItem && !historyInfo.isChecked && !historyInfo.isRejected") 課後日誌
+            span.status.class-notes-disabled(v-if="historyInfo.hasETutorCourseItem && " +
+            "((!historyInfo.isChecked && !historyInfo.isRejected) || !historyInfo.noteUploaded)") 上課筆記
+            a.status.class-notes(:href="'/coach-web/eTutor/view-file?type=課堂筆記&userCourse=' + historyInfo.courseId",
+                target="_blank", v-if="historyInfo.hasETutorCourseItem && (historyInfo.isChecked || " +
+            "historyInfo.isRejected) && historyInfo.noteUploaded") 上課筆記
+            span.status.course-diary-disabled(v-if="historyInfo.hasETutorCourseItem &&" +
+            " ((!historyInfo.isChecked && !historyInfo.isRejected) || !historyInfo.diaryFinished)") 課後日誌
             a.status.course-diary(:href="'/coach-web/diary-view.html?userCourse=' + historyInfo.courseId",
-                target="_blank", v-if="historyInfo.hasETutorCourseItem && (historyInfo.isChecked || historyInfo.isRejected)") 課後日誌
+                target="_blank", v-if="historyInfo.hasETutorCourseItem && (historyInfo.isChecked || historyInfo.isRejected)" +
+            " && historyInfo.diaryFinished") 課後日誌
             span.action(v-if="historyInfo.hasCourseItem")
                 span.switch
                     i.fa.fa-chevron-circle-down

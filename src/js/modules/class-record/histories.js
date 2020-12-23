@@ -35,14 +35,20 @@ export default {
     composeHistory (userCourseDoc) {
       const vueModel = this
       const data = userCourseDoc.data()
-
       const userCourse = data.userCourse
       const courseId = userCourse._id
       const courseName = userCourse.name
       const status = userCourse.status
       const result = userCourse.result
+      const info = userCourse.info
+      let noteUploaded  = false, diaryFinished = false
+      if(info && info.noteUploaded){
+        noteUploaded = info.noteUploaded
+      }
+      if(info && info.diaryFinished){
+        diaryFinished = info.diaryFinished
+      }
       let coins = 0, gems = 0, chestLevel = 0, chestCount = 0, details = {}
-      console.log(result)
       if (result && result.rewards) {
         coins =  result.rewards.coin
         gems = result.rewards.gem
@@ -113,6 +119,8 @@ export default {
         gems: gems,
         chestLevel: chestLevel,
         chestCount: chestCount,
+        noteUploaded: noteUploaded,
+        diaryFinished: diaryFinished,
         showResult:(e) => {
           e.preventDefault();
           resultModal(coins, gems, chestLevel, chestCount, details)
