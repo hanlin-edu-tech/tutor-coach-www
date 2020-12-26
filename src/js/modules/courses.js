@@ -237,8 +237,8 @@ export default {
                 })
                 await vueModel.userAssetsHandler()
               } catch (error) {
-                if(error && error.responseJSON && error.responseJSON.message === "活動空格已滿"){
-                  messageModal(PopupText.CHEST_ERROR)
+                if(error && error.responseJSON){
+                  messageModal(error.responseJSON.message)
                 } else {
                   messageModal(PopupText.REWARD_ERROR)
                 }

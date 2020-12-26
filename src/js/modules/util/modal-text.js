@@ -17,7 +17,6 @@ const PopupText = {
 
   },
   REWARD_ERROR: '獎勵領取失敗',
-  CHEST_ERROR: '水晶球剩餘空間不足, 請至活動頁進行調配',
   FIRE_STORE_ERROR: '資料暫時無法存取'
 }
 
