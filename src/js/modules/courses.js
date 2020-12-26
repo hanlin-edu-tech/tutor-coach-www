@@ -437,7 +437,10 @@ export default {
                     break
                   }
                   if (status.rejected) {
-                    resultModal(0, 0, 0, 0, '')
+                    if(result.rewardsDetails){
+                      const details = result.rewardsDetails.rawData;
+                      resultModal(0, 0, 0, 0, details)
+                    }
                   } else if (result.rewards) {
                     const rewards = result.rewards;
                     const coins = rewards.coin;
