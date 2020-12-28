@@ -442,12 +442,25 @@ export default {
                       resultModal(0, 0, 0, 0, details)
                     }
                   } else if (result.rewards) {
+
                     const rewards = result.rewards;
-                    const coins = rewards.coin;
-                    const gems = rewards.gem;
-                    const chestLevel = rewards.chestLevel;
-                    const chestCount = rewards.chestCount;
-                    const details = result.rewardsDetails.rawData;
+                    let coins = 0, gems = 0, chestLevel = 1, chestCount = 0, details = {}
+                    if(result.rewardsDetails){
+                      coins = rewards.coin;
+                      gems = rewards.gem;
+                      chestLevel = rewards.chestLevel;
+                      chestCount = rewards.chestCount;
+                      details = result.rewardsDetails.rawData;
+                    } else {
+                      coins =  rewards
+                          .filter(reward => reward.type === 'coin')
+                          .map(reward => reward.amount)
+                          .reduce((prev, curr) => prev + curr, 0)
+                      gems = rewards
+                          .filter(reward => reward.type === 'gem')
+                          .map(reward => reward.amount)
+                          .reduce((prev, curr) => prev + curr, 0)
+                    }
                     resultModal(coins, gems, chestLevel, chestCount, details)
                   }
                   vueModel.removeCourse(id)
