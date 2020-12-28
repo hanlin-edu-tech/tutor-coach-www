@@ -27,6 +27,19 @@ export default {
   },
 
   methods: {
+    userAssetsHandler() {
+      fetch(`/currencyBank/totalAssets?ts=${new Date().getTime()}`,{
+        method: "GET",
+        headers: {"content-type":"application/json"},
+      }).then(res => {
+        if(res.ok) return res.json();
+      }).then(result => {
+        const asset = result.content;
+        $(".ecoin").html(asset.coins);
+        $(".diamond").html(asset.gems);
+      })
+    },
+
     onReceivedBonus () {
       const vueModel = this
       $('#bonus-received .btn-get').on('click', async () => {
@@ -60,6 +73,7 @@ export default {
                   .reduce((prev, curr) => prev + curr, 0)
 
               rewardsModal(coins, gems, chestLevel, chestCount)
+              vueModel.userAssetsHandler()
               vueModel.bonusUnReceived--
               vueModel.determineShowReceivedBonusBtn(vueModel.bonusUnReceived)
             } catch (error) {
@@ -69,8 +83,8 @@ export default {
           })
         } catch (error) {
           console.error(error)
-          if(error && error.responseJSON && error.responseJSON.message === "活動空格已滿"){
-            messageModal(PopupText.CHEST_ERROR)
+          if(error && error.responseJSON){
+            messageModal(error.responseJSON.message)
           } else {
             messageModal(PopupText.REWARD_ERROR)
           }

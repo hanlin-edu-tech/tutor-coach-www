@@ -237,8 +237,8 @@ export default {
                 })
                 await vueModel.userAssetsHandler()
               } catch (error) {
-                if(error && error.responseJSON && error.responseJSON.message === "活動空格已滿"){
-                  messageModal(PopupText.CHEST_ERROR)
+                if(error && error.responseJSON){
+                  messageModal(error.responseJSON.message)
                 } else {
                   messageModal(PopupText.REWARD_ERROR)
                 }
@@ -437,7 +437,10 @@ export default {
                     break
                   }
                   if (status.rejected) {
-                    resultModal(0, 0, 0, 0, '')
+                    if(result.rewardsDetails){
+                      const details = result.rewardsDetails.rawData;
+                      resultModal(0, 0, 0, 0, details)
+                    }
                   } else if (result.rewards) {
                     const rewards = result.rewards;
                     const coins = rewards.coin;
