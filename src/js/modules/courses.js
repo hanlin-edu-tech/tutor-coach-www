@@ -38,10 +38,10 @@ export default {
     determineCourseStatus(id, userCourse, startDate, endDate) {
       const vueModel = this
       const nowDiffMinStartDate = vueModel.now.diff(startDate, 'second')
+      const nowDiffMinEndDate = vueModel.now.diff(endDate, 'second')
       const nowBeforeEndDate = vueModel.now.isBefore(endDate)
       const { tutorStarted, ...status } = userCourse.status;
       const statusCount = !!status ? Object.keys(status).length : 0
-      const userCourseId = userCourse['_id']
 
       // 一般課堂狀態
       // 已開始上課
@@ -80,68 +80,10 @@ export default {
         && status.hasOwnProperty('rejected')
       )
 
-      const retrieveETutorStatus = (userCourse, isDone, isRejected, nowDiffMinStartDate, tutorStarted) => {
-        if (!userCourse.eTutorUrl) {
-          return 'no-class'
-        }
-        if (isDone || isRejected) {
-          return ['done', 'class-btn-done', './img/btn-done-purple.png']
-        }
-        if (nowDiffMinStartDate < -300) {
-          return ['not-ready', 'disabled', './img/btn-eTutor-noclass.png']
-        }
-        if (nowDiffMinStartDate >= -300 && nowDiffMinStartDate < 0) {
-          return ['ready', 'class-btn-start focus-animation', './img/btn-eTutor-ready.png']
-        }
-        const fifteenMin = 15 * 60
-        if(!tutorStarted && nowDiffMinStartDate > fifteenMin){
-          return ['expired', '', './img/btn-check-error.png']
-        }
-        return ['start', '', './img/btn-eTutor-ready.png']
-      }
-
-      const [eTutorStatus, eTutorClassBtnCss, eTutorClassBtnImg] = retrieveETutorStatus(userCourse, isDone, isRejected,
+      const [eTutorStatus, eTutorClassBtnCss, eTutorClassBtnImg] = this.retrieveETutorStatus(userCourse, isDone, isRejected,
           nowDiffMinStartDate, tutorStarted)
       // 倒數計時修改
-      if (nowDiffMinStartDate < 0) {
-        setTimeout(() => {
-          vueModel.courses[id].classBtnCss = 'class-btn-start'
-          vueModel.courses[id].classBtnImg = './img/btn-start.png'
-          vueModel.courses[id].process = () => {
-            if (window.sessionStorage) {
-              sessionStorage.setItem('course', userCourseId)
-              window.location.href = `/coach-web/enterCourse.html?id=${userCourseId}`
-            }
-          }
-        }, Math.abs(vueModel.$dayjs(Date.now()).diff(startDate, 'second')) * 1000)
-        const threeDays = -(3 * 24 * 60 * 60)
-        // 距開課日期三天以內才setTimeout
-        if (eTutorStatus === 'not-ready' && nowDiffMinStartDate > threeDays) {
-          let aboutToReady = Math.abs(vueModel.$dayjs(Date.now()).diff(startDate, 'second') + 300)
-          setTimeout(() => {
-            vueModel.courses[id].eTutorStatus = 'ready'
-          }, aboutToReady * 1000)
-        }
-
-        if (eTutorStatus === 'ready') {
-          let aboutToStart = Math.abs(vueModel.$dayjs(Date.now()).diff(startDate, 'second'))
-          setTimeout(() => {
-            vueModel.courses[id].eTutorStatus = 'start'
-          }, aboutToStart * 1000)
-        }
-      }
-      const fifteenMin = 15 * 60
-      const hasETutorClassAndNotStarted = userCourse.eTutorUrl && !tutorStarted;
-      // 倒數計時15分鐘, 逾時鎖課程
-      if(hasETutorClassAndNotStarted && Math.abs(nowDiffMinStartDate) <= fifteenMin){
-        let aboutToStart = vueModel.$dayjs(Date.now()).diff(startDate, 'second')
-        const delayReload = 3000
-        setTimeout(() => {
-          vueModel.courses[id].eTutorStatus = 'expired'
-          vueModel.courses[id].eTutorClassBtnCss = ''
-          vueModel.courses[id].eTutorClassBtnImg = './img/btn-check-error.png'
-        }, Math.abs(fifteenMin - aboutToStart) * 1000 + delayReload)
-      }
+      this.triggerAutoChangeState(id, userCourse, eTutorStatus, nowDiffMinStartDate, nowDiffMinEndDate)
 
       const retrieveCourseStatus = ({ isStart, isAdd, isCheck, isDone, isRejected,
                                       eTutorStatus, eTutorClassBtnCss, eTutorClassBtnImg, tutorStarted}) => {
@@ -157,7 +99,7 @@ export default {
             eTutorClassBtnImg: eTutorClassBtnImg,
             process: () => {
               if (window.sessionStorage) {
-                sessionStorage.setItem('course', userCourseId)
+                window.sessionStorage.setItem('course', userCourseId)
                 window.location.href = `/coach-web/enterCourse.html?id=${userCourseId}`
               }
             },
@@ -169,6 +111,7 @@ export default {
                   url: `/coach-web/${userCourseId}/enterTutorCourse`,
                 })
               }
+              userCourse.tutorEnter = true
               window.open(eTutorUrl, '_blank')
             }
           }
@@ -183,7 +126,7 @@ export default {
             eTutorClassBtnImg: eTutorClassBtnImg,
             process: () => {
               if (window.sessionStorage) {
-                sessionStorage.setItem('course', userCourseId)
+                window.sessionStorage.setItem('course', userCourseId)
                 window.location.href = `/coach-web/enterCourse.html?id=${userCourseId}`
               }
             },
@@ -195,6 +138,7 @@ export default {
                   url: `/coach-web/${userCourseId}/enterTutorCourse`,
                 })
               }
+              userCourse.tutorEnter = true
               window.open(eTutorUrl, '_blank')
             }
           }
@@ -215,11 +159,11 @@ export default {
                   url: `/coach-web/${userCourseId}/enterTutorCourse`,
                 })
               }
+              userCourse.tutorEnter = true
               window.open(eTutorUrl, '_blank')
             }
           }
         }
-
 
         if (isDone) {
           return {
@@ -299,6 +243,7 @@ export default {
                 url: `/coach-web/${userCourseId}/enterTutorCourse`,
               })
             }
+            userCourse.tutorEnter = true
             window.open(eTutorUrl, '_blank')
           }
         }
@@ -548,5 +493,107 @@ export default {
 
       determineBanner({ isBannerBuyEcoach, isBannerArrange, isBannerFinish })
     },
+    retrieveETutorStatus (userCourse, isDone, isRejected, nowDiffMinStartDate, tutorStarted){
+      if (!userCourse.eTutorUrl) {
+        return 'no-class'
+      }
+      if (isDone || isRejected) {
+        return ['done', 'class-btn-done', './img/btn-done-purple.png']
+      }
+      if (nowDiffMinStartDate < -300) {
+        return ['not-ready', 'disabled', './img/btn-eTutor-noclass.png']
+      }
+      if (nowDiffMinStartDate >= -300 && nowDiffMinStartDate < 0) {
+        return ['ready', 'class-btn-start focus-animation', './img/btn-eTutor-ready.png']
+      }
+      const fifteenMin = 15 * 60
+      if(!tutorStarted && nowDiffMinStartDate > fifteenMin){
+        return ['expired', '', './img/btn-check-error.png']
+      }
+      return ['start', '', './img/btn-eTutor-ready.png']
+    },
+    triggerAutoChangeState(id, userCourse, eTutorStatus, nowDiffMinStartDate, nowDiffMinEndDate){
+      const fifteenMin = 15 * 60
+      const { tutorStarted } = userCourse.status;
+      const hasETutorClassAndNotStarted = userCourse.eTutorUrl && !tutorStarted;
+
+      if (nowDiffMinStartDate < 0) {
+        const waitTime = Math.abs(nowDiffMinStartDate)
+        this.changeCourseState(id, userCourse["_id"], waitTime, nowDiffMinEndDate)
+        const threeDays = -(3 * 24 * 60 * 60)
+        // 距開課日期三天以內才setTimeout
+        if (eTutorStatus === 'not-ready' && nowDiffMinStartDate > threeDays) {
+          // 5分鐘前換狀態
+          const fiveMin = 5 * 60
+          this.changeETutorToNextState(id, 'not-ready', waitTime - fiveMin, userCourse)
+        }else if (eTutorStatus === 'ready') {
+          this.changeETutorToNextState(id, 'ready', waitTime, userCourse)
+        }
+      } else {
+        this.changeCourseStateToAdd(id, userCourse["_id"], nowDiffMinEndDate)
+      }
+      // 倒數計時15分鐘, 逾時鎖課程
+      if(hasETutorClassAndNotStarted && Math.abs(nowDiffMinStartDate) <= fifteenMin){
+        const waitTime = Math.abs(fifteenMin - nowDiffMinStartDate)
+        this.changeETutorToNextState(id, 'start', waitTime, userCourse)
+      }
+    },
+    changeCourseState(id, userCourseId, waitTime, nowDiffMinEndDate){
+      const vueModel = this
+      setTimeout(() => {
+        vueModel.courses[id].classBtnCss = 'class-btn-start'
+        vueModel.courses[id].classBtnImg = './img/btn-start.png'
+        vueModel.courses[id].process = () => {
+          if (window.sessionStorage) {
+            window.sessionStorage.setItem('course', userCourseId)
+            window.location.href = `/coach-web/enterCourse.html?id=${userCourseId}`
+          }
+        }
+        this.changeCourseStateToAdd(id, userCourseId, nowDiffMinEndDate)
+      }, waitTime * 1000 + 300)
+    },
+    changeCourseStateToAdd(id, userCourseId, waitTime){
+      const vueModel = this
+      setTimeout(() => {
+        vueModel.courses[id].classBtnCss = 'class-btn-add'
+        vueModel.courses[id].classBtnImg = './img/btn-add.png'
+        vueModel.courses[id].process = () => {
+          if (window.sessionStorage) {
+            window.sessionStorage.setItem('course', userCourseId)
+            window.location.href = `/coach-web/enterCourse.html?id=${userCourseId}`
+          }
+        }
+      }, waitTime * 1000 + 300)
+    },
+    changeETutorToNextState(id, state, waitTime, userCourse){
+      const vueModel = this
+      if (state === 'not-ready') {
+        setTimeout(() => {
+          vueModel.courses[id].eTutorStatus = 'ready'
+          vueModel.courses[id].eTutorClassBtnCss = 'class-btn-start focus-animation'
+          vueModel.courses[id].eTutorClassBtnImg = './img/btn-eTutor-ready.png'
+          // 5分鐘後再度改變狀態
+          const fiveMin = 5 * 60
+          this.changeETutorToNextState(id, 'ready', fiveMin, userCourse)
+        }, waitTime * 1000 + 300)
+      }else if (state === 'ready') {
+        setTimeout(() => {
+          vueModel.courses[id].eTutorStatus = 'start'
+          vueModel.courses[id].eTutorClassBtnCss = ''
+          vueModel.courses[id].eTutorClassBtnImg = './img/btn-eTutor-ready.png'
+          // 計時15分鐘遇時改變按鈕狀態
+          const waitTime = 15 * 60
+          this.changeETutorToNextState(id, 'start', waitTime, userCourse)
+        }, waitTime * 1000 + 300)
+      } else if(state === 'start'){
+        setTimeout(() => {
+          if(!userCourse.tutorEnter){
+            vueModel.courses[id].eTutorStatus = 'expired'
+            vueModel.courses[id].eTutorClassBtnCss = ''
+            vueModel.courses[id].eTutorClassBtnImg = './img/btn-check-error.png'
+          }
+        }, waitTime * 1000 + 300)
+      }
+    }
   }
 }
