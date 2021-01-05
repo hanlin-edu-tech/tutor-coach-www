@@ -44,43 +44,50 @@ export default {
       const vueModel = this
       $('#bonus-received .btn-get').on('click', async () => {
         try {
-          await $.ajax({
+          let res = await $.ajax({
             type: 'GET',
             url: '/coach-web/UserAchievement/check',
           })
-          chestModal()
-          $(".gift.chest").on('click', async () => {
-            try {
-              const receivedReward = await $.ajax({
-                type: 'PUT',
-                url: '/coach-web/UserAchievement/received',
-              })
-              let coins = receivedReward
-                  .filter(reward => reward.type === 'coin')
-                  .map(reward => reward.amount)
-                  .reduce((prev, curr) => prev + curr, 0)
-              let gems = receivedReward
-                  .filter(reward => reward.type === 'gem')
-                  .map(reward => reward.amount)
-                  .reduce((prev, curr) => prev + curr, 0)
-              let chestLevel = receivedReward
-                  .filter(reward => reward.type === 'chest_level')
-                  .map(reward => reward.amount)
-                  .reduce((prev, curr) => prev + curr, 0)
-              let chestCount = receivedReward
-                  .filter(reward => reward.type === 'chest_count')
-                  .map(reward => reward.amount)
-                  .reduce((prev, curr) => prev + curr, 0)
+          if(res !== "ok"){
+            messageModal(res)
+          } else {
+            chestModal()
+            $(".gift.chest").on('click', async () => {
+              try {
+                console.log("onReceivedBonus received 1")
+                const receivedReward = await $.ajax({
+                  type: 'PUT',
+                  url: '/coach-web/UserAchievement/received',
+                })
+                console.log("onReceivedBonus received 2")
+                let coins = receivedReward
+                    .filter(reward => reward.type === 'coin')
+                    .map(reward => reward.amount)
+                    .reduce((prev, curr) => prev + curr, 0)
+                let gems = receivedReward
+                    .filter(reward => reward.type === 'gem')
+                    .map(reward => reward.amount)
+                    .reduce((prev, curr) => prev + curr, 0)
+                let chestLevel = receivedReward
+                    .filter(reward => reward.type === 'chest_level')
+                    .map(reward => reward.amount)
+                    .reduce((prev, curr) => prev + curr, 0)
+                let chestCount = receivedReward
+                    .filter(reward => reward.type === 'chest_count')
+                    .map(reward => reward.amount)
+                    .reduce((prev, curr) => prev + curr, 0)
 
-              rewardsModal(coins, gems, chestLevel, chestCount)
-              vueModel.userAssetsHandler()
-              vueModel.bonusUnReceived--
-              vueModel.determineShowReceivedBonusBtn(vueModel.bonusUnReceived)
-            } catch (error) {
-              console.error(error)
-              messageModal(PopupText.REWARD_ERROR)
-            }
-          })
+                rewardsModal(coins, gems, chestLevel, chestCount)
+                console.log("onReceivedBonus received 3")
+                vueModel.userAssetsHandler()
+                vueModel.bonusUnReceived--
+                vueModel.determineShowReceivedBonusBtn(vueModel.bonusUnReceived)
+              } catch (error) {
+                console.error(error)
+                messageModal(PopupText.REWARD_ERROR)
+              }
+            })
+          }
         } catch (error) {
           console.error(error)
           if(error && error.responseJSON){

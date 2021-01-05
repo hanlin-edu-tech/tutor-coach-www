@@ -174,28 +174,32 @@ export default {
             eTutorClassBtnImg: eTutorClassBtnImg,
             process: async () => {
               try {
-                await $.ajax({
+                let res = await $.ajax({
                   type: 'PUT',
                   contentType: 'application/json',
                   url: `/coach-web/UserCourse/${userCourseId}/status/received`,
                 })
-                await vueModel.userAssetsHandler()
-              } catch (error) {
-                if(error && error.responseJSON){
-                  messageModal(error.responseJSON.message)
+                if(res !== "ok"){
+                  messageModal(res)
                 } else {
-                  messageModal(PopupText.REWARD_ERROR)
+                  await vueModel.userAssetsHandler()
                 }
+              } catch (error) {
+                messageModal(PopupText.REWARD_ERROR)
               }
             },
             eTutorProcess: async () => {
               try {
-                await $.ajax({
+                let res = await $.ajax({
                   type: 'PUT',
                   contentType: 'application/json',
                   url: `/coach-web/UserCourse/${userCourseId}/status/received`,
                 })
-                await vueModel.userAssetsHandler()
+                if(res !== "ok"){
+                  messageModal(res)
+                } else {
+                  await vueModel.userAssetsHandler()
+                }
               } catch (error) {
                 console.error(error)
                 messageModal(PopupText.REWARD_ERROR)
