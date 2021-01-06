@@ -13,6 +13,7 @@ export default {
       userCourseOriginalRef: db.collection('UserCourse'),
       ehanlinUser: '',
       now: vueModel.$dayjs(Date.now()),
+      scheduleMap: new Map(),
       oneYearAgo: vueModel.$dayjs().subtract(1, 'year').toDate()
     }
   },
@@ -72,7 +73,6 @@ export default {
         statusCount > 0
         && status.hasOwnProperty('checked')
       )
-
       // 課程審核不通過
       const isRejected = (
         statusCount > 0
@@ -522,10 +522,17 @@ export default {
       const hasETutorClassAndNotStarted = userCourse.eTutorUrl && !tutorStarted;
       const nowDiffMinStartDate = vueModel.$dayjs(Date.now()).diff(startDate, 'second')
       const nowDiffMinEndDate = vueModel.$dayjs(Date.now()).diff(endDate, 'second')
-
+      if(this.checkCourseIsLocked(userCourse)){
+        if (vueModel.scheduleMap.has(id)) {
+          const schedule = vueModel.scheduleMap.get(id)
+          clearTimeout(schedule)
+          vueModel.scheduleMap.delete(id)
+        }
+        return;
+      }
       if (nowDiffMinStartDate < 0) {
         const waitTime = Math.abs(nowDiffMinStartDate)
-        this.changeCourseState(id, userCourse["_id"], waitTime, nowDiffMinEndDate)
+        this.changeCourseState(id, userCourse, waitTime, endDate)
         const threeDays = -(3 * 24 * 60 * 60)
         // 距開課日期三天以內才setTimeout
         if (eTutorStatus === 'not-ready' && nowDiffMinStartDate > threeDays) {
@@ -536,7 +543,7 @@ export default {
           this.changeETutorToNextState(id, 'ready', waitTime, userCourse)
         }
       } else {
-        this.changeCourseStateToAdd(id, userCourse["_id"], nowDiffMinEndDate)
+        this.changeCourseStateToAdd(id, userCourse, nowDiffMinEndDate)
       }
       // 倒數計時15分鐘, 逾時鎖課程
       if(hasETutorClassAndNotStarted && Math.abs(nowDiffMinStartDate) <= fifteenMin){
@@ -544,62 +551,78 @@ export default {
         this.changeETutorToNextState(id, 'start', waitTime, userCourse)
       }
     },
-    changeCourseState(id, userCourseId, waitTime, nowDiffMinEndDate){
+    changeCourseState(id, userCourse, waitTime, endDate){
       const vueModel = this
-      setTimeout(() => {
+      const schedule = setTimeout(() => {
         vueModel.courses[id].classBtnCss = 'class-btn-start'
         vueModel.courses[id].classBtnImg = './img/btn-start.png'
         vueModel.courses[id].process = () => {
           if (window.sessionStorage) {
-            window.sessionStorage.setItem('course', userCourseId)
-            window.location.href = `/coach-web/enterCourse.html?id=${userCourseId}`
+            window.sessionStorage.setItem('course', userCourse["_id"])
+            window.location.href = `/coach-web/enterCourse.html?id=${userCourse["_id"]}`
           }
         }
-        this.changeCourseStateToAdd(id, userCourseId, nowDiffMinEndDate)
+        const nowDiffMinEndDate = vueModel.$dayjs(Date.now()).diff(endDate, 'second')
+        this.changeCourseStateToAdd(id, userCourse,  nowDiffMinEndDate)
       }, waitTime * 1000 + 300)
+      vueModel.scheduleMap.set(id, schedule)
     },
-    changeCourseStateToAdd(id, userCourseId, waitTime){
+    changeCourseStateToAdd(id, userCourse, waitTime){
       const vueModel = this
-      setTimeout(() => {
-        vueModel.courses[id].classBtnCss = 'class-btn-add'
-        vueModel.courses[id].classBtnImg = './img/btn-add.png'
-        vueModel.courses[id].process = () => {
-          if (window.sessionStorage) {
-            window.sessionStorage.setItem('course', userCourseId)
-            window.location.href = `/coach-web/enterCourse.html?id=${userCourseId}`
+      const  schedule = setTimeout(() => {
+        if(!this.checkCourseIsLocked(userCourse)){
+          vueModel.courses[id].classBtnCss = 'class-btn-add'
+          vueModel.courses[id].classBtnImg = './img/btn-add.png'
+          vueModel.courses[id].process = () => {
+            if (window.sessionStorage) {
+              window.sessionStorage.setItem('course', userCourse["_id"])
+              window.location.href = `/coach-web/enterCourse.html?id=${userCourse["_id"]}`
+            }
           }
         }
       }, Math.abs(waitTime) * 1000 + 300)
+      vueModel.scheduleMap.set(id, schedule)
     },
     changeETutorToNextState(id, state, waitTime, userCourse){
       const vueModel = this
       if (state === 'not-ready') {
-        setTimeout(() => {
-          vueModel.courses[id].eTutorStatus = 'ready'
-          vueModel.courses[id].eTutorClassBtnCss = 'class-btn-start focus-animation'
-          vueModel.courses[id].eTutorClassBtnImg = './img/btn-eTutor-ready.png'
-          // 5分鐘後再度改變狀態
-          const fiveMin = 5 * 60
-          this.changeETutorToNextState(id, 'ready', fiveMin, userCourse)
+        const schedule = setTimeout(() => {
+          if(!this.checkCourseIsLocked(userCourse)) {
+            vueModel.courses[id].eTutorStatus = 'ready'
+            vueModel.courses[id].eTutorClassBtnCss = 'class-btn-start focus-animation'
+            vueModel.courses[id].eTutorClassBtnImg = './img/btn-eTutor-ready.png'
+            // 5分鐘後再度改變狀態
+            const fiveMin = 5 * 60
+            this.changeETutorToNextState(id, 'ready', fiveMin, userCourse)
+          }
         }, waitTime * 1000 + 300)
+        vueModel.scheduleMap.set(id, schedule)
       }else if (state === 'ready') {
-        setTimeout(() => {
-          vueModel.courses[id].eTutorStatus = 'start'
-          vueModel.courses[id].eTutorClassBtnCss = ''
-          vueModel.courses[id].eTutorClassBtnImg = './img/btn-eTutor-ready.png'
-          // 計時15分鐘遇時改變按鈕狀態
-          const waitTime = 15 * 60
-          this.changeETutorToNextState(id, 'start', waitTime, userCourse)
+        const schedule = setTimeout(() => {
+          if(!this.checkCourseIsLocked(userCourse)) {
+            vueModel.courses[id].eTutorStatus = 'start'
+            vueModel.courses[id].eTutorClassBtnCss = ''
+            vueModel.courses[id].eTutorClassBtnImg = './img/btn-eTutor-ready.png'
+            // 計時15分鐘遇時改變按鈕狀態
+            const waitTime = 15 * 60
+            this.changeETutorToNextState(id, 'start', waitTime, userCourse)
+          }
         }, waitTime * 1000 + 300)
+        vueModel.scheduleMap.set(id, schedule)
       } else if(state === 'start'){
-        setTimeout(() => {
-          if(!userCourse.tutorEnter){
+        const schedule = setTimeout(() => {
+          if(!userCourse.tutorEnter && !this.checkCourseIsLocked(userCourse)){
             vueModel.courses[id].eTutorStatus = 'expired'
             vueModel.courses[id].eTutorClassBtnCss = ''
             vueModel.courses[id].eTutorClassBtnImg = './img/btn-check-error.png'
           }
         }, waitTime * 1000 + 300)
+        vueModel.scheduleMap.set(id, schedule)
       }
+    },
+    checkCourseIsLocked(userCourse) {
+      return userCourse.status.checked || userCourse.status.rejected || userCourse.status.finished
     }
+
   }
 }
