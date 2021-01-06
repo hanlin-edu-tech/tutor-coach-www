@@ -38,7 +38,6 @@ export default {
     determineCourseStatus(id, userCourse, startDate, endDate) {
       const vueModel = this
       const nowDiffMinStartDate = vueModel.now.diff(startDate, 'second')
-      const nowDiffMinEndDate = vueModel.now.diff(endDate, 'second')
       const nowBeforeEndDate = vueModel.now.isBefore(endDate)
       const { tutorStarted, ...status } = userCourse.status;
       const statusCount = !!status ? Object.keys(status).length : 0
@@ -83,7 +82,7 @@ export default {
       const [eTutorStatus, eTutorClassBtnCss, eTutorClassBtnImg] = this.retrieveETutorStatus(userCourse, isDone, isRejected,
           nowDiffMinStartDate, tutorStarted)
       // 倒數計時修改
-      this.triggerAutoChangeState(id, userCourse, eTutorStatus, nowDiffMinStartDate, nowDiffMinEndDate)
+      this.triggerAutoChangeState(id, userCourse, eTutorStatus, startDate, endDate)
 
       const retrieveCourseStatus = ({ isStart, isAdd, isCheck, isDone, isRejected,
                                       eTutorStatus, eTutorClassBtnCss, eTutorClassBtnImg, tutorStarted}) => {
@@ -516,10 +515,13 @@ export default {
       }
       return ['start', '', './img/btn-eTutor-ready.png']
     },
-    triggerAutoChangeState(id, userCourse, eTutorStatus, nowDiffMinStartDate, nowDiffMinEndDate){
+    triggerAutoChangeState(id, userCourse, eTutorStatus, startDate, endDate){
+      const vueModel = this
       const fifteenMin = 15 * 60
       const { tutorStarted } = userCourse.status;
       const hasETutorClassAndNotStarted = userCourse.eTutorUrl && !tutorStarted;
+      const nowDiffMinStartDate = vueModel.$dayjs(Date.now()).diff(startDate, 'second')
+      const nowDiffMinEndDate = vueModel.$dayjs(Date.now()).diff(endDate, 'second')
 
       if (nowDiffMinStartDate < 0) {
         const waitTime = Math.abs(nowDiffMinStartDate)
@@ -567,7 +569,7 @@ export default {
             window.location.href = `/coach-web/enterCourse.html?id=${userCourseId}`
           }
         }
-      }, waitTime * 1000 + 300)
+      }, Math.abs(waitTime) * 1000 + 300)
     },
     changeETutorToNextState(id, state, waitTime, userCourse){
       const vueModel = this
