@@ -54,12 +54,10 @@ export default {
             chestModal()
             $(".gift.chest").on('click', async () => {
               try {
-                console.log("onReceivedBonus received 1")
                 const receivedReward = await $.ajax({
                   type: 'PUT',
                   url: '/coach-web/UserAchievement/received',
                 })
-                console.log("onReceivedBonus received 2")
                 let coins = receivedReward
                     .filter(reward => reward.type === 'coin')
                     .map(reward => reward.amount)
@@ -78,7 +76,6 @@ export default {
                     .reduce((prev, curr) => prev + curr, 0)
 
                 rewardsModal(coins, gems, chestLevel, chestCount)
-                console.log("onReceivedBonus received 3")
                 vueModel.userAssetsHandler()
                 vueModel.bonusUnReceived--
                 vueModel.determineShowReceivedBonusBtn(vueModel.bonusUnReceived)
