@@ -434,9 +434,11 @@ export default {
       }).then(res => {
         if(res.ok) return res.json();
       }).then(result => {
-        const asset = result.content;
-        $(".ecoin").html(asset.coins);
-        $(".diamond").html(asset.gems);
+        if(result){
+          const asset = result.content;
+          $(".ecoin").html(asset.coins);
+          $(".diamond").html(asset.gems);
+        }
       })
     },
 
@@ -530,11 +532,14 @@ export default {
         }
         return;
       }
+      // 距開課日期三天以內才setTimeout
+      const threeDays = -(3 * 24 * 60 * 60)
       if (nowDiffMinStartDate < 0) {
         const waitTime = Math.abs(nowDiffMinStartDate)
-        this.changeCourseState(id, userCourse, waitTime, endDate)
+        if(nowDiffMinStartDate > threeDays){
+          this.changeCourseState(id, userCourse, waitTime, endDate)
+        }
         const threeDays = -(3 * 24 * 60 * 60)
-        // 距開課日期三天以內才setTimeout
         if (eTutorStatus === 'not-ready' && nowDiffMinStartDate > threeDays) {
           // 5分鐘前換狀態
           const fiveMin = 5 * 60
