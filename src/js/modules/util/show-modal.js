@@ -56,7 +56,7 @@ function resultModal(coin, gem, chestLevel, chestCount, details) {
       let resultMap = new Map();
       resultMap.set('time-a', "準時到課");
       resultMap.set('time-b', "逾時到課");
-      resultMap.set('time-c', "未完成");
+      resultMap.set('time-c', "未到課");
       resultMap.set('concentrate-a', "專心");
       resultMap.set('concentrate-b', "普通");
       resultMap.set('concentrate-c', "不專心");
