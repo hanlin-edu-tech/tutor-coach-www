@@ -1,10 +1,13 @@
-#testBasic {
-  width: 980px;
-  background: url("https://www.ehanlin.com.tw/images/body_bg.jpg") repeat;
-  font-size: 12px;
-  margin: 0 auto;
-  padding: 10px;
+body {
   font-family: "微軟正黑體", Arial, sans-serif;
+  background: url("https://www.ehanlin.com.tw/images/body_bg.jpg") repeat;
+}
+.coach-container {
+  width: 980px;
+  font-size: 12px;
+  margin: 60px auto 0;
+  padding: 10px;
+  min-height: calc(100vh - 150px);
 }
 
 #ehanlin-menu.nav {
