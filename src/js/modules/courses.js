@@ -88,7 +88,6 @@ export default {
                                       eTutorStatus, eTutorClassBtnCss, eTutorClassBtnImg, tutorStarted}) => {
         const userCourseId = userCourse['_id']
         const eTutorUrl = userCourse['eTutorUrl']
-
         if (isStart) {
           return {
             classBtnCss: 'class-btn-start',
