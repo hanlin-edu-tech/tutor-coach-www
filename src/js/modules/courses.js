@@ -261,7 +261,7 @@ export default {
       const userCourse = data.userCourse
       let subjectIcon = "./img/icon/icon.png"
       let su = userCourse.userPlan.split("_")
-      if(su.length > 4){
+      if(su.length > 4 && "en|ma|na|pc|so".indexOf(su[3]) !== -1){
         subjectIcon = `./img/icon/${su[3]}.png`
       }
       const rewards = userCourse.rewards
