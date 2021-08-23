@@ -499,7 +499,8 @@ export default {
     },
     retrieveETutorStatus (userCourse, isDone, isRejected, nowDiffMinStartDate, tutorStarted){
       if (!userCourse.eTutorUrl) {
-        return ['no-class', 'no-class', './img/btn-eTutor-noclass.png']
+        // 無課程不顯示icon
+        return ['no-class']
       }
       if (isDone || isRejected) {
         return ['done', 'class-btn-done', './img/btn-done-purple.png']
