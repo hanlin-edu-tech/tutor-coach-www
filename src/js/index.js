@@ -27,8 +27,3 @@ $(document).click(function(event) {
         $("body").find(".modal").removeClass("visible");
     }
 });
-
-
-$(".btn-intro").click(function(){
-  $(".popup-unlogin").addClass("hide");
-});
