@@ -1,3 +1,13 @@
+(() => {
+  let cookieToken = getEhToken();
+  if(cookieToken!=null){
+      let user = cookieToken.user;
+      if(user==null){
+        window.location.href = `/app/member-center/login.html?redirect=/app/coach/`;
+      }
+  }
+})();
+
 // 滑鼠滑入顯示完整課名
 $(function() {
     $("body").on("mouseenter", ".course-unit", function() {
