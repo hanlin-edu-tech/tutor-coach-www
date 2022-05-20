@@ -28,7 +28,7 @@ export default {
 
   methods: {
     userAssetsHandler() {
-      fetch(`/currencyBank/totalAssets?ts=${new Date().getTime()}`,{
+      fetch(`/student-asset/totalAssets`,{
         method: "GET",
         headers: {"content-type":"application/json"},
       }).then(res => {
