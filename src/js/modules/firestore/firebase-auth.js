@@ -9,13 +9,13 @@ const testConfig = {
 }
 
 const productionConfig = {
-  apiKey: "AIzaSyAVB-qyFs_xKMkWQaYp5Th3XfE4pIbvQvQ",
-  authDomain: "coach-245411-84942.firebaseapp.com",
-  projectId: "coach-245411-84942",
-  storageBucket: "coach-245411-84942.appspot.com",
-  messagingSenderId: "306771284876",
-  appId: "1:306771284876:web:0fb42e3ac1743b3ec67ca9",
-  measurementId: "G-PG9N0RH0SW"
+  apiKey: "AIzaSyApascu4ux1iHVA_dD7GDbLyHQUWDay8uw",
+  authDomain: "coach-245411.firebaseapp.com",
+  databaseURL: "https://coach-245411.firebaseio.com",
+  projectId: "coach-245411",
+  storageBucket: "coach-245411.appspot.com",
+  messagingSenderId: "745967530532",
+  appId: "1:745967530532:web:de55031a35d6d680"
 }
 
 //export default testConfig
