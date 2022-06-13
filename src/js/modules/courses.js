@@ -30,6 +30,7 @@ export default {
       await vueModel.userCoursesHandler()
       await vueModel.initialBanner()
     } catch (error) {
+      console.error(error)
       messageModal(PopupText.FIRE_STORE_ERROR)
     }
   },
