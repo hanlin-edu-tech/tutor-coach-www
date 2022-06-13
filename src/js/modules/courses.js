@@ -30,8 +30,7 @@ export default {
       await vueModel.userCoursesHandler()
       await vueModel.initialBanner()
     } catch (error) {
-      console.error(error)
-      // messageModal(PopupText.FIRE_STORE_ERROR)
+      messageModal(PopupText.FIRE_STORE_ERROR)
     }
   },
 
@@ -103,14 +102,21 @@ export default {
             },
             eTutorProcess: () => {
               if(!tutorStarted){
-                $.ajax({
-                  type: 'PUT',
-                  contentType: 'application/json',
-                  url: `/coach-web/${userCourseId}/enterTutorCourse`,
+                fetch(`/coach-web/${userCourseId}/enterTutorCourse`, {
+                  headers: {
+                    'content-type': 'application/json'
+                  },
+                  method: "PUT"
+                }).then(res => {
+                  if(res.ok){
+                    userCourse.tutorEnter = true
+                    window.open(eTutorUrl, '_blank')
+                  }
                 })
+              } else {
+                userCourse.tutorEnter = true
+                window.open(eTutorUrl, '_blank')
               }
-              userCourse.tutorEnter = true
-              window.open(eTutorUrl, '_blank')
             }
           }
         }
@@ -130,14 +136,21 @@ export default {
             },
             eTutorProcess: () => {
               if(!tutorStarted){
-                $.ajax({
-                  type: 'PUT',
-                  contentType: 'application/json',
-                  url: `/coach-web/${userCourseId}/enterTutorCourse`,
+                fetch(`/coach-web/${userCourseId}/enterTutorCourse`, {
+                  headers: {
+                    'content-type': 'application/json'
+                  },
+                  method: "PUT"
+                }).then(res => {
+                  if(res.ok){
+                    userCourse.tutorEnter = true
+                    window.open(eTutorUrl, '_blank')
+                  }
                 })
+              } else {
+                userCourse.tutorEnter = true
+                window.open(eTutorUrl, '_blank')
               }
-              userCourse.tutorEnter = true
-              window.open(eTutorUrl, '_blank')
             }
           }
         }
@@ -151,14 +164,21 @@ export default {
             eTutorClassBtnImg: eTutorClassBtnImg,
             eTutorProcess: () => {
               if(!tutorStarted){
-                $.ajax({
-                  type: 'PUT',
-                  contentType: 'application/json',
-                  url: `/coach-web/${userCourseId}/enterTutorCourse`,
+                fetch(`/coach-web/${userCourseId}/enterTutorCourse`, {
+                  headers: {
+                    'content-type': 'application/json'
+                  },
+                  method: "PUT"
+                }).then(res => {
+                  if(res.ok){
+                    userCourse.tutorEnter = true
+                    window.open(eTutorUrl, '_blank')
+                  }
                 })
+              } else {
+                userCourse.tutorEnter = true
+                window.open(eTutorUrl, '_blank')
               }
-              userCourse.tutorEnter = true
-              window.open(eTutorUrl, '_blank')
             }
           }
         }
@@ -238,15 +258,7 @@ export default {
           eTutorClassBtnCss: eTutorClassBtnCss,
           eTutorClassBtnImg: eTutorClassBtnImg,
           eTutorProcess: () => {
-            if(!tutorStarted){
-              $.ajax({
-                type: 'PUT',
-                contentType: 'application/json',
-                url: `/coach-web/${userCourseId}/enterTutorCourse`,
-              })
-            }
-            userCourse.tutorEnter = true
-            window.open(eTutorUrl, '_blank')
+            // 未開課
           }
         }
       }
