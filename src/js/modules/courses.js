@@ -85,7 +85,7 @@ export default {
       this.triggerAutoChangeState(id, userCourse, eTutorStatus, startDate, endDate)
 
       const retrieveCourseStatus = ({ isStart, isAdd, isCheck, isDone, isRejected,
-                                      eTutorStatus, eTutorClassBtnCss, eTutorClassBtnImg, tutorStarted}) => {
+                                      eTutorStatus, eTutorClassBtnCss, eTutorClassBtnImg}) => {
         const userCourseId = userCourse['_id']
         const eTutorUrl = userCourse['eTutorUrl']
         if (isStart) {
@@ -102,15 +102,17 @@ export default {
               }
             },
             eTutorProcess: () => {
-              if(!tutorStarted){
-                $.ajax({
-                  type: 'PUT',
-                  contentType: 'application/json',
-                  url: `/coach-web/${userCourseId}/enterTutorCourse`,
-                })
-              }
-              userCourse.tutorEnter = true
-              window.open(eTutorUrl, '_blank')
+              fetch(`/coach-web/${userCourseId}/enterTutorCourse`, {
+                headers: {
+                  'content-type': 'application/json'
+                },
+                method: "PUT"
+              }).then(res => {
+                if(res.ok){
+                  userCourse.tutorEnter = true
+                  window.open(eTutorUrl, '_blank')
+                }
+              })
             }
           }
         }
@@ -129,15 +131,17 @@ export default {
               }
             },
             eTutorProcess: () => {
-              if(!tutorStarted){
-                $.ajax({
-                  type: 'PUT',
-                  contentType: 'application/json',
-                  url: `/coach-web/${userCourseId}/enterTutorCourse`,
-                })
-              }
-              userCourse.tutorEnter = true
-              window.open(eTutorUrl, '_blank')
+              fetch(`/coach-web/${userCourseId}/enterTutorCourse`, {
+                headers: {
+                  'content-type': 'application/json'
+                },
+                method: "PUT"
+              }).then(res => {
+                if(res.ok){
+                  userCourse.tutorEnter = true
+                  window.open(eTutorUrl, '_blank')
+                }
+              })
             }
           }
         }
@@ -150,15 +154,17 @@ export default {
             eTutorClassBtnCss: eTutorClassBtnCss,
             eTutorClassBtnImg: eTutorClassBtnImg,
             eTutorProcess: () => {
-              if(!tutorStarted){
-                $.ajax({
-                  type: 'PUT',
-                  contentType: 'application/json',
-                  url: `/coach-web/${userCourseId}/enterTutorCourse`,
-                })
-              }
-              userCourse.tutorEnter = true
-              window.open(eTutorUrl, '_blank')
+              fetch(`/coach-web/${userCourseId}/enterTutorCourse`, {
+                headers: {
+                  'content-type': 'application/json'
+                },
+                method: "PUT"
+              }).then(res => {
+                if(res.ok){
+                  userCourse.tutorEnter = true
+                  window.open(eTutorUrl, '_blank')
+                }
+              })
             }
           }
         }
@@ -238,21 +244,13 @@ export default {
           eTutorClassBtnCss: eTutorClassBtnCss,
           eTutorClassBtnImg: eTutorClassBtnImg,
           eTutorProcess: () => {
-            if(!tutorStarted){
-              $.ajax({
-                type: 'PUT',
-                contentType: 'application/json',
-                url: `/coach-web/${userCourseId}/enterTutorCourse`,
-              })
-            }
-            userCourse.tutorEnter = true
-            window.open(eTutorUrl, '_blank')
+            // 未開課
           }
         }
       }
 
       return retrieveCourseStatus({ isStart, isAdd, isCheck, isDone, isRejected, eTutorStatus, eTutorClassBtnCss,
-        eTutorClassBtnImg, tutorStarted})
+        eTutorClassBtnImg})
     },
 
     composeCourseInfo(id, data) {
