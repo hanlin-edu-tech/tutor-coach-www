@@ -102,6 +102,8 @@ export default {
               }
             },
             eTutorProcess: () => {
+              const safariWindow = window.open();
+              safariWindow.opener = null;
               fetch(`/coach-web/${userCourseId}/enterTutorCourse`, {
                 headers: {
                   'content-type': 'application/json'
@@ -110,7 +112,8 @@ export default {
               }).then(res => {
                 if(res.ok){
                   userCourse.tutorEnter = true
-                  window.open(eTutorUrl, '_blank')
+                  safariWindow.location.href = eTutorUrl;
+                  // window.open(eTutorUrl, '_blank')
                 }
               })
             }
@@ -131,6 +134,8 @@ export default {
               }
             },
             eTutorProcess: () => {
+              const safariWindow = window.open();
+              safariWindow.opener = null;
               fetch(`/coach-web/${userCourseId}/enterTutorCourse`, {
                 headers: {
                   'content-type': 'application/json'
@@ -139,7 +144,8 @@ export default {
               }).then(res => {
                 if(res.ok){
                   userCourse.tutorEnter = true
-                  window.open(eTutorUrl, '_blank')
+                  safariWindow.location.href = eTutorUrl;
+                  // window.open(eTutorUrl, '_blank')
                 }
               })
             }
@@ -154,6 +160,8 @@ export default {
             eTutorClassBtnCss: eTutorClassBtnCss,
             eTutorClassBtnImg: eTutorClassBtnImg,
             eTutorProcess: () => {
+              const safariWindow = window.open();
+              safariWindow.opener = null;
               fetch(`/coach-web/${userCourseId}/enterTutorCourse`, {
                 headers: {
                   'content-type': 'application/json'
@@ -162,7 +170,8 @@ export default {
               }).then(res => {
                 if(res.ok){
                   userCourse.tutorEnter = true
-                  window.open(eTutorUrl, '_blank')
+                  // window.open(eTutorUrl, '_blank')
+                  safariWindow.location.href = eTutorUrl;
                 }
               })
             }
