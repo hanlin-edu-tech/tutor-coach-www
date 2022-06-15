@@ -113,7 +113,6 @@ export default {
                 if(res.ok){
                   userCourse.tutorEnter = true
                   safariWindow.location.href = eTutorUrl;
-                  // window.open(eTutorUrl, '_blank')
                 }
               })
             }
@@ -145,7 +144,6 @@ export default {
                 if(res.ok){
                   userCourse.tutorEnter = true
                   safariWindow.location.href = eTutorUrl;
-                  // window.open(eTutorUrl, '_blank')
                 }
               })
             }
@@ -170,7 +168,6 @@ export default {
               }).then(res => {
                 if(res.ok){
                   userCourse.tutorEnter = true
-                  // window.open(eTutorUrl, '_blank')
                   safariWindow.location.href = eTutorUrl;
                 }
               })
