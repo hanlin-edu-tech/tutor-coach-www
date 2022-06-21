@@ -102,13 +102,11 @@ export default {
               }
             },
             eTutorProcess: () => {
-              if(!tutorStarted){
-                $.ajax({
-                  type: 'PUT',
-                  contentType: 'application/json',
-                  url: `/coach-web/${userCourseId}/enterTutorCourse`,
-                })
-              }
+              $.ajax({
+                type: 'PUT',
+                contentType: 'application/json',
+                url: `/coach-web/${userCourseId}/enterTutorCourse`,
+              })
               userCourse.tutorEnter = true
               window.open(eTutorUrl, '_blank')
             }
@@ -129,13 +127,11 @@ export default {
               }
             },
             eTutorProcess: () => {
-              if(!tutorStarted){
-                $.ajax({
-                  type: 'PUT',
-                  contentType: 'application/json',
-                  url: `/coach-web/${userCourseId}/enterTutorCourse`,
-                })
-              }
+              $.ajax({
+                type: 'PUT',
+                contentType: 'application/json',
+                url: `/coach-web/${userCourseId}/enterTutorCourse`,
+              })
               userCourse.tutorEnter = true
               window.open(eTutorUrl, '_blank')
             }
@@ -150,13 +146,11 @@ export default {
             eTutorClassBtnCss: eTutorClassBtnCss,
             eTutorClassBtnImg: eTutorClassBtnImg,
             eTutorProcess: () => {
-              if(!tutorStarted){
-                $.ajax({
-                  type: 'PUT',
-                  contentType: 'application/json',
-                  url: `/coach-web/${userCourseId}/enterTutorCourse`,
-                })
-              }
+              $.ajax({
+                type: 'PUT',
+                contentType: 'application/json',
+                url: `/coach-web/${userCourseId}/enterTutorCourse`,
+              })
               userCourse.tutorEnter = true
               window.open(eTutorUrl, '_blank')
             }
@@ -238,13 +232,11 @@ export default {
           eTutorClassBtnCss: eTutorClassBtnCss,
           eTutorClassBtnImg: eTutorClassBtnImg,
           eTutorProcess: () => {
-            if(!tutorStarted){
-              $.ajax({
-                type: 'PUT',
-                contentType: 'application/json',
-                url: `/coach-web/${userCourseId}/enterTutorCourse`,
-              })
-            }
+            $.ajax({
+              type: 'PUT',
+              contentType: 'application/json',
+              url: `/coach-web/${userCourseId}/enterTutorCourse`,
+            })
             userCourse.tutorEnter = true
             window.open(eTutorUrl, '_blank')
           }
