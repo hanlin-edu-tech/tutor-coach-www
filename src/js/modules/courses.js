@@ -85,7 +85,7 @@ export default {
       this.triggerAutoChangeState(id, userCourse, eTutorStatus, startDate, endDate)
 
       const retrieveCourseStatus = ({ isStart, isAdd, isCheck, isDone, isRejected,
-                                      eTutorStatus, eTutorClassBtnCss, eTutorClassBtnImg}) => {
+                                      eTutorStatus, eTutorClassBtnCss, eTutorClassBtnImg, tutorStarted}) => {
         const userCourseId = userCourse['_id']
         const eTutorUrl = userCourse['eTutorUrl']
         if (isStart) {
@@ -102,19 +102,13 @@ export default {
               }
             },
             eTutorProcess: () => {
-              const safariWindow = window.open();
-              safariWindow.opener = null;
-              fetch(`/coach-web/${userCourseId}/enterTutorCourse`, {
-                headers: {
-                  'content-type': 'application/json'
-                },
-                method: "PUT"
-              }).then(res => {
-                if(res.ok){
-                  userCourse.tutorEnter = true
-                  safariWindow.location.href = eTutorUrl;
-                }
+              $.ajax({
+                type: 'PUT',
+                contentType: 'application/json',
+                url: `/coach-web/${userCourseId}/enterTutorCourse`,
               })
+              userCourse.tutorEnter = true
+              window.open(eTutorUrl, '_blank')
             }
           }
         }
@@ -133,19 +127,13 @@ export default {
               }
             },
             eTutorProcess: () => {
-              const safariWindow = window.open();
-              safariWindow.opener = null;
-              fetch(`/coach-web/${userCourseId}/enterTutorCourse`, {
-                headers: {
-                  'content-type': 'application/json'
-                },
-                method: "PUT"
-              }).then(res => {
-                if(res.ok){
-                  userCourse.tutorEnter = true
-                  safariWindow.location.href = eTutorUrl;
-                }
+              $.ajax({
+                type: 'PUT',
+                contentType: 'application/json',
+                url: `/coach-web/${userCourseId}/enterTutorCourse`,
               })
+              userCourse.tutorEnter = true
+              window.open(eTutorUrl, '_blank')
             }
           }
         }
@@ -158,19 +146,13 @@ export default {
             eTutorClassBtnCss: eTutorClassBtnCss,
             eTutorClassBtnImg: eTutorClassBtnImg,
             eTutorProcess: () => {
-              const safariWindow = window.open();
-              safariWindow.opener = null;
-              fetch(`/coach-web/${userCourseId}/enterTutorCourse`, {
-                headers: {
-                  'content-type': 'application/json'
-                },
-                method: "PUT"
-              }).then(res => {
-                if(res.ok){
-                  userCourse.tutorEnter = true
-                  safariWindow.location.href = eTutorUrl;
-                }
+              $.ajax({
+                type: 'PUT',
+                contentType: 'application/json',
+                url: `/coach-web/${userCourseId}/enterTutorCourse`,
               })
+              userCourse.tutorEnter = true
+              window.open(eTutorUrl, '_blank')
             }
           }
         }
@@ -250,13 +232,19 @@ export default {
           eTutorClassBtnCss: eTutorClassBtnCss,
           eTutorClassBtnImg: eTutorClassBtnImg,
           eTutorProcess: () => {
-            // 未開課
+            $.ajax({
+              type: 'PUT',
+              contentType: 'application/json',
+              url: `/coach-web/${userCourseId}/enterTutorCourse`,
+            })
+            userCourse.tutorEnter = true
+            window.open(eTutorUrl, '_blank')
           }
         }
       }
 
       return retrieveCourseStatus({ isStart, isAdd, isCheck, isDone, isRejected, eTutorStatus, eTutorClassBtnCss,
-        eTutorClassBtnImg})
+        eTutorClassBtnImg, tutorStarted})
     },
 
     composeCourseInfo(id, data) {
@@ -600,22 +588,6 @@ export default {
             vueModel.courses[id].eTutorStatus = 'ready'
             vueModel.courses[id].eTutorClassBtnCss = 'class-btn-start focus-animation'
             vueModel.courses[id].eTutorClassBtnImg = './img/btn-eTutor-ready.png'
-            vueModel.courses[id].eTutorProcess = function(){
-              const eTutorUrl = vueModel.courses[id]['eTutorUrl']
-              const safariWindow = window.open();
-              safariWindow.opener = null;
-              fetch(`/coach-web/${id}/enterTutorCourse`, {
-                headers: {
-                  'content-type': 'application/json'
-                },
-                method: "PUT"
-              }).then(res => {
-                if(res.ok){
-                  userCourse.tutorEnter = true
-                  safariWindow.location.href = eTutorUrl;
-                }
-              })
-            }
             // 5分鐘後再度改變狀態
             const fiveMin = 5 * 60
             this.changeETutorToNextState(id, 'ready', fiveMin, userCourse)
@@ -628,22 +600,6 @@ export default {
             vueModel.courses[id].eTutorStatus = 'start'
             vueModel.courses[id].eTutorClassBtnCss = ''
             vueModel.courses[id].eTutorClassBtnImg = './img/btn-eTutor-ready.png'
-            vueModel.courses[id].eTutorProcess = function(){
-              const eTutorUrl = vueModel.courses[id]['eTutorUrl']
-              const safariWindow = window.open();
-              safariWindow.opener = null;
-              fetch(`/coach-web/${id}/enterTutorCourse`, {
-                headers: {
-                  'content-type': 'application/json'
-                },
-                method: "PUT"
-              }).then(res => {
-                if(res.ok){
-                  userCourse.tutorEnter = true
-                  safariWindow.location.href = eTutorUrl;
-                }
-              })
-            }
             // 計時15分鐘遇時改變按鈕狀態
             const waitTime = 15 * 60
             this.changeETutorToNextState(id, 'start', waitTime, userCourse)
