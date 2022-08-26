@@ -1,7 +1,7 @@
-import { db, ehanlinAuth } from './firestore/firebase-config'
+import {db, ehanlinAuth} from './firestore/firebase-config'
 import singleCourse from './components/single-course'
 import {messageModal, resultModal} from './util/show-modal'
-import { PopupText } from './util/modal-text'
+import {PopupText} from './util/modal-text'
 
 export default {
   name: 'courses',
@@ -20,7 +20,13 @@ export default {
   components: {
     course: singleCourse
   },
-
+  computed:{
+    sortedCourse(){
+      return Object.entries(this.courses)
+          .sort(([, a], [, b]) => new Date(b.start) - new Date(a.start))
+          .reduce((r, [k, v]) => ({...r, [k]: v}), {})
+    }
+  },
   async mounted() {
     const vueModel = this
     vueModel.ehanlinUser = await ehanlinAuth()
@@ -44,9 +50,9 @@ export default {
       const statusCount = !!status ? Object.keys(status).length : 0
 
       // 一般課堂狀態
-      // 已開始上課
+      // 已開始上課, 提前五分鐘上課
       const isStart = (
-        nowDiffMinStartDate >= 0 && nowBeforeEndDate
+        nowDiffMinStartDate >= - (5 * 60) && nowBeforeEndDate
         && (
           statusCount === 0 || (statusCount === 1 && status.hasOwnProperty('started'))
         )
@@ -276,6 +282,7 @@ export default {
           .map(reward => reward.amount)
           .reduce((prev, curr) => prev + curr, 0)
       return Object.assign({
+        start: userCourse.start.toDate(),
         startDate: startDate.format('MM月DD日 HH:mm'),
         endDate: endDate.format('MM月DD日 HH:mm'),
         subject: subject,
@@ -524,17 +531,18 @@ export default {
         }
         return;
       }
-      // 距開課日期三天以內才setTimeout
-      const threeDays = -(3 * 24 * 60 * 60)
       if (nowDiffMinStartDate < 0) {
+
+        // 距開課日期三天以內才setTimeout
+        let threeDays = -(3 * 24 * 60 * 60)
+        // 提早五分鐘轉按鈕
         const waitTime = Math.abs(nowDiffMinStartDate)
+        const fiveMin = 5 * 60
         if(nowDiffMinStartDate > threeDays){
-          this.changeCourseState(id, userCourse, waitTime, endDate)
+          this.changeCourseState(id, userCourse, waitTime - fiveMin, endDate)
         }
-        const threeDays = -(3 * 24 * 60 * 60)
         if (eTutorStatus === 'not-ready' && nowDiffMinStartDate > threeDays) {
           // 5分鐘前換狀態
-          const fiveMin = 5 * 60
           this.changeETutorToNextState(id, 'not-ready', waitTime - fiveMin, userCourse)
         }else if (eTutorStatus === 'ready') {
           this.changeETutorToNextState(id, 'ready', waitTime, userCourse)
