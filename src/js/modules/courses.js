@@ -317,10 +317,12 @@ export default {
 
     filterStatusReceived(id, data, showBanner = () => { }) {
       const vueModel = this
-      const status = data.userCourse.status
+      const userCourse = data.userCourse
+      const status = userCourse.status
       const statusCount = !!status ? Object.keys(status).length : 0
-
-      if (statusCount >= 0 && !status.hasOwnProperty('received')) {
+      const endDate = vueModel.$dayjs(userCourse.end.toDate())
+      if (statusCount >= 0 && !status.hasOwnProperty('received') &&
+          !(userCourse.type === "自學課堂" && (status.hasOwnProperty('finished') || vueModel.now.isAfter(endDate)))) {
         Vue.set(vueModel.courses, id, vueModel.attachPreventDoubleClick(id, data))
         showBanner()
       }
@@ -413,7 +415,10 @@ export default {
                   break
                 }
 
-                Vue.set(vueModel.courses, id, vueModel.attachPreventDoubleClick(id, data))
+                const endDate = vueModel.$dayjs(userCourse.end.toDate())
+                if (!(userCourse.type === "自學課堂" && (status.hasOwnProperty('finished') || vueModel.now.isAfter(endDate)))) {
+                  Vue.set(vueModel.courses, id, vueModel.attachPreventDoubleClick(id, data))
+                }
                 break
               }
 

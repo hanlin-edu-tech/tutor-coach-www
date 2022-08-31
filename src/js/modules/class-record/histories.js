@@ -113,6 +113,7 @@ export default {
         hasETutorCourseItem: hasETutorCourseItem,
         courseName: courseName,
         items: items,
+        isTutor: userCourse.type !== '自學課堂',
         isChecked: (status && status.checked),
         isRejected: (status && status.rejected),
         coins: coins,
