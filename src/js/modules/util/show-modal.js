@@ -96,28 +96,42 @@ function resultModal(coin, gem, chestLevel, chestCount, details) {
       selfStudy.css("display", '');
     }
   }
+  let isCoinExist = false;
+  let isChestExist = false;
   if(coin && coin !== 0){
     modalConTarget.find('.coin-number-award').empty();
     modalConTarget.find('.coin-number-award').html(`x${coin}`);
     modalConTarget.find('.gem-number-award').empty();
     modalConTarget.find('.gem-number-award').html(`x${gem}`);
-    modalConTarget.find('.reward-detail').css("display", '');
-    modalConTarget.find('.coin-item-award').css("display", '');
-    modalConTarget.find('.gem-item-award').css("display", '');
-    modalConTarget.find('.chest-item-award').css("display", 'None');
+    isCoinExist = true;
   } else if(chestCount && chestCount !== 0){
     modalConTarget.find(".chest-item-award").find(".img-award").src = `./img/crystal/lv${chestLevel}.png`;
     modalConTarget.find('.chest-name-award').empty();
     modalConTarget.find('.chest-name-award').html(`Lv${chestLevel} 水晶球`);
     modalConTarget.find('.chest-number-award').empty();
     modalConTarget.find('.chest-number-award').html(`x${chestCount}`);
+    isChestExist = true;
+  } 
+
+  if(isCoinExist || isChestExist){
     modalConTarget.find('.reward-detail').css("display", '');
-    modalConTarget.find('.coin-item-award').css("display", 'None');
-    modalConTarget.find('.gem-item-award').css("display", 'None');
-    modalConTarget.find('.chest-item-award').css("display", '');
-  } else {
+    if(isCoinExist==false){
+      modalConTarget.find('.coin-item-award').css("display", 'None');
+      modalConTarget.find('.gem-item-award').css("display", 'None');
+    }else{
+      modalConTarget.find('.coin-item-award').css("display", '');
+      modalConTarget.find('.gem-item-award').css("display", '');
+    }
+
+    if(isChestExist==false){
+      modalConTarget.find('.chest-item-award').css("display", 'None');
+    }else{
+      modalConTarget.find('.chest-item-award').css("display", '');
+    }
+  }else{
     modalConTarget.find('.reward-detail').css("display", 'None');
   }
+  
   modalConTarget.addClass('slideDown');
   modalTarget.addClass('visible');
 }
