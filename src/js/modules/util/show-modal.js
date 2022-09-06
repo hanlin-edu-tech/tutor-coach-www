@@ -104,7 +104,8 @@ function resultModal(coin, gem, chestLevel, chestCount, details) {
     modalConTarget.find('.gem-number-award').empty();
     modalConTarget.find('.gem-number-award').html(`x${gem}`);
     isCoinExist = true;
-  } else if(chestCount && chestCount !== 0){
+  }
+  if(chestCount && chestCount !== 0){
     modalConTarget.find(".chest-item-award").find(".img-award").src = `./img/crystal/lv${chestLevel}.png`;
     modalConTarget.find('.chest-name-award').empty();
     modalConTarget.find('.chest-name-award').html(`Lv${chestLevel} 水晶球`);
