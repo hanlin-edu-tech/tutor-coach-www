@@ -515,15 +515,15 @@ export default {
       if (nowDiffMinStartDate >= -300 && nowDiffMinStartDate < 0) {
         return ['ready', 'class-btn-start focus-animation', './img/btn-eTutor-ready.png']
       }
-      const fifteenMin = 15 * 60
-      if(!tutorStarted && nowDiffMinStartDate > fifteenMin){
+      const thirtyMin = 30 * 60
+      if(!tutorStarted && nowDiffMinStartDate > thirtyMin){
         return ['expired', '', './img/btn-check-error.png']
       }
       return ['start', '', './img/btn-eTutor-ready.png']
     },
     triggerAutoChangeState(id, userCourse, eTutorStatus, startDate, endDate){
       const vueModel = this
-      const fifteenMin = 15 * 60
+      const thirtyMin = 30 * 60
       const { tutorStarted } = userCourse.status;
       const hasETutorClassAndNotStarted = userCourse.eTutorUrl && !tutorStarted;
       const nowDiffMinStartDate = vueModel.$dayjs(Date.now()).diff(startDate, 'second')
@@ -555,9 +555,9 @@ export default {
       } else {
         this.changeCourseStateToAdd(id, userCourse, nowDiffMinEndDate)
       }
-      // 倒數計時15分鐘, 逾時鎖課程
-      if(hasETutorClassAndNotStarted && Math.abs(nowDiffMinStartDate) <= fifteenMin){
-        const waitTime = Math.abs(fifteenMin - nowDiffMinStartDate)
+      // 倒數計時30分鐘, 逾時鎖課程
+      if(hasETutorClassAndNotStarted && Math.abs(nowDiffMinStartDate) <= thirtyMin){
+        const waitTime = Math.abs(thirtyMin - nowDiffMinStartDate)
         this.changeETutorToNextState(id, 'start', waitTime, userCourse)
       }
     },
