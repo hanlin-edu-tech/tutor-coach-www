@@ -157,7 +157,7 @@ export default {
           return res.json();
         }
       }).then(result => {
-        if (!!result) {
+        if (!!result && result.length>0) {
           vueModel.retrieveUserCourses(result)
         } else {
           $('.noclass-record').css({ display: '' })
