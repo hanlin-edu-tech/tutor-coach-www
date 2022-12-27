@@ -183,7 +183,7 @@ export default {
 
     async userCoursesHandler () {
       const vueModel = this
-      await fetch(`/coach-web/classRecord?courseUser=61b1870ec7c84d16644c264c`,{
+      await fetch(`/coach-web/classRecord?courseUser=${vueModel.ehanlinUser}`,{
         method: "GET",
         headers: {"content-type":"application/json"},
       }).then(res => {
