@@ -1,6 +1,6 @@
-import { db, ehanlinAuth } from '../firestore/firebase-config'
+import { ehanlinAuth }  from '../firestore/firebase-config'
 import singleHistory from '../components/single-history'
-import { resultModal} from '../util/show-modal'
+import { resultModal } from '../util/show-modal'
 import { ItemType, ItemIconClass } from '../util/modal-text'
 
 export default {
@@ -9,8 +9,6 @@ export default {
   data () {
     return {
       histories: {},
-      userCourseRef: db.collection('UserCourse'),
-      userPlanRef: db.collection('UserPlan'),
       ehanlinUser: ''
     }
   },
@@ -149,38 +147,6 @@ export default {
       })
     },
 
-    listeningOnUserCourseChange () {
-      const vueModel = this
-      vueModel.userCourseRef
-        .onSnapshot(
-          async userCourseQuerySnapshot => {
-            if (userCourseQuerySnapshot.empty) {
-              return
-            }
-            const userCourseNewestChange = userCourseQuerySnapshot.docChanges().last()
-            const id = userCourseNewestChange.doc.id
-            const data = userCourseNewestChange.doc.data()
-
-            const userCourse = data.userCourse
-            const userPlan = data.userPlan
-            const userPlanName = userPlan.name
-            if (userCourseNewestChange.type === 'modified') {
-              const histories = historiesByUserPlan[userPlanName]
-              const isIncludingHistories = histories
-                .some(history => {
-                  return history.courseId === userCourse._id
-                })
-
-              if (!isIncludingHistories) {
-                histories.push(
-                  vueModel.composeHistory(userCourseNewestChange.doc)
-                )
-              }
-            }
-          }
-        )
-    },
-
     async userCoursesHandler () {
       const vueModel = this
       await fetch(`/coach-web/classRecord?courseUser=${vueModel.ehanlinUser}`,{
@@ -193,7 +159,6 @@ export default {
       }).then(result => {
         if (!!result) {
           vueModel.retrieveUserCourses(result)
-          //vueModel.listeningOnUserCourseChange()
         } else {
           $('.noclass-record').css({ display: '' })
         }
