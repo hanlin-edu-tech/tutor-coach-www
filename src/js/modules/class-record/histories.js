@@ -34,7 +34,7 @@ export default {
     },
     composeHistory (userCourseDoc) {
       const vueModel = this
-      const data = userCourseDoc.data()
+      const data = userCourseDoc
       const userCourse = data.userCourse
       const courseId = userCourse._id
       const courseName = userCourse.name
@@ -72,17 +72,17 @@ export default {
       const userPlan = data.userPlan
       const userPlanId = userPlan._id
       const userPlanName = userPlan.name
-      const hasCourseItem = data.userCourseItem.length > 0
+      const hasCourseItem = !!data.userCourseItem && data.userCourseItem.length > 0
       const hasETutorCourseItem = userCourse.eTutorUrl != null
       const items = data.userCourseItem.map(
         item => {
           const itemStatus = item.status
           let startTime = '', finishedTime = ''
           if (!!itemStatus.started) {
-            startTime = vueModel.$dayjs(itemStatus.started.toDate()).format('YYYY/MM/DD HH:mm')
+            startTime = vueModel.$dayjs(itemStatus.started).format('YYYY/MM/DD HH:mm')
           }
           if (!!itemStatus.finished) {
-            finishedTime = vueModel.$dayjs(itemStatus.finished.toDate()).format('HH:mm')
+            finishedTime = vueModel.$dayjs(itemStatus.finished).format('HH:mm')
           }
           return {
             _id: item._id,
@@ -136,7 +136,6 @@ export default {
       const historiesByUserPlan = userCourseDocs
         .map(vueModel.composeHistory)
         .groupBy('userPlanName')
-
       vueModel.historiesByUserPlan = historiesByUserPlan
 
       userPlansTarget.css({ display: '' })
@@ -184,20 +183,21 @@ export default {
 
     async userCoursesHandler () {
       const vueModel = this
-      let userCourseQuerySnapshot
-      vueModel.userCourseRef = vueModel.userCourseRef
-        .where('userCourse.user', '==', vueModel.ehanlinUser)
-        .where('userCourse.enabled', '==', true)
-        .where('userCourse.visible', '==', true)
-        .orderBy('userCourse.start', 'desc')
-
-      userCourseQuerySnapshot = await vueModel.userCourseRef.get()
-      if (!userCourseQuerySnapshot.empty) {
-        vueModel.retrieveUserCourses(userCourseQuerySnapshot.docs)
-        //vueModel.listeningOnUserCourseChange()
-      } else {
-        $('.noclass-record').css({ display: '' })
-      }
+      await fetch(`/coach-web/classRecord?courseUser=61b1870ec7c84d16644c264c`,{
+        method: "GET",
+        headers: {"content-type":"application/json"},
+      }).then(res => {
+        if(res.ok){
+          return res.json();
+        }
+      }).then(result => {
+        if (!!result) {
+          vueModel.retrieveUserCourses(result)
+          //vueModel.listeningOnUserCourseChange()
+        } else {
+          $('.noclass-record').css({ display: '' })
+        }
+      })
     }
   }
 }
