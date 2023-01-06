@@ -50,9 +50,9 @@ export default {
       const statusCount = !!status ? Object.keys(status).length : 0
 
       // 一般課堂狀態
-      // 已開始上課, 提前五分鐘上課
+      // 已開始上課, 提前20分鐘上課(讓新同學可以提前互動)
       const isStart = (
-        nowDiffMinStartDate >= - (5 * 60) && nowBeforeEndDate
+        nowDiffMinStartDate >= - (20 * 60) && nowBeforeEndDate
         && (
           statusCount === 0 || (statusCount === 1 && status.hasOwnProperty('started'))
         )
