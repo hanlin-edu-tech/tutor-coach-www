@@ -540,14 +540,14 @@ export default {
 
         // 距開課日期三天以內才setTimeout
         let threeDays = -(3 * 24 * 60 * 60)
-        // 提早五分鐘轉按鈕
+        // 提早20分鐘轉按鈕
         const waitTime = Math.abs(nowDiffMinStartDate)
         const twentyMin = 20 * 60
         if(nowDiffMinStartDate > threeDays){
           this.changeCourseState(id, userCourse, waitTime - twentyMin, endDate)
         }
         if (eTutorStatus === 'not-ready' && nowDiffMinStartDate > threeDays) {
-          // 5分鐘前換狀態
+          // 20分鐘前換狀態
           this.changeETutorToNextState(id, 'not-ready', waitTime - twentyMin, userCourse)
         }else if (eTutorStatus === 'ready') {
           this.changeETutorToNextState(id, 'ready', waitTime, userCourse)
@@ -601,7 +601,7 @@ export default {
             vueModel.courses[id].eTutorStatus = 'ready'
             vueModel.courses[id].eTutorClassBtnCss = 'class-btn-start focus-animation'
             vueModel.courses[id].eTutorClassBtnImg = './img/btn-eTutor-ready.png'
-            // 5分鐘後再度改變狀態
+            // 20分鐘後再度改變狀態
             const twentyMin = 20 * 60
             this.changeETutorToNextState(id, 'ready', twentyMin, userCourse)
           }
