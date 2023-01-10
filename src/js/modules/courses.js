@@ -509,10 +509,10 @@ export default {
       if (isDone || isRejected) {
         return ['done', 'class-btn-done', './img/btn-done-purple.png']
       }
-      if (nowDiffMinStartDate < -300) {
+      if (nowDiffMinStartDate < -(20 * 60)) {
         return ['not-ready', 'disabled', './img/btn-eTutor-noclass.png']
       }
-      if (nowDiffMinStartDate >= -300 && nowDiffMinStartDate < 0) {
+      if (nowDiffMinStartDate >= -(20 * 60) && nowDiffMinStartDate < 0) {
         return ['ready', 'class-btn-start focus-animation', './img/btn-eTutor-ready.png']
       }
       const thirtyMin = 30 * 60
@@ -540,15 +540,15 @@ export default {
 
         // 距開課日期三天以內才setTimeout
         let threeDays = -(3 * 24 * 60 * 60)
-        // 提早五分鐘轉按鈕
+        // 提早20分鐘轉按鈕
         const waitTime = Math.abs(nowDiffMinStartDate)
-        const fiveMin = 5 * 60
+        const twentyMin = 20 * 60
         if(nowDiffMinStartDate > threeDays){
-          this.changeCourseState(id, userCourse, waitTime - fiveMin, endDate)
+          this.changeCourseState(id, userCourse, waitTime - twentyMin, endDate)
         }
         if (eTutorStatus === 'not-ready' && nowDiffMinStartDate > threeDays) {
-          // 5分鐘前換狀態
-          this.changeETutorToNextState(id, 'not-ready', waitTime - fiveMin, userCourse)
+          // 20分鐘前換狀態
+          this.changeETutorToNextState(id, 'not-ready', waitTime - twentyMin, userCourse)
         }else if (eTutorStatus === 'ready') {
           this.changeETutorToNextState(id, 'ready', waitTime, userCourse)
         }
@@ -601,9 +601,9 @@ export default {
             vueModel.courses[id].eTutorStatus = 'ready'
             vueModel.courses[id].eTutorClassBtnCss = 'class-btn-start focus-animation'
             vueModel.courses[id].eTutorClassBtnImg = './img/btn-eTutor-ready.png'
-            // 5分鐘後再度改變狀態
-            const fiveMin = 5 * 60
-            this.changeETutorToNextState(id, 'ready', fiveMin, userCourse)
+            // 20分鐘後再度改變狀態
+            const twentyMin = 20 * 60
+            this.changeETutorToNextState(id, 'ready', twentyMin, userCourse)
           }
         }, waitTime * 1000 + 300)
         vueModel.scheduleMap.set(id, schedule)
@@ -613,8 +613,8 @@ export default {
             vueModel.courses[id].eTutorStatus = 'start'
             vueModel.courses[id].eTutorClassBtnCss = ''
             vueModel.courses[id].eTutorClassBtnImg = './img/btn-eTutor-ready.png'
-            // 計時15分鐘遇時改變按鈕狀態
-            const waitTime = 15 * 60
+            // 計時30分鐘遇時改變按鈕狀態
+            const waitTime = 30 * 60
             this.changeETutorToNextState(id, 'start', waitTime, userCourse)
           }
         }, waitTime * 1000 + 300)
