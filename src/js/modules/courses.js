@@ -613,8 +613,8 @@ export default {
             vueModel.courses[id].eTutorStatus = 'start'
             vueModel.courses[id].eTutorClassBtnCss = ''
             vueModel.courses[id].eTutorClassBtnImg = './img/btn-eTutor-ready.png'
-            // 計時15分鐘遇時改變按鈕狀態
-            const waitTime = 15 * 60
+            // 計時30分鐘遇時改變按鈕狀態
+            const waitTime = 30 * 60
             this.changeETutorToNextState(id, 'start', waitTime, userCourse)
           }
         }, waitTime * 1000 + 300)
