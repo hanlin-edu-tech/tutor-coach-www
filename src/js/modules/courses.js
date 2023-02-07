@@ -281,6 +281,9 @@ export default {
           .filter(reward => reward.type === 'chestCount')
           .map(reward => reward.amount)
           .reduce((prev, curr) => prev + curr, 0)
+      if(data.userCourseItem.length === 0 && !userCourse.eTutorUrl){
+        this.checkUserCourse(userCourse._id)
+      }
       return Object.assign({
         start: userCourse.start.toDate(),
         startDate: startDate.format('MM月DD日 HH:mm'),
@@ -430,6 +433,17 @@ export default {
           }
         )
     },
+    checkUserCourse(id) {
+      fetch(`/coach-web/checkUserCourse?courseId=${id}`,{
+        method: "GET",
+        headers: {"content-type":"application/json"},
+      }).then(res => {
+        if(res.ok){
+          console.log("sync!")
+        }
+      })
+    },
+
     async userAssetsHandler() {
       fetch(`/student-asset/totalAssets`,{
         method: "GET",
