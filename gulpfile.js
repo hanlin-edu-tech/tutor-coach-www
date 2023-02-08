@@ -55,7 +55,7 @@ const uploadToGCS = async (bucketName, projectId, gcsKeyPath, cacheControlConfig
     keyFilename: gcsKeyPath
   })
 
-  await cleanGCS(bucketName, storage)
+  // await cleanGCS(bucketName, storage)
 
   const multiDistEntireFilePath = await findAllUploadFilesPath(distDir)
   multiDistEntireFilePath.forEach(distEntireFilePath => {

@@ -49,10 +49,14 @@ export default {
       const { tutorStarted, ...status } = userCourse.status;
       const statusCount = !!status ? Object.keys(status).length : 0
 
+      // 三天前的早上7點開放
+      var date = new Date(startDate);
+      date.setHours(7, 0, 0, 0);  
+      date.setDate(date.getDate() - 3);
+      const beforeClassTime = vueModel.$dayjs(date).diff(startDate, 'second')
       // 一般課堂狀態
-      // 已開始上課, 提前20分鐘上課(讓新同學可以提前互動)
       const isStart = (
-        nowDiffMinStartDate >= - (20 * 60) && nowBeforeEndDate
+        nowDiffMinStartDate >= beforeClassTime && nowBeforeEndDate
         && (
           statusCount === 0 || (statusCount === 1 && status.hasOwnProperty('started'))
         )
@@ -541,6 +545,11 @@ export default {
       const { tutorStarted } = userCourse.status;
       const hasETutorClassAndNotStarted = userCourse.eTutorUrl && !tutorStarted;
       const nowDiffMinStartDate = vueModel.$dayjs(Date.now()).diff(startDate, 'second')
+      // 三天前的早上7點開放
+      var date = new Date(startDate);
+      date.setHours(7, 0, 0, 0);  
+      date.setDate(date.getDate() - 3);
+      const beforeClassTime = vueModel.$dayjs(date).diff(startDate, 'second')
       const nowDiffMinEndDate = vueModel.$dayjs(Date.now()).diff(endDate, 'second')
       if(this.checkCourseIsLocked(userCourse)){
         if (vueModel.scheduleMap.has(id)) {
@@ -557,8 +566,11 @@ export default {
         // 提早20分鐘轉按鈕
         const waitTime = Math.abs(nowDiffMinStartDate)
         const twentyMin = 20 * 60
-        if(nowDiffMinStartDate > threeDays){
-          this.changeCourseState(id, userCourse, waitTime - twentyMin, endDate)
+
+         // 三天前的早上7點轉狀態
+        const waitTimeBeforeTagetTime = Math.abs(beforeClassTime-nowDiffMinStartDate)
+        if(beforeClassTime>nowDiffMinStartDate){
+          this.changeCourseState(id, userCourse, waitTimeBeforeTagetTime, endDate)
         }
         if (eTutorStatus === 'not-ready' && nowDiffMinStartDate > threeDays) {
           // 20分鐘前換狀態
