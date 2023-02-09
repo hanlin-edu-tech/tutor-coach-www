@@ -285,7 +285,8 @@ export default {
           .filter(reward => reward.type === 'chestCount')
           .map(reward => reward.amount)
           .reduce((prev, curr) => prev + curr, 0)
-      if(data.userCourseItem.length === 0 && !userCourse.eTutorUrl){
+      if(data.userCourseItem.length === 0 && !userCourse.eTutorUrl && (
+          !userCourse.info.syncCount || userCourse.info.syncCount < 3)){
         this.checkUserCourse(userCourse._id)
       }
       return Object.assign({
