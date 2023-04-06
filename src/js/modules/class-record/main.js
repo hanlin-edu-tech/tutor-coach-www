@@ -22,3 +22,5 @@ new Vue({
     return createElement(histories)
   }
 }).$mount('#histories')
+
+sessionStorage.removeItem('action');

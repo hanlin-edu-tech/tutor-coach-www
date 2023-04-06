@@ -1,5 +1,6 @@
 (() => {
   let cookieToken = getEhToken();
+  sessionStorage.removeItem('action');
   if(cookieToken!=null){
       let user = cookieToken.user;
       if(user==null){
