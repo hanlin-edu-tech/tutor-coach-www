@@ -12,10 +12,10 @@ script(type="text/x-template" id="template-history")
                 target="_blank", v-if="historyInfo.isTutor && historyInfo.hasETutorCourseItem && (historyInfo.isChecked || " +
             "historyInfo.isRejected) && historyInfo.noteUploaded") 上課筆記
             span.status.course-diary-disabled(v-if="historyInfo.isTutor && historyInfo.hasETutorCourseItem &&" +
-            " ((!historyInfo.isChecked && !historyInfo.isRejected) || !historyInfo.diaryFinished)") 課後日誌
+            " ((!historyInfo.isChecked && !historyInfo.isRejected) || !historyInfo.afterCourseMessageSent)") 課後日誌
             a.status.course-diary(:href="'/coach-web/diary-view.html?userCourse=' + historyInfo.courseId",
                 target="_blank", v-if="historyInfo.isTutor && historyInfo.hasETutorCourseItem && (historyInfo.isChecked || historyInfo.isRejected)" +
-            " && historyInfo.diaryFinished") 課後日誌
+            " && historyInfo.afterCourseMessageSent") 課後日誌
             span.action(v-if="historyInfo.hasCourseItem")
                 span.switch
                     i.fa.fa-chevron-circle-down
