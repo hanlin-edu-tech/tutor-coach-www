@@ -39,12 +39,12 @@ export default {
       const status = userCourse.status
       const result = userCourse.result
       const info = userCourse.info
-      let noteUploaded  = false, diaryFinished = false
+      let noteUploaded  = false, afterCourseMessageSent = false
       if(info && info.noteUploaded){
         noteUploaded = info.noteUploaded
       }
-      if(info && info.diaryFinished){
-        diaryFinished = info.diaryFinished
+      if(info && info.afterCourseMessageSent){
+        afterCourseMessageSent = info.afterCourseMessageSent
       }
       let coins = 0, gems = 0, chestLevel = 0, chestCount = 0, details = {}
       if (result && result.rewards) {
@@ -119,7 +119,7 @@ export default {
         chestLevel: chestLevel,
         chestCount: chestCount,
         noteUploaded: noteUploaded,
-        diaryFinished: diaryFinished,
+        afterCourseMessageSent: afterCourseMessageSent,
         showResult:(e) => {
           e.preventDefault();
           resultModal(coins, gems, chestLevel, chestCount, details)
