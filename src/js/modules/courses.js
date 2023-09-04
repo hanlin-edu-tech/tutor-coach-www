@@ -51,7 +51,7 @@ export default {
 
       // 三天前的早上7點開放
       var date = new Date(startDate);
-      date.setHours(7, 0, 0, 0);  
+      date.setHours(7, 0, 0, 0);
       date.setDate(date.getDate() - 3);
       const beforeClassTime = vueModel.$dayjs(date).diff(startDate, 'second')
       // 一般課堂狀態
@@ -263,8 +263,18 @@ export default {
       const userCourse = data.userCourse
       let subjectIcon = "./img/icon/icon.png"
       let su = userCourse.userPlan.split("_")
-      if(su.length > 4 && "en|ma|na|pc|so".indexOf(su[3]) !== -1){
-        subjectIcon = `./img/icon/${su[3]}.png`
+      if(su.length > 4) {
+        if (su[3].indexOf("en") !== -1) {
+          subjectIcon = "./img/icon/en.png"
+        } else if (su[3].indexOf("ma") !== -1) {
+          subjectIcon = "./img/icon/ma.png"
+        } else if (su[3].indexOf("na") !== -1) {
+          subjectIcon = "./img/icon/na.png"
+        } else if (su[3].indexOf("pc") !== -1) {
+          subjectIcon = "./img/icon/pc.png"
+        } else if (su[3].indexOf("so") !== -1) {
+          subjectIcon = "./img/icon/so.png"
+        }
       }
       const rewards = userCourse.rewards
       const startDate = vueModel.$dayjs(userCourse.start.toDate())
@@ -330,7 +340,7 @@ export default {
       const statusCount = !!status ? Object.keys(status).length : 0
       const endDate = vueModel.$dayjs(userCourse.end.toDate())
       if (statusCount >= 0 && !status.hasOwnProperty('received') &&
-          !(userCourse.type === "自學課堂" && (status.hasOwnProperty('finished') || vueModel.now.isAfter(endDate)))) {
+          !((userCourse.name.indexOf("課後作業") === -1 && userCourse.type === "自學課堂") && (status.hasOwnProperty('finished') || vueModel.now.isAfter(endDate)))) {
         Vue.set(vueModel.courses, id, vueModel.attachPreventDoubleClick(id, data))
         showBanner()
       }
@@ -424,7 +434,7 @@ export default {
                 }
 
                 const endDate = vueModel.$dayjs(userCourse.end.toDate())
-                if (!(userCourse.type === "自學課堂" && (status.hasOwnProperty('finished') || vueModel.now.isAfter(endDate)))) {
+                if (!((userCourse.name.indexOf("課後作業") === -1 && userCourse.type === "自學課堂") && (status.hasOwnProperty('finished') || vueModel.now.isAfter(endDate)))) {
                   Vue.set(vueModel.courses, id, vueModel.attachPreventDoubleClick(id, data))
                 }
                 break
@@ -548,7 +558,7 @@ export default {
       const nowDiffMinStartDate = vueModel.$dayjs(Date.now()).diff(startDate, 'second')
       // 三天前的早上7點開放
       var date = new Date(startDate);
-      date.setHours(7, 0, 0, 0);  
+      date.setHours(7, 0, 0, 0);
       date.setDate(date.getDate() - 3);
       const beforeClassTime = vueModel.$dayjs(date).diff(startDate, 'second')
       const nowDiffMinEndDate = vueModel.$dayjs(Date.now()).diff(endDate, 'second')
