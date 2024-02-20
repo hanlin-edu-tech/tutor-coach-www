@@ -1,22 +1,29 @@
-const del = require('del')
-const pug = require('pug')
-const gulp = require('gulp')
-const es = require('event-stream')
-const rename = require('gulp-rename')
-const gulpSass = require('gulp-sass')
-const autoprefixer = require('autoprefixer')
-const postcss = require('gulp-postcss')
-const replace = require('gulp-replace')
-const browserSync = require('browser-sync')
-const cache = require('gulp-cache')
-const imageMin = require('gulp-imagemin')
-const pngquant = require('imagemin-pngquant')
-const { Storage } = require('@google-cloud/storage')
-const fs = require('fs').promises
-const path = require('path')
+import gulp from 'gulp';
+import * as del from 'del';
+import pug from 'pug';
+import es from 'event-stream';
+import rename from 'gulp-rename';
+import gulpSass from 'gulp-sass';
+import autoprefixer from "autoprefixer";
+import postcss from 'gulp-postcss';
+import replace from 'gulp-replace';
+import browserSync from 'browser-sync';
+import cache from 'gulp-cache';
+import imageMin from 'gulp-imagemin';
+import pngquant from 'imagemin-pngquant';
+import { Storage } from '@google-cloud/storage';
+import fs from 'fs';
+import path from 'path';
+import * as sassCompiler from 'sass';
+import {fileURLToPath} from "url";
+const sass = gulpSass(sassCompiler);
+
+
 const appPath = 'app/coach/'
 
-const distDir = path.join(__dirname, 'dist/')
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const distDir = path.join(__dirname, 'dist/');
 
 const cleanGCS = async (bucketName, storage) => {
   const options = {
@@ -33,11 +40,11 @@ const cleanGCS = async (bucketName, storage) => {
 }
 
 const findAllUploadFilesPath = async (dir, multiDistEntireFilePath = []) => {
-  const files = await fs.readdir(dir)
+  const files = await fs.promises.readdir(dir)
 
   for (let file of files) {
     const entireFilepath = path.join(dir, file)
-    const fileStatus = await fs.stat(entireFilepath)
+    const fileStatus = await fs.promises.stat(entireFilepath)
 
     if (fileStatus.isDirectory()) {
       multiDistEntireFilePath = await findAllUploadFilesPath(entireFilepath, multiDistEntireFilePath)
@@ -75,8 +82,8 @@ const uploadToGCS = async (bucketName, projectId, gcsKeyPath, cacheControlConfig
   })
 }
 
-const clean = source => {
-  return del([source])
+const clean = () => {
+    return del.deleteAsync(['./dist']);
 }
 
 const buildHtml = () => {
@@ -111,7 +118,7 @@ const styleTask = dest => {
     ]
 
     return gulp.src('src/sass/**/*.sass')
-      .pipe(gulpSass())
+      .pipe(sass())
       .pipe(postcss(processors))
       .pipe(rename({
         extname: '.css'
@@ -198,6 +205,7 @@ const watchPugSassImages = () => {
   gulp.watch('./src/img/**/*.@(jpg|png)', gulp.series('minifyImage'))
 }
 
+gulp.task('clean', clean);
 gulp.task('html', htmlTask('./dist'))
 gulp.task('copyToDist', copyStaticTask('./dist'))
 gulp.task('style', styleTask('./dist/css'))

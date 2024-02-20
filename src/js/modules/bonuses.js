@@ -1,4 +1,4 @@
-import { db, ehanlinAuth } from './firestore/firebase-config'
+import { db, collection, query, onSnapshot, where, getDocs, ehanlinAuth } from './firestore/firebase-config'
 import singleBonus from './components/single-bonus'
 import {messageModal, chestModal, rewardsModal} from './util/show-modal'
 import { PopupText } from './util/modal-text'
@@ -142,85 +142,84 @@ export default {
 
     listeningOnUserAchievementChange () {
       const vueModel = this
-      db.collection('UserAchievement')
-        .where('user', '==', vueModel.ehanlinUser)
-        .onSnapshot(
-          async userAchievementQuerySnapshot => {
-            let userAchievementNewestChange, userAchievement
-            if (userAchievementQuerySnapshot.empty) {
-              const bonus = 0
-              vueModel.composeBonusInfo({
-                continuous: 0,
-                bonus: bonus
-              })
-              vueModel.determineShowReceivedBonusBtn(bonus)
-              return
+      const q = query(collection(db, 'UserAchievement'),
+          where('user', '==', vueModel.ehanlinUser)
+      );
+
+      onSnapshot(q, async (userAchievementQuerySnapshot) => {
+        const changes = userAchievementQuerySnapshot.docChanges();
+        if (changes.length > 0) {
+          const userAchievementNewestChange = changes[changes.length - 1];
+          let userAchievement = userAchievementNewestChange.doc.data()
+          switch (userAchievementNewestChange.type) {
+            case 'added': {
+              vueModel.composeBonusInfo(userAchievement)
+              vueModel.determineShowReceivedBonusBtn(userAchievement.bonus)
+              break
             }
 
-            userAchievementNewestChange = userAchievementQuerySnapshot.docChanges().last()
-            userAchievement = userAchievementNewestChange.doc.data()
-            switch (userAchievementNewestChange.type) {
-              case 'added': {
-                vueModel.composeBonusInfo(userAchievement)
-                vueModel.determineShowReceivedBonusBtn(userAchievement.bonus)
-                break
-              }
-
-              case 'modified': {
-                let comboBonus = userAchievement.continuous % vueModel.LIMITED_SHOW_COMBO_BONUS
-                vueModel.bonusUnReceived = userAchievement.bonus
-                if (comboBonus === 0 && vueModel.bonusUnReceived === 0) {
-                  for (let index = comboBonus; index < vueModel.LIMITED_SHOW_COMBO_BONUS; index++) {
-                    Vue.set(vueModel.bonuses, index, {
+            case 'modified': {
+              let comboBonus = userAchievement.continuous % vueModel.LIMITED_SHOW_COMBO_BONUS
+              vueModel.bonusUnReceived = userAchievement.bonus
+              if (comboBonus === 0 && vueModel.bonusUnReceived === 0) {
+                for (let index = comboBonus; index < vueModel.LIMITED_SHOW_COMBO_BONUS; index++) {
+                  Vue.set(vueModel.bonuses, index, {
                         isStampFinish: false,
                         isStampNone: true,
                         isAnimationStamp: false
                       }
-                    )
-                  }
-                  break
+                  )
+                }
+                break
+              }
+
+              if (comboBonus !== vueModel.currentComboBonus) {
+                vueModel.currentComboBonus = comboBonus
+
+                if (comboBonus === 0 && userAchievement.bonus > 0) {
+                  comboBonus = 5
                 }
 
-                if (comboBonus !== vueModel.currentComboBonus) {
-                  vueModel.currentComboBonus = comboBonus
-
-                  if (comboBonus === 0 && userAchievement.bonus > 0) {
-                    comboBonus = 5
-                  }
-
-                  for (let index = 0; index < comboBonus; index++) {
-                    let stampInfo
-                    if (index === (comboBonus - 1)) {
-                      stampInfo = {
-                        isStampFinish: true,
-                        isStampNone: false,
-                        isAnimationStamp: true
-                      }
-                    } else {
-                      stampInfo = {
-                        isStampFinish: true,
-                        isStampNone: false,
-                        isAnimationStamp: false
-                      }
+                for (let index = 0; index < comboBonus; index++) {
+                  let stampInfo
+                  if (index === (comboBonus - 1)) {
+                    stampInfo = {
+                      isStampFinish: true,
+                      isStampNone: false,
+                      isAnimationStamp: true
                     }
-                    Vue.set(vueModel.bonuses, index, stampInfo)
+                  } else {
+                    stampInfo = {
+                      isStampFinish: true,
+                      isStampNone: false,
+                      isAnimationStamp: false
+                    }
                   }
+                  Vue.set(vueModel.bonuses, index, stampInfo)
+                }
 
-                  for (let index = comboBonus; index < vueModel.LIMITED_SHOW_COMBO_BONUS; index++) {
-                    Vue.set(vueModel.bonuses, index, {
+                for (let index = comboBonus; index < vueModel.LIMITED_SHOW_COMBO_BONUS; index++) {
+                  Vue.set(vueModel.bonuses, index, {
                         isStampFinish: false,
                         isStampNone: true,
                         isAnimationStamp: false
                       }
-                    )
-                  }
+                  )
                 }
-                vueModel.determineShowReceivedBonusBtn(userAchievement.bonus)
-                break
               }
+              vueModel.determineShowReceivedBonusBtn(userAchievement.bonus)
+              break
             }
           }
-        )
+        } else {
+          const bonus = 0
+          vueModel.composeBonusInfo({
+            continuous: 0,
+            bonus: bonus
+          })
+          vueModel.determineShowReceivedBonusBtn(bonus)
+        }
+      });
     },
   }
 }

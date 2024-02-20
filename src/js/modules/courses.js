@@ -1,4 +1,4 @@
-import {db, ehanlinAuth} from './firestore/firebase-config'
+import {db, collection, query, onSnapshot, where, orderBy, getDocs, ehanlinAuth} from './firestore/firebase-config'
 import singleCourse from './components/single-course'
 import {messageModal, resultModal} from './util/show-modal'
 import {PopupText} from './util/modal-text'
@@ -10,7 +10,7 @@ export default {
     const vueModel = this
     return {
       courses: {},
-      userCourseOriginalRef: db.collection('UserCourse'),
+      userCourseOriginalRef: collection(db, 'UserCourse'),
       ehanlinUser: '',
       now: vueModel.$dayjs(Date.now()),
       scheduleMap: new Map(),
@@ -98,6 +98,7 @@ export default {
                                       eTutorStatus, eTutorClassBtnCss, eTutorClassBtnImg, tutorStarted}) => {
         const userCourseId = userCourse['_id']
         const eTutorUrl = userCourse['eTutorUrl']
+        const video = userCourse['video']
         if (isStart) {
           return {
             classBtnCss: 'class-btn-start',
@@ -112,13 +113,17 @@ export default {
               }
             },
             eTutorProcess: () => {
-              $.ajax({
-                type: 'PUT',
-                contentType: 'application/json',
-                url: `/coach-web/${userCourseId}/enterTutorCourse`,
-              })
-              userCourse.tutorEnter = true
-              window.open(eTutorUrl, '_blank')
+              if(video){
+                window.location.href = `/coach-web/enterTutorCourse.html?id=${userCourseId}`
+              } else {
+                $.ajax({
+                  type: 'PUT',
+                  contentType: 'application/json',
+                  url: `/coach-web/${userCourseId}/enterTutorCourse`,
+                })
+                userCourse.tutorEnter = true
+                window.open(eTutorUrl, '_blank')
+              }
             }
           }
         }
@@ -137,13 +142,17 @@ export default {
               }
             },
             eTutorProcess: () => {
-              $.ajax({
-                type: 'PUT',
-                contentType: 'application/json',
-                url: `/coach-web/${userCourseId}/enterTutorCourse`,
-              })
-              userCourse.tutorEnter = true
-              window.open(eTutorUrl, '_blank')
+              if(video){
+                window.location.href = `/coach-web/enterTutorCourse.html?id=${userCourseId}`
+              } else {
+                $.ajax({
+                  type: 'PUT',
+                  contentType: 'application/json',
+                  url: `/coach-web/${userCourseId}/enterTutorCourse`,
+                })
+                userCourse.tutorEnter = true
+                window.open(eTutorUrl, '_blank')
+              }
             }
           }
         }
@@ -156,11 +165,15 @@ export default {
             eTutorClassBtnCss: eTutorClassBtnCss,
             eTutorClassBtnImg: eTutorClassBtnImg,
             eTutorProcess: () => {
-              $.ajax({
-                type: 'PUT',
-                contentType: 'application/json',
-                url: `/coach-web/${userCourseId}/enterTutorCourse`,
-              })
+              if(video){
+                window.location.href = `/coach-web/enterTutorCourse.html?id=${userCourseId}`
+              } else {
+                $.ajax({
+                  type: 'PUT',
+                  contentType: 'application/json',
+                  url: `/coach-web/${userCourseId}/enterTutorCourse`,
+                })
+              }
               userCourse.tutorEnter = true
               window.open(eTutorUrl, '_blank')
             }
@@ -242,13 +255,17 @@ export default {
           eTutorClassBtnCss: eTutorClassBtnCss,
           eTutorClassBtnImg: eTutorClassBtnImg,
           eTutorProcess: () => {
-            $.ajax({
-              type: 'PUT',
-              contentType: 'application/json',
-              url: `/coach-web/${userCourseId}/enterTutorCourse`,
-            })
-            userCourse.tutorEnter = true
-            window.open(eTutorUrl, '_blank')
+            if(video){
+              window.location.href = `/coach-web/enterTutorCourse.html?id=${userCourseId}`
+            } else {
+              $.ajax({
+                type: 'PUT',
+                contentType: 'application/json',
+                url: `/coach-web/${userCourseId}/enterTutorCourse`,
+              })
+              userCourse.tutorEnter = true
+              window.open(eTutorUrl, '_blank')
+            }
           }
         }
       }
@@ -376,14 +393,11 @@ export default {
 
     listeningOnUserCourseChange() {
       const vueModel = this
-      vueModel.userCourseRef
-        .onSnapshot(
-          async userCourseQuerySnapshot => {
-            const userCourseNewestChange = userCourseQuerySnapshot.docChanges().last()
-            if (!userCourseNewestChange) {
-              return
-            }
 
+      onSnapshot(vueModel.userCourseRef, (querySnapshot) => {
+          const changes = querySnapshot.docChanges();
+          if (changes.length > 0) {
+            const userCourseNewestChange = changes[changes.length - 1];
             const id = userCourseNewestChange.doc.id
             const data = userCourseNewestChange.doc.data()
             switch (userCourseNewestChange.type) {
@@ -446,7 +460,7 @@ export default {
               }
             }
           }
-        )
+      });
     },
     checkUserCourse(id) {
       fetch(`/coach-web/checkUserCourse?courseId=${id}`,{
@@ -477,14 +491,15 @@ export default {
     async userCoursesHandler() {
       const vueModel = this
       let userCourseQuerySnapshot
-      vueModel.userCourseRef = vueModel.userCourseOriginalRef
-        .where('userCourse.user', '==', vueModel.ehanlinUser)
-        .where('userCourse.enabled', '==', true)
-        .where('userCourse.visible', '==', true)
-        .where('userCourse.start', '>=', vueModel.oneYearAgo)
-        .orderBy('userCourse.start', 'asc')
+      vueModel.userCourseRef = query(vueModel.userCourseOriginalRef,
+          where('userCourse.user', '==', vueModel.ehanlinUser),
+          where('userCourse.enabled', '==', true),
+          where('userCourse.visible', '==', true),
+          where('userCourse.start', '>=', vueModel.oneYearAgo),
+          orderBy('userCourse.start', 'asc')
+      );
 
-      userCourseQuerySnapshot = await vueModel.userCourseRef.get()
+      userCourseQuerySnapshot = await getDocs(vueModel.userCourseRef)
       if (!userCourseQuerySnapshot.empty) {
         vueModel.retrieveUserCourses(userCourseQuerySnapshot.docs)
         vueModel.listeningOnUserCourseChange()
@@ -498,17 +513,19 @@ export default {
       let isBannerArrange
       let isBannerFinish
 
-      userPlanQuerySnapshot = await db.collection('UserPlan')
-        .where('user', '==', vueModel.ehanlinUser)
-        .where('enabled', '==', true)
-        .get()
+      const q = query(collection(db, 'UserPlan'),
+          where('user', '==', vueModel.ehanlinUser),
+          where('enabled', '==', true)
+      );
+      userPlanQuerySnapshot = await getDocs(q);
 
       isBannerBuyEcoach = !!userPlanQuerySnapshot.empty
       if (isBannerBuyEcoach === false) {
-        userCourseQuerySnapshot = await vueModel.userCourseOriginalRef
-          .where('userCourse.user', '==', vueModel.ehanlinUser)
-          .where('userCourse.enabled', '==', true)
-          .get()
+        const q = query(vueModel.userCourseOriginalRef,
+            where('userCourse.user', '==', vueModel.ehanlinUser),
+            where('userCourse.enabled', '==', true)
+        );
+        userCourseQuerySnapshot = await getDocs(q);
 
         isBannerArrange = !!userCourseQuerySnapshot.empty
         isBannerFinish = !userCourseQuerySnapshot.empty && (Object.keys(vueModel.courses).length === 0)
