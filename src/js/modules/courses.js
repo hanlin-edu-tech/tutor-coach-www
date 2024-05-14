@@ -99,6 +99,7 @@ export default {
         const userCourseId = userCourse['_id']
         const eTutorUrl = userCourse['eTutorUrl']
         const video = userCourse['video']
+        console.log(userCourseId, eTutorUrl, video)
         if (isStart) {
           return {
             classBtnCss: 'class-btn-start',
@@ -316,6 +317,12 @@ export default {
           !userCourse.info.syncCount || userCourse.info.syncCount < 3)){
         this.checkUserCourse(userCourse._id)
       }
+      if(id === "65d443c227f3945df7460ab0"){
+        console.log("data.userCourseItem.length:", (data.userCourseItem))
+        console.log("data.userCourseItem.length:", (data.userCourseItem.length > 0))
+        console.log("userCourse.eTutorUrl != null:", (userCourse.eTutorUrl != null))
+      }
+
       return Object.assign({
         start: userCourse.start.toDate(),
         startDate: startDate.format('MM月DD日 HH:mm'),
