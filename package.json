@@ -2,7 +2,7 @@
   "name": "tutor-coach-www",
   "version": "1.0.0",
   "engines": {
-    "node": "^20.6.0"
+    "node": "20.x"
   },
   "main": "index.js",
   "scripts": {
@@ -21,11 +21,11 @@
   ],
   "dependencies": {
     "@babel/runtime": "^7.23.9",
-    "@firebase/app": "^0.9.27",
-    "@firebase/util": "^1.9.4",
+    "@firebase/app": "^0.10.5",
+    "@firebase/auth": "^1.7.4",
+    "@firebase/firestore": "^4.6.3",
     "dayjs": "^1.11.10",
     "del": "^7.1.0",
-    "firebase": "^10.8.0",
     "fs": "0.0.1-security",
     "jquery-modal": "^0.9.2"
   },

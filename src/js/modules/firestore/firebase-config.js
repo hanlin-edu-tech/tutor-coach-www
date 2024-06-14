@@ -1,7 +1,7 @@
 import authConfig from './firebase-auth'
-import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, query, onSnapshot, where, orderBy, getDocs } from 'firebase/firestore';
-import { getAuth, signInWithCustomToken } from 'firebase/auth';
+import { initializeApp } from '@firebase/app';
+import { getFirestore, collection, query, onSnapshot, where, orderBy, getDocs } from '@firebase/firestore';
+import { getAuth, signInWithCustomToken } from '@firebase/auth';
 import { AuthText } from '../util/modal-text'
 
 const app = initializeApp(authConfig);
