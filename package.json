@@ -7,8 +7,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo 'skip test'",
-    "ui": "gulp packageToUi && rollup -c rollup.base.config.js && gulp watch",
-    "js": "gulp packageToJs && rollup -c rollup.dev.config.js -w",
+    "ui": "gulp packageToUi && rollup -c rollup.base.config.mjs && gulp watch",
+    "js": "gulp packageToJs && rollup -c rollup.dev.config.mjs -w",
     "deployToTest": "gulp packageToJs && rollup -c rollup.base.config.mjs && gulp uploadGcsTest",
     "deployToProduction": "gulp packageToProduction && rollup -c rollup.base.config.mjs && gulp uploadGcsProd"
   },

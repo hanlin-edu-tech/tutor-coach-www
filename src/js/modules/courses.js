@@ -99,7 +99,6 @@ export default {
         const userCourseId = userCourse['_id']
         const eTutorUrl = userCourse['eTutorUrl']
         const video = userCourse['video']
-        console.log(userCourseId, eTutorUrl, video)
         if (isStart) {
           return {
             classBtnCss: 'class-btn-start',
@@ -297,30 +296,13 @@ export default {
       const rewards = userCourse.rewards
       const startDate = vueModel.$dayjs(userCourse.start.toDate())
       const endDate = vueModel.$dayjs(userCourse.end.toDate())
-      const coins =  rewards
-            .filter(reward => reward.type === 'coin')
+      const points =  rewards
+            .filter(reward => reward.type === 'points')
             .map(reward => reward.amount)
             .reduce((prev, curr) => prev + curr, 0)
-      const gems = rewards
-            .filter(reward => reward.type === 'gem')
-            .map(reward => reward.amount)
-            .reduce((prev, curr) => prev + curr, 0)
-      const chestLevel = rewards
-            .filter(reward => reward.type === 'chestLevel')
-            .map(reward => reward.amount)
-            .reduce((prev, curr) => prev + curr, 0)
-      const chestCount = rewards
-          .filter(reward => reward.type === 'chestCount')
-          .map(reward => reward.amount)
-          .reduce((prev, curr) => prev + curr, 0)
       if(data.userCourseItem.length === 0 && !userCourse.eTutorUrl && (
           !userCourse.info.syncCount || userCourse.info.syncCount < 3)){
         this.checkUserCourse(userCourse._id)
-      }
-      if(id === "65d443c227f3945df7460ab0"){
-        console.log("data.userCourseItem.length:", (data.userCourseItem))
-        console.log("data.userCourseItem.length:", (data.userCourseItem.length > 0))
-        console.log("userCourse.eTutorUrl != null:", (userCourse.eTutorUrl != null))
       }
 
       return Object.assign({
@@ -332,10 +314,7 @@ export default {
         icon: subjectIcon,
         tool: userCourse.description,
         eTutorUrl: userCourse.eTutorUrl,
-        coins: coins,
-        gems: gems,
-        chestLevel: chestLevel,
-        chestCount: chestCount,
+        points: points,
         hasCourseItem: data.userCourseItem.length > 0,
         hasETutorCourseItem: userCourse.eTutorUrl != null,
         process: () => { },
@@ -426,29 +405,22 @@ export default {
                   if (status.rejected) {
                     if(result.rewardsDetails){
                       const details = result.rewardsDetails.rawData;
-                      resultModal(0, 0, 0, 0, details)
+                      resultModal(0, details)
                     }
                   } else if (result.rewards) {
 
                     const rewards = result.rewards;
-                    let coins = 0, gems = 0, chestLevel = 1, chestCount = 0, details = {}
+                    let points = 0, details = {}
                     if(result.rewardsDetails){
-                      coins = rewards.coin;
-                      gems = rewards.gem;
-                      chestLevel = rewards.chestLevel;
-                      chestCount = rewards.chestCount;
+                      points = rewards.points;
                       details = result.rewardsDetails.rawData;
                     } else {
-                      coins =  rewards
-                          .filter(reward => reward.type === 'coin')
-                          .map(reward => reward.amount)
-                          .reduce((prev, curr) => prev + curr, 0)
-                      gems = rewards
-                          .filter(reward => reward.type === 'gem')
+                      points =  rewards
+                          .filter(reward => reward.type === 'points')
                           .map(reward => reward.amount)
                           .reduce((prev, curr) => prev + curr, 0)
                     }
-                    resultModal(coins, gems, chestLevel, chestCount, details)
+                    resultModal(points, details)
                   }
                   vueModel.removeCourse(id)
                   break
@@ -481,16 +453,14 @@ export default {
     },
 
     async userAssetsHandler() {
-      fetch(`/student-asset/totalAssets`,{
+      fetch(`/coach-web/eTutorStudent/assets`,{
         method: "GET",
         headers: {"content-type":"application/json"},
       }).then(res => {
-        if(res.ok) return res.json();
+        if(res.ok) return res.text();
       }).then(result => {
         if(result){
-          const asset = result.content;
-          $(".ecoin").html(asset.coins);
-          $(".diamond").html(asset.gems);
+          $(".points").html(result);
         }
       })
     },

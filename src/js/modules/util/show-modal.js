@@ -7,44 +7,19 @@ function messageModal(messageContent) {
   modalTarget.addClass('visible')
 }
 
-function chestModal() {
-  const modalTarget = $('.modal-chest')
-  const modalConTarget = modalTarget.find('.modal-con')
-  modalConTarget.addClass('slideDown')
-  modalTarget.addClass('visible')
-}
-
-function rewardsModal(coin, gem, chestLevel, chestCount) {
-  $('.modal-chest').removeClass('visible');
+function rewardsModal(img, name, message) {
   const modalTarget = $('.modal-rewards')
   const modalConTarget = modalTarget.find('.modal-con')
-  if(coin !== 0){
-    modalConTarget.find('.coin-number-award').empty()
-    modalConTarget.find('.coin-number-award').html(`x${coin}`)
-    modalConTarget.find('.coin-item-award').css("display", '');
-    modalConTarget.find('.gem-item-award').css("display", 'None');
-    modalConTarget.find('.chest-item-award').css("display", 'None');
-  } else if(gem !== 0){
-    modalConTarget.find('.gem-number-award').empty()
-    modalConTarget.find('.gem-number-award').html(`x${gem}`)
-    modalConTarget.find('.coin-item-award').css("display", 'None');
-    modalConTarget.find('.gem-item-award').css("display", '');
-    modalConTarget.find('.chest-item-award').css("display", 'None');
-  } else {
-    modalConTarget.find(".chest-item-award").find(".img-award").src = `./img/crystal/lv${chestLevel}.png`
-    modalConTarget.find('.chest-name-award').empty()
-    modalConTarget.find('.chest-name-award').html(`Lv${chestLevel} 水晶球`)
-    modalConTarget.find('.chest-number-award').empty()
-    modalConTarget.find('.chest-number-award').html(`x${chestCount}`)
-    modalConTarget.find('.coin-item-award').css("display", 'None');
-    modalConTarget.find('.gem-item-award').css("display", 'None');
-    modalConTarget.find('.chest-item-award').css("display", '');
-  }
+  modalConTarget.find(".item-award").find(".img-award").src = img;
+  modalConTarget.find('.item-name-award').empty();
+  modalConTarget.find('.item-name-award').html(name);
+  modalConTarget.find('.item-message-award').empty();
+  modalConTarget.find('.item-message-award').html(message);
   modalConTarget.addClass('slideDown')
   modalTarget.addClass('visible')
 }
 
-function resultModal(coin, gem, chestLevel, chestCount, details) {
+function resultModal(points, details) {
   const modalTarget = $('.modal-result');
   const modalConTarget = modalTarget.find('.modal-con');
   const selfStudy = modalConTarget.find('.self-study');
@@ -96,43 +71,20 @@ function resultModal(coin, gem, chestLevel, chestCount, details) {
       selfStudy.css("display", '');
     }
   }
-  let isCoinExist = false;
-  let isChestExist = false;
-  if(coin && coin !== 0){
-    modalConTarget.find('.coin-number-award').empty();
-    modalConTarget.find('.coin-number-award').html(`x${coin}`);
-    modalConTarget.find('.gem-number-award').empty();
-    modalConTarget.find('.gem-number-award').html(`x${gem}`);
-    isCoinExist = true;
+  let isPointExist = false;
+  if(points && points !== 0){
+    modalConTarget.find('.point-number-award').empty();
+    modalConTarget.find('.point-number-award').html(`x${points}`);
+    isPointExist = true;
   }
-  if(chestCount && chestCount !== 0){
-    modalConTarget.find(".chest-item-award").find(".img-award").src = `./img/crystal/lv${chestLevel}.png`;
-    modalConTarget.find('.chest-name-award').empty();
-    modalConTarget.find('.chest-name-award').html(`Lv${chestLevel} 水晶球`);
-    modalConTarget.find('.chest-number-award').empty();
-    modalConTarget.find('.chest-number-award').html(`x${chestCount}`);
-    isChestExist = true;
-  } 
 
-  if(isCoinExist || isChestExist){
+  if(isPointExist){
     modalConTarget.find('.reward-detail').css("display", '');
-    if(isCoinExist==false){
-      modalConTarget.find('.coin-item-award').css("display", 'None');
-      modalConTarget.find('.gem-item-award').css("display", 'None');
-    }else{
-      modalConTarget.find('.coin-item-award').css("display", '');
-      modalConTarget.find('.gem-item-award').css("display", '');
-    }
-
-    if(isChestExist==false){
-      modalConTarget.find('.chest-item-award').css("display", 'None');
-    }else{
-      modalConTarget.find('.chest-item-award').css("display", '');
-    }
+    modalConTarget.find('.point-item-award').css("display", '');
   }else{
     modalConTarget.find('.reward-detail').css("display", 'None');
   }
-  
+
   modalConTarget.addClass('slideDown');
   modalTarget.addClass('visible');
 }
@@ -146,5 +98,5 @@ function isEmpty(obj) {
 }
 
 export {
-  messageModal, chestModal, rewardsModal, resultModal
+  messageModal, rewardsModal, resultModal
 }

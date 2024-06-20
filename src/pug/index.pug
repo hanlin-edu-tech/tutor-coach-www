@@ -34,27 +34,11 @@ html(lang='zh-Hant-TW')
                     .row-assets
                         a.btn-activity(href="#")
                             img.img-assets(src="./img/ecoin.png", alt="")
-                            h3.ecoin 0
+                            h3.points 0
                 img.banner(src="./img/bg-banner2.png", alt="")
-
                 // 引入獎勵內容的 vue 模組
-                include ./vue/vue-bonuses.pug
 
-                .row-gift(id="bonus-received")
-                    .gift-bg
-                        img(src="./img/cont-gift-treasure.png", alt="")
-                    .class-btn
-                        // 領取獎勵按鈕
-                        .btn-get(style="display:none")
-                            img(src="./img/btn-get.png", alt="")
-                        // 尚未達成按鈕
-                        .btn-none
-                            img(src="./img/btn-none.png", alt="")
-                    .text-get-number(style="display:none") 可領
-                        span.gift-get-number
-                        span 次
-
-
+                include ./vue/vue-items.pug
 
             // 引入課程內容的 vue 模組
             include ./vue/vue-courses.pug
@@ -65,13 +49,8 @@ html(lang='zh-Hant-TW')
             // Banner
             include ./popup.pug
 
-            // widget 引入 e 導師
-            //include ./ecoach.pug
-
-            // x-template of Vue Component
             include ./x-template/template-course.pug
-            include ./x-template/template-bonus.pug
-        //include ./ecoach.pug
+            include ./x-template/template-item.pug
         eh-footer
 
         script(src="../platform-wc/platform-env/dist/js/platform-env.js")

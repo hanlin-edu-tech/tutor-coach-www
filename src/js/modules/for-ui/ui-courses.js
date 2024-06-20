@@ -11,5 +11,16 @@ export default {
   },
   components: {
     'course': singleCourse
-  }
+  },
+  computed:{
+    sortedCourse(){
+      return Object.entries(this.courses)
+          .sort(([, a], [, b]) => new Date(b.start) - new Date(a.start))
+          .reduce((r, [k, v]) => ({...r, [k]: v}), {})
+    }
+  },
+  mounted() {
+    $(".points").html(30);
+  },
+
 }

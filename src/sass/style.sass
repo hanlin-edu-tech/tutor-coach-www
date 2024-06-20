@@ -112,6 +112,28 @@
         padding: 0px 10px
         img
             width: 100%
+    .item
+        flex-grow: 1
+        padding: 0px 10px
+        img
+            width: 100%
+            max-height: 100px
+        .item-btn
+            width: 90px
+            padding: 5px 10px 0px
+            img
+                cursor: pointer
+                width: 100%
+                transition: .3s
+        .btn-get
+            &:hover
+                img
+                    transform: scale(1.05)
+        .text-get-number
+            text-align: center
+            color: #247C0A
+            font-weight: 700
+            letter-spacing: 1px
     .class-bg
         position: relative
         .stamp-finish,.stamp-none
@@ -627,6 +649,5 @@
 @media screen and (max-width: 700px)
     .modal-con
         width: 70%
-
 
 
