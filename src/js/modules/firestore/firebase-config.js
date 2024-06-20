@@ -1,14 +1,13 @@
 import authConfig from './firebase-auth'
-import firebase from '@firebase/app'
-import '@firebase/firestore'
-import '@firebase/auth'
-import '@firebase/storage'
+import { initializeApp } from '@firebase/app';
+import { getFirestore, collection, query, onSnapshot, where, orderBy, getDocs } from '@firebase/firestore';
+import { getAuth, signInWithCustomToken } from '@firebase/auth';
 import { AuthText } from '../util/modal-text'
 
-firebase.initializeApp(authConfig)
+const app = initializeApp(authConfig);
 
-const db = firebase.firestore()
-const auth = firebase.auth()
+const db = getFirestore(app);
+const auth = getAuth(app);
 const ehanlinAuth = async () => {
   let token = ''
   let ehanlinUser = ''
@@ -40,7 +39,7 @@ const ehanlinAuth = async () => {
   }
 
   try {
-    await auth.signInWithCustomToken(token)
+    await signInWithCustomToken(auth, token)
   } catch (error) {
     console.error(error)
   }
@@ -49,8 +48,13 @@ const ehanlinAuth = async () => {
 }
 
 export {
-  firebase,
   db,
+  collection,
+  query,
+  onSnapshot,
+  where,
+  orderBy,
+  getDocs,
   auth,
   ehanlinAuth
 }
