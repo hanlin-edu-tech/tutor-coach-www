@@ -47,7 +47,7 @@
     "gulp-sass": "^5.1.0",
     "imagemin-pngquant": "^9.0.2",
     "lite-server": "^2.6.1",
-    "pug": "^3.0.2",
+    "pug": "^3.0.3",
     "sass": "^1.66.1",
     "sass-loader": "^13.2.0",
     "rollup": "^4.12.0",
