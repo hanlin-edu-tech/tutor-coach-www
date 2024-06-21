@@ -539,21 +539,16 @@
             width: 150px
             height: 150px
         .item-name-award
-            font-size: 16px
+            font-size: 20px
             font-weight: 700
-            color: #744C28
-            margin-top: 8px
+            margin-top: 16px
         .item-message-award
             font-size: 20px
             font-weight: 700
             color: #fff
-            margin-top: 8px
+            margin-top: 16px
             padding: 8px 16px
             border-radius: 50px
-            border: 2px solid #FFC2D0
-            outline: 3px solid #C1272D
-            background: linear-gradient(to top, #F5608F, #FE8FA9)
-            text-shadow: -1px -1px 0 #C1272D, 1px -1px 0 #C1272D, -1px 1px 0 #C1272D, 1px 1px 0 #C1272D
     .point-item-award
         display: flex
         align-items: center
@@ -577,6 +572,24 @@
         font-size: 20px
         color: #E94840
         font-weight: bold
+
+.modal-rewards-success
+    .item-name-award
+        color: #C1272D
+    .item-message-award
+        border: 2px solid #FFC2D0
+        outline: 3px solid #C1272D
+        background: linear-gradient(to top, #F5608F, #FE8FA9)
+        text-shadow: -1px -1px 0 #C1272D, 1px -1px 0 #C1272D, -1px 1px 0 #C1272D, 1px 1px 0 #C1272D
+
+.modal-rewards-fail
+    .item-name-award
+        color: #666666
+    .item-message-award
+        border: 2px solid #CCCCCC
+        outline: 3px solid #666666
+        background: linear-gradient(to top, #A1A1A1, #CBCBCB)
+        text-shadow: -1px -1px 0 #666666, 1px -1px 0 #666666, -1px 1px 0 #666666, 1px 1px 0 #666666
 
 @keyframes congrats-glow
     0%
@@ -640,6 +653,7 @@
             text-align: center
         .img-award
             width: 30px
+            border-radius: 8px
         .coin-name-award,.gem-name-award,.chest-name-award
             font-size: 16px
             color: #454545
