@@ -5,7 +5,7 @@
         .content-gift
 
 // 獲得獎勵popup
-.modal.modal-rewards
+.modal.modal-rewards.modal-rewards-success
     .modal-con
         .js-close-modal.flaticon-close
         .modal-body.modal-body-award
@@ -18,6 +18,20 @@
                     img.img-award(src="./img/crystal/lv1.png", alt="獎勵圖")
                     .item-name-award 麥當勞
                     .item-message-award 兌換成功
+
+.modal.modal-rewards.modal-rewards-fail
+    .modal-con
+        .js-close-modal.flaticon-close
+        .modal-body.modal-body-award
+            .title-congrats
+                img.congrats-glow(src="./img/congrats-glow.png")
+                img.congrats-deco(src="./img/title-deco.png")
+                img.congrats-title(src="./img/title-get.png", alt="獲得獎勵")
+            .wrap-award
+                .item-award
+                    img.img-award(src="./img/crystal/lv1.png", alt="獎勵圖")
+                    .item-name-award 麥當勞
+                    .item-message-award 點數還不夠，再繼續加油喔！
 
 
 // 審核結果popup

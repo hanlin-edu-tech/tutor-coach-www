@@ -8,9 +8,22 @@ function messageModal(messageContent) {
 }
 
 function rewardsModal(img, name, message) {
-  const modalTarget = $('.modal-rewards')
+  const modalTarget = $('.modal-rewards-success')
   const modalConTarget = modalTarget.find('.modal-con')
-  modalConTarget.find(".item-award").find(".img-award").src = img;
+  modalConTarget.find(".item-award").find(".img-award")[0].src = img;
+  modalConTarget.find('.item-name-award').empty();
+  modalConTarget.find('.item-name-award').html(name);
+  modalConTarget.find('.item-message-award').empty();
+  modalConTarget.find('.item-message-award').html(message);
+  modalConTarget.addClass('slideDown')
+  modalTarget.addClass('visible')
+}
+
+function rewardsModalFail(img, name, message) {
+  console.log(img, name, message);
+  const modalTarget = $('.modal-rewards-fail')
+  const modalConTarget = modalTarget.find('.modal-con')
+  modalConTarget.find(".item-award").find(".img-award")[0].src = img;
   modalConTarget.find('.item-name-award').empty();
   modalConTarget.find('.item-name-award').html(name);
   modalConTarget.find('.item-message-award').empty();
@@ -98,5 +111,5 @@ function isEmpty(obj) {
 }
 
 export {
-  messageModal, rewardsModal, resultModal
+  messageModal, rewardsModal, rewardsModalFail, resultModal
 }

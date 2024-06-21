@@ -1,4 +1,4 @@
-import {rewardsModal} from '../util/show-modal'
+import {rewardsModal, rewardsModalFail} from '../util/show-modal'
 
 export default {
     props: {
@@ -12,7 +12,7 @@ export default {
             if(points >= this.singleItem.point){
                 rewardsModal(this.singleItem.url,  this.singleItem.name, '兌換成功');
             } else {
-                rewardsModal(this.singleItem.url,  this.singleItem.name, '兌換失敗');
+                rewardsModalFail(this.singleItem.url,  this.singleItem.name, '點數還不夠，再繼續加油喔!');
             }
         }
     }
