@@ -1,5 +1,5 @@
-import courses from './courses'
-import items from './items'
+import courses from './for-ui/ui-courses'
+import items from './for-ui/ui-items'
 import util from './util/util'
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-tw'

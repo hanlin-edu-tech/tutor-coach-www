@@ -1,4 +1,4 @@
-import {rewardsModal} from '../util/show-modal'
+import {rewardsModal, rewardsModalFail} from '../util/show-modal'
 
 export default {
     props: {
@@ -25,7 +25,7 @@ export default {
                     throw Error("兌換失敗");
                 }
             }).catch(_ => {
-                rewardsModal(this.singleItem.url,  this.singleItem.name, '兌換失敗');
+                rewardsModalFail(this.singleItem.url,  this.singleItem.name, '點數還不夠，再繼續加油喔!');
             })
         }
     }
