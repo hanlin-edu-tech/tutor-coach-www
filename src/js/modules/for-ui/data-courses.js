@@ -20,7 +20,6 @@ let dataCourses = {
     "eTutorClassBtnImg": "./img/btn-done-purple.png",
     "action": () => {},
     "eTutorAction": () => {
-      console.log("eTutorAction")
       resultModal(5, {
         "homework": "on-time",
         "tutorTime": "time-a",

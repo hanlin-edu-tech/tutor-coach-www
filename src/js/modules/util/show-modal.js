@@ -7,6 +7,23 @@ function messageModal(messageContent) {
   modalTarget.addClass('visible')
 }
 
+function rewardsCheckModal(img, name, click) {
+  const modalTarget = $('.modal-rewards-check')
+  const modalConTarget = modalTarget.find('.modal-con')
+  modalConTarget.find(".item-award").find(".img-award")[0].src = img;
+  modalConTarget.find('.item-name-award').empty();
+  modalConTarget.find('.item-name-award').html(name);
+  modalConTarget.addClass('slideDown')
+  modalTarget.addClass('visible')
+
+  modalConTarget.find('.item-btn').one('click', function() {
+    modalTarget.removeClass('visible');
+    if(click){
+      click();
+    }
+  });
+}
+
 function rewardsModal(img, name, message) {
   const modalTarget = $('.modal-rewards-success')
   const modalConTarget = modalTarget.find('.modal-con')
@@ -20,7 +37,6 @@ function rewardsModal(img, name, message) {
 }
 
 function rewardsModalFail(img, name, message) {
-  console.log(img, name, message);
   const modalTarget = $('.modal-rewards-fail')
   const modalConTarget = modalTarget.find('.modal-con')
   modalConTarget.find(".item-award").find(".img-award")[0].src = img;
@@ -111,5 +127,5 @@ function isEmpty(obj) {
 }
 
 export {
-  messageModal, rewardsModal, rewardsModalFail, resultModal
+  messageModal, rewardsCheckModal, rewardsModal, rewardsModalFail, resultModal
 }

@@ -4,7 +4,6 @@ const AuthText = {
 
 const PopupText = {
   reward (isChecked, coins, gems, chestLevel, chestCount,details) {
-    console.log("PopupText", isChecked, coins, gems, chestLevel, chestCount, details)
     if(isChecked){
       if(chestCount === 0){
         return `審核結果<br/>審核通過<br/>${details}<br/>恭喜獲得金幣 ${coins} 寶石 ${gems}<br/>`
