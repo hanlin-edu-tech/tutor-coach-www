@@ -1,4 +1,4 @@
-import {rewardsModal, rewardsModalFail} from '../util/show-modal'
+import {rewardsCheckModal, rewardsModal, rewardsModalFail} from '../util/show-modal'
 
 export default {
     props: {
@@ -7,6 +7,9 @@ export default {
     },
     template: '#template-item',
     methods: {
+        checkExchange() {
+            rewardsCheckModal(this.singleItem.url,  this.singleItem.name, this.exchange);
+        },
         exchange() {
             let points = $(".points").html();
             if(points >= this.singleItem.point){

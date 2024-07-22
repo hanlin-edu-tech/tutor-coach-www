@@ -5,7 +5,7 @@ script(type="text/x-template" id="template-item")
         .item-detail
             .item-name {{ singleItem.name }}
             .item-point 兌換點數 {{ singleItem.point }}
-        .item-btn(@click="exchange()")
+        .item-btn(@click="checkExchange()")
             // 領取獎勵按鈕
             .btn-get
                 img(src="./img/btn-get.png", alt="")
