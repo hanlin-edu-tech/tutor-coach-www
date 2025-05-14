@@ -20,7 +20,7 @@ export default {
                 if (res.ok) {
                     let result = await res.text();
                     if (result !== 'success') {
-                        throw Error("兌換失敗");
+                        throw Error(result);
                     } else {
                         rewardsModal(this.singleItem.url,  this.singleItem.name, '兌換成功');
                         await this.userAssetsHandler()
