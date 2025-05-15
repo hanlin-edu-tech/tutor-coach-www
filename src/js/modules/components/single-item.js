@@ -33,9 +33,9 @@ export default {
                 if (errorMessage === 'success') {
                     rewardsModal(this.singleItem.url,  this.singleItem.name, '兌換成功');
                 } else if (errorMessage === 'no enough points') {
-                    rewardsModalFail(this.singleItem.url,  this.singleItem.name, '點數不足');
+                    rewardsModalFail(this.singleItem.url,  this.singleItem.name, '點數還不夠，再繼續加油喔!');
                 } else if (errorMessage === 'no enough item') {
-                    rewardsModalFail(this.singleItem.url,  this.singleItem.name, '獎品不足');
+                    rewardsModalFail(this.singleItem.url,  this.singleItem.name, '獎品不足，補充後再來兌換喔!');
                 }
                 rewardsModalFail(this.singleItem.url,  this.singleItem.name, '兌換失敗');
             })
