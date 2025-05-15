@@ -30,14 +30,14 @@ export default {
                 }
             }).catch(err => {
                 const errorMessage = err instanceof Error ? err.message : String(err);
-                if (errorMessage === 'success') {
-                    rewardsModal(this.singleItem.url,  this.singleItem.name, '兌換成功');
-                } else if (errorMessage === 'no enough points') {
+                console.log(`errorMessage: ${errorMessage}`);
+                if (errorMessage === 'no enough points') {
                     rewardsModalFail(this.singleItem.url,  this.singleItem.name, '點數還不夠，再繼續加油喔!');
                 } else if (errorMessage === 'no enough item') {
                     rewardsModalFail(this.singleItem.url,  this.singleItem.name, '獎品不足，補充後再來兌換喔!');
+                } else {
+                    rewardsModalFail(this.singleItem.url,  this.singleItem.name, '兌換失敗');
                 }
-                rewardsModalFail(this.singleItem.url,  this.singleItem.name, '兌換失敗');
             })
         },
         async userAssetsHandler() {
