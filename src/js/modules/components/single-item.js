@@ -28,8 +28,16 @@ export default {
                 } else {
                     throw Error("兌換失敗");
                 }
-            }).catch(_ => {
-                rewardsModalFail(this.singleItem.url,  this.singleItem.name, '點數還不夠，再繼續加油喔!');
+            }).catch(err => {
+                const errorMessage = err instanceof Error ? err.message : String(err);
+                if (errorMessage === 'success') {
+                    rewardsModal(this.singleItem.url,  this.singleItem.name, '兌換成功');
+                } else if (errorMessage === 'no enough points') {
+                    rewardsModalFail(this.singleItem.url,  this.singleItem.name, '點數不足');
+                } else if (errorMessage === 'no enough item') {
+                    rewardsModalFail(this.singleItem.url,  this.singleItem.name, '獎品不足');
+                }
+                rewardsModalFail(this.singleItem.url,  this.singleItem.name, '兌換失敗');
             })
         },
         async userAssetsHandler() {
