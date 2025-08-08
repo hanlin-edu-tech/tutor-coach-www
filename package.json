@@ -63,5 +63,8 @@
     "last 2 version",
     "ie 11",
     "> 1%"
-  ]
+  ],
+  "overrides": {
+    "yargs-parser": "21.1.1"
+  }
 }
