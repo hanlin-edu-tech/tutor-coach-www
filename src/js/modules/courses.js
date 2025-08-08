@@ -124,6 +124,8 @@ export default {
                     if(xhr.status === 200) {
                       userCourse.tutorEnter = true;
                       window.open(eTutorUrl, '_blank');
+                    } else {
+                      alert('進入課程失敗，請稍後再試');
                     }
                   }
                 });
