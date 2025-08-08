@@ -120,9 +120,13 @@ export default {
                   type: 'PUT',
                   contentType: 'application/json',
                   url: `/coach-web/${userCourseId}/enterTutorCourse`,
-                })
-                userCourse.tutorEnter = true
-                window.open(eTutorUrl, '_blank')
+                  complete: function(xhr) {
+                    if(xhr.status === 200) {
+                      userCourse.tutorEnter = true;
+                      window.open(eTutorUrl, '_blank');
+                    }
+                  }
+                });
               }
             }
           }
@@ -149,9 +153,13 @@ export default {
                   type: 'PUT',
                   contentType: 'application/json',
                   url: `/coach-web/${userCourseId}/enterTutorCourse`,
-                })
-                userCourse.tutorEnter = true
-                window.open(eTutorUrl, '_blank')
+                  complete: function(xhr) {
+                    if(xhr.status === 200) {
+                      userCourse.tutorEnter = true;
+                      window.open(eTutorUrl, '_blank');
+                    }
+                  }
+                });
               }
             }
           }
@@ -262,9 +270,13 @@ export default {
                 type: 'PUT',
                 contentType: 'application/json',
                 url: `/coach-web/${userCourseId}/enterTutorCourse`,
-              })
-              userCourse.tutorEnter = true
-              window.open(eTutorUrl, '_blank')
+                complete: function(xhr) {
+                  if(xhr.status === 200) {
+                    userCourse.tutorEnter = true;
+                    window.open(eTutorUrl, '_blank');
+                  }
+                }
+              });
             }
           }
         }
